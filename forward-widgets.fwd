@@ -76,13 +76,13 @@
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/xvideos.js"
     },
     {
-      "id": "chai.91porny",
-      "title": "91Porny",
-      "description": "91Porny 分类、来源切换、搜索与在线播放",
+      "id": "chai.kedou",
+      "title": "蝌蚪窝",
+      "description": "蝌蚪窝分类浏览与在线播放",
       "requiredVersion": "0.0.1",
       "version": "2.1.0",
       "author": "chai-j",
-      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/91porny.js"
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/kedou.js"
     },
     {
       "id": "chai.91porn",
