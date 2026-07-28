@@ -1,114 +1,198 @@
 WidgetMetadata = {
-  id: "chai.hanime1",
-  title: "Hanime1",
-  version: "2.0.0",
-  requiredVersion: "0.0.1",
-  description: "Hanime1 浏览、搜索、分类与多清晰度播放",
-  author: "chai-j",
-  site: "https://hanime1.me",
-  detailCacheDuration: 300,
-  modules: [
+  "id": "chai.hanime1",
+  "title": "Hanime1",
+  "version": "2.1.0",
+  "requiredVersion": "0.0.1",
+  "description": "Hanime1 浏览、搜索、中文字幕与多清晰度播放",
+  "author": "chai-j",
+  "site": "https://hanime1.me",
+  "detailCacheDuration": 300,
+  "modules": [
     {
-      id: "browse",
-      title: "分类浏览",
-      functionName: "loadVideos",
-      cacheDuration: 900,
-      requiresWebView: false,
-      params: [
+      "id": "browse",
+      "title": "分类浏览",
+      "functionName": "loadVideos",
+      "cacheDuration": 900,
+      "requiresWebView": false,
+      "params": [
         {
-          name: "genre",
-          title: "影片类型",
-          type: "enumeration",
-          value: "all",
-          enumOptions: [
-            { title: "全部", value: "all" },
-            { title: "里番", value: "hentai" },
-            { title: "泡面番", value: "short_anime" },
-            { title: "Motion Anime", value: "motion" },
-            { title: "3DCG", value: "3dcg" },
-            { title: "2.5D", value: "2_5d" },
-            { title: "2D 动画", value: "2d" },
-            { title: "AI 生成", value: "ai" },
-            { title: "MMD", value: "mmd" },
-            { title: "Cosplay", value: "cosplay" },
-          ],
+          "name": "genre",
+          "title": "影片类型",
+          "type": "enumeration",
+          "value": "all",
+          "enumOptions": [
+            {
+              "title": "全部",
+              "value": "all"
+            },
+            {
+              "title": "里番",
+              "value": "hentai"
+            },
+            {
+              "title": "泡面番",
+              "value": "short_anime"
+            },
+            {
+              "title": "Motion Anime",
+              "value": "motion"
+            },
+            {
+              "title": "3DCG",
+              "value": "3dcg"
+            },
+            {
+              "title": "2.5D",
+              "value": "2_5d"
+            },
+            {
+              "title": "2D 动画",
+              "value": "2d"
+            },
+            {
+              "title": "AI 生成",
+              "value": "ai"
+            },
+            {
+              "title": "MMD",
+              "value": "mmd"
+            },
+            {
+              "title": "Cosplay",
+              "value": "cosplay"
+            }
+          ]
         },
         {
-          name: "sort_by",
-          title: "排序",
-          type: "enumeration",
-          value: "new_release",
-          enumOptions: [
-            { title: "最新上市", value: "new_release" },
-            { title: "最新上传", value: "latest_upload" },
-            { title: "本日排行", value: "daily_rank" },
-            { title: "本周排行", value: "weekly_rank" },
-            { title: "本月排行", value: "monthly_rank" },
-            { title: "观看次数", value: "views" },
-            { title: "时长最长", value: "duration" },
-            { title: "他们在看", value: "watching" },
-          ],
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "value": "new_release",
+          "enumOptions": [
+            {
+              "title": "最新上市",
+              "value": "new_release"
+            },
+            {
+              "title": "最新上传",
+              "value": "latest_upload"
+            },
+            {
+              "title": "本日排行",
+              "value": "daily_rank"
+            },
+            {
+              "title": "本周排行",
+              "value": "weekly_rank"
+            },
+            {
+              "title": "本月排行",
+              "value": "monthly_rank"
+            },
+            {
+              "title": "观看次数",
+              "value": "views"
+            },
+            {
+              "title": "时长最长",
+              "value": "duration"
+            },
+            {
+              "title": "他们在看",
+              "value": "watching"
+            }
+          ]
         },
-        { name: "page", title: "页码", type: "page" },
-      ],
-    },
-    {
-      id: "chineseSubtitles",
-      title: "中文字幕",
-      functionName: "loadChineseSubtitles",
-      cacheDuration: 900,
-      requiresWebView: false,
-      params: [
         {
-          name: "sort_by",
-          title: "排序",
-          type: "enumeration",
-          value: "new_release",
-          enumOptions: [
-            { title: "最新上市", value: "new_release" },
-            { title: "最新上传", value: "latest_upload" },
-            { title: "本日排行", value: "daily_rank" },
-            { title: "本周排行", value: "weekly_rank" },
-            { title: "本月排行", value: "monthly_rank" },
-          ],
+          "name": "subtitle",
+          "title": "字幕筛选",
+          "type": "enumeration",
+          "value": "all",
+          "enumOptions": [
+            {
+              "title": "全部影片",
+              "value": "all"
+            },
+            {
+              "title": "中文字幕",
+              "value": "chinese"
+            }
+          ]
         },
-        { name: "page", title: "页码", type: "page" },
-      ],
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
     },
     {
-      id: "loadResource",
-      title: "加载播放资源",
-      functionName: "loadResource",
-      type: "stream",
-      cacheDuration: 0,
-      requiresWebView: false,
-      params: [],
-    },
+      "id": "loadResource",
+      "title": "加载播放资源",
+      "functionName": "loadResource",
+      "type": "stream",
+      "cacheDuration": 0,
+      "requiresWebView": false,
+      "params": []
+    }
   ],
-  search: {
-    title: "搜索影片",
-    functionName: "searchVideos",
-    params: [
-      { name: "keyword", title: "关键词", type: "input", value: "" },
+  "search": {
+    "title": "搜索影片",
+    "functionName": "searchVideos",
+    "params": [
       {
-        name: "sort_by",
-        title: "排序",
-        type: "enumeration",
-        value: "new_release",
-        enumOptions: [
-          { title: "最新上市", value: "new_release" },
-          { title: "最新上传", value: "latest_upload" },
-          { title: "本日排行", value: "daily_rank" },
-          { title: "本周排行", value: "weekly_rank" },
-          { title: "本月排行", value: "monthly_rank" },
-          { title: "观看次数", value: "views" },
-          { title: "时长最长", value: "duration" },
-          { title: "他们在看", value: "watching" },
-        ],
+        "name": "keyword",
+        "title": "关键词",
+        "type": "input",
+        "value": ""
       },
-      { name: "page", title: "页码", type: "page" },
-    ],
-  },
+      {
+        "name": "sort_by",
+        "title": "排序",
+        "type": "enumeration",
+        "value": "new_release",
+        "enumOptions": [
+          {
+            "title": "最新上市",
+            "value": "new_release"
+          },
+          {
+            "title": "最新上传",
+            "value": "latest_upload"
+          },
+          {
+            "title": "本日排行",
+            "value": "daily_rank"
+          },
+          {
+            "title": "本周排行",
+            "value": "weekly_rank"
+          },
+          {
+            "title": "本月排行",
+            "value": "monthly_rank"
+          },
+          {
+            "title": "观看次数",
+            "value": "views"
+          },
+          {
+            "title": "时长最长",
+            "value": "duration"
+          },
+          {
+            "title": "他们在看",
+            "value": "watching"
+          }
+        ]
+      },
+      {
+        "name": "page",
+        "title": "页码",
+        "type": "page"
+      }
+    ]
+  }
 };
 
 var HANIME_HOSTS = ["https://hanime1.com", "https://hanime1.me"];
@@ -287,19 +371,11 @@ async function searchVideos(params) {
 async function loadVideos(params) {
   var jumped = await loadJumpedListing(params);
   if (jumped) return jumped;
-  var request = buildRequest(params || {}, []);
+  var fixedTags = params && params.subtitle === "chinese" ? ["中文字幕"] : [];
+  var request = buildRequest(params || {}, fixedTags);
   var response = await requestHtml(request.url, request.params, HANIME_BASE_URL + "/");
   return parseVideoList(response.html);
 }
-
-async function loadChineseSubtitles(params) {
-  var jumped = await loadJumpedListing(params);
-  if (jumped) return jumped;
-  var request = buildRequest(params || {}, ["中文字幕"]);
-  var response = await requestHtml(request.url, request.params, HANIME_BASE_URL + "/");
-  return parseVideoList(response.html);
-}
-
 function normalizeCardLink(value) {
   var url = normalizeSiteUrl(value);
   return normalizeWatchUrl(url);

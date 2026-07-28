@@ -1,23 +1,43 @@
 WidgetMetadata = {
   "id": "chai.91porny",
   "title": "91Porny",
-  "description": "91Porny 分类、搜索与在线播放",
-  "version": "2.0.0",
+  "description": "91Porny 分类、来源切换、搜索与在线播放",
+  "version": "2.1.0",
   "requiredVersion": "0.0.1",
   "author": "chai-j",
   "site": "https://91porny.com",
   "detailCacheDuration": 60,
   "modules": [
     {
+      "id": "browse",
+      "title": "分类浏览",
+      "description": "合并 91Porny、蝌蚪窝和精选视频来源",
+      "functionName": "getList",
       "cacheDuration": 3600,
       "requiresWebView": false,
-      "id": "91porny.video",
-      "title": "91Porny",
-      "description": "91Porny",
-      "functionName": "get91List",
       "params": [
         {
-          "name": "sort_by",
+          "name": "source",
+          "title": "视频来源",
+          "type": "enumeration",
+          "value": "91porny",
+          "enumOptions": [
+            {
+              "title": "91Porny",
+              "value": "91porny"
+            },
+            {
+              "title": "蝌蚪窝视频",
+              "value": "kedou"
+            },
+            {
+              "title": "精选视频",
+              "value": "vod"
+            }
+          ]
+        },
+        {
+          "name": "sort_91porny",
           "title": "分类",
           "description": "分类",
           "type": "enumeration",
@@ -79,32 +99,16 @@ WidgetMetadata = {
               "value": "top-last",
               "title": "上月最热"
             }
-          ]
+          ],
+          "belongTo": {
+            "paramName": "source",
+            "value": [
+              "91porny"
+            ]
+          }
         },
         {
-          "name": "page",
-          "title": "页码",
-          "type": "page",
-          "value": "1"
-        },
-        {
-          "name": "base_url",
-          "title": "基础 URL",
-          "type": "input",
-          "value": "https://91porny.com"
-        }
-      ]
-    },
-    {
-      "cacheDuration": 3600,
-      "requiresWebView": false,
-      "id": "91porny.videos",
-      "title": "蝌蚪窝视频",
-      "description": "蝌蚪窝视频",
-      "functionName": "getKedouList",
-      "params": [
-        {
-          "name": "sort_by",
+          "name": "sort_kedou",
           "title": "分类",
           "description": "分类",
           "type": "enumeration",
@@ -182,32 +186,16 @@ WidgetMetadata = {
               "value": "huangjia",
               "title": "皇家华人"
             }
-          ]
+          ],
+          "belongTo": {
+            "paramName": "source",
+            "value": [
+              "kedou"
+            ]
+          }
         },
         {
-          "name": "page",
-          "title": "页码",
-          "type": "page",
-          "value": "1"
-        },
-        {
-          "name": "base_url",
-          "title": "基础 URL",
-          "type": "input",
-          "value": "https://91porny.com"
-        }
-      ]
-    },
-    {
-      "cacheDuration": 3600,
-      "requiresWebView": false,
-      "id": "91porny.vod",
-      "title": "精选视频",
-      "description": "精选视频",
-      "functionName": "getVodList",
-      "params": [
-        {
-          "name": "sort_by",
+          "name": "sort_vod",
           "title": "分类",
           "description": "分类",
           "type": "enumeration",
@@ -229,7 +217,13 @@ WidgetMetadata = {
               "value": "赞助",
               "title": "赞助"
             }
-          ]
+          ],
+          "belongTo": {
+            "paramName": "source",
+            "value": [
+              "vod"
+            ]
+          }
         },
         {
           "name": "page",
@@ -383,6 +377,12 @@ async function getVodList(params = {}) {
   }
 }
 
+async function getList(params = {}) {
+  const source = params.source || "91porny";
+  if (source === "kedou") return getKedouList({ ...params, sort_by: params.sort_kedou || "chinese" });
+  if (source === "vod") return getVodList({ ...params, sort_by: params.sort_vod || "" });
+  return get91List({ ...params, sort_by: params.sort_91porny || "latest" });
+}
 async function loadDetail(link) {
   const originalLink = String(link || "").trim();
   if (!originalLink) return null;

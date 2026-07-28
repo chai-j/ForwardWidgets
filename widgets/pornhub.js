@@ -1,13 +1,719 @@
 WidgetMetadata = {
   "id": "chai.pornhub",
   "title": "Pornhub",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "requiredVersion": "0.0.1",
   "description": "Pornhub 搜索、艺人、榜单、筛选与在线播放",
   "author": "chai-j",
   "site": "https://cn.pornhub.com",
   "detailCacheDuration": 1200,
   "modules": [
+    {
+      "id": "videoFeeds",
+      "title": "视频榜单",
+      "description": "合并热播、最多观看、最高评分、最新精选和最新视频",
+      "functionName": "getVideos",
+      "cacheDuration": 900,
+      "requiresWebView": false,
+      "params": [
+        {
+          "name": "pageType",
+          "title": "视频榜单",
+          "type": "enumeration",
+          "value": "ht",
+          "enumOptions": [
+            {
+              "title": "热播视频",
+              "value": "ht"
+            },
+            {
+              "title": "最多观看",
+              "value": "mv"
+            },
+            {
+              "title": "最高评分",
+              "value": "tr"
+            },
+            {
+              "title": "最新精选",
+              "value": "latestFeatured"
+            },
+            {
+              "title": "最新视频",
+              "value": "cm"
+            }
+          ]
+        },
+        {
+          "name": "p",
+          "title": "出品类型",
+          "type": "enumeration",
+          "description": "全部",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部",
+              "value": ""
+            },
+            {
+              "title": "专业",
+              "value": "professional"
+            },
+            {
+              "title": "自制",
+              "value": "homemade"
+            }
+          ]
+        },
+        {
+          "name": "hd",
+          "title": "分辨率",
+          "description": "默认全部",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部",
+              "value": ""
+            },
+            {
+              "title": "仅高清",
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "name": "c",
+          "title": "视频类型",
+          "type": "enumeration",
+          "description": "筛选视频类型",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部",
+              "value": ""
+            },
+            {
+              "title": "已认证素人",
+              "value": "138"
+            },
+            {
+              "title": "已认证模特",
+              "value": "139"
+            },
+            {
+              "title": "亚洲人",
+              "value": "1"
+            },
+            {
+              "title": "已认证情侣",
+              "value": "482"
+            },
+            {
+              "title": "60帧",
+              "value": "105"
+            },
+            {
+              "title": "大学",
+              "value": "79"
+            },
+            {
+              "title": "18-25岁",
+              "value": "teen"
+            },
+            {
+              "title": "韩国人",
+              "value": "103"
+            },
+            {
+              "title": "日本人",
+              "value": "111"
+            },
+            {
+              "title": "校园",
+              "value": "88"
+            },
+            {
+              "title": "欧洲人",
+              "value": "55"
+            },
+            {
+              "title": "英国人",
+              "value": "96"
+            },
+            {
+              "title": "法国人",
+              "value": "94"
+            },
+            {
+              "title": "浪漫",
+              "value": "522"
+            },
+            {
+              "title": "女性自慰",
+              "value": "492"
+            },
+            {
+              "title": "女性高潮",
+              "value": "502"
+            },
+            {
+              "title": "3P",
+              "value": "65"
+            },
+            {
+              "title": "Cosplay",
+              "value": "241"
+            },
+            {
+              "title": "Gaming",
+              "value": "881"
+            },
+            {
+              "title": "Podcast",
+              "value": "891"
+            },
+            {
+              "title": "上班时观赏",
+              "value": "221"
+            },
+            {
+              "title": "乱交群欢",
+              "value": "2"
+            },
+            {
+              "title": "交互式",
+              "value": "108"
+            },
+            {
+              "title": "佩戴式阳具",
+              "value": "542"
+            },
+            {
+              "title": "俄国人",
+              "value": "99"
+            },
+            {
+              "title": "公众野战",
+              "value": "24"
+            },
+            {
+              "title": "内射中出",
+              "value": "15"
+            },
+            {
+              "title": "内嵌字幕",
+              "value": "732"
+            },
+            {
+              "title": "劲爆重口味",
+              "value": "21"
+            },
+            {
+              "title": "卡通",
+              "value": "86"
+            },
+            {
+              "title": "印度人",
+              "value": "101"
+            },
+            {
+              "title": "双性恋男",
+              "value": "76"
+            },
+            {
+              "title": "双龙入洞",
+              "value": "72"
+            },
+            {
+              "title": "口交",
+              "value": "13"
+            },
+            {
+              "title": "古典派",
+              "value": "43"
+            },
+            {
+              "title": "合集",
+              "value": "57"
+            },
+            {
+              "title": "名人",
+              "value": "12"
+            },
+            {
+              "title": "大号美女",
+              "value": "6"
+            },
+            {
+              "title": "女同",
+              "value": "27"
+            },
+            {
+              "title": "娇妻偷吃",
+              "value": "242"
+            },
+            {
+              "title": "射精",
+              "value": "16"
+            },
+            {
+              "title": "巨乳",
+              "value": "8"
+            },
+            {
+              "title": "巨屌",
+              "value": "7"
+            },
+            {
+              "title": "巴西人",
+              "value": "102"
+            },
+            {
+              "title": "德国人",
+              "value": "95"
+            },
+            {
+              "title": "性玩具",
+              "value": "23"
+            },
+            {
+              "title": "恋物癖",
+              "value": "18"
+            },
+            {
+              "title": "恋足",
+              "value": "93"
+            },
+            {
+              "title": "意大利人",
+              "value": "97"
+            },
+            {
+              "title": "手交",
+              "value": "20"
+            },
+            {
+              "title": "手淫",
+              "value": "22"
+            },
+            {
+              "title": "抽烟",
+              "value": "91"
+            },
+            {
+              "title": "拉丁裔美女",
+              "value": "26"
+            },
+            {
+              "title": "拳交",
+              "value": "19"
+            },
+            {
+              "title": "指交",
+              "value": "592"
+            },
+            {
+              "title": "按摩",
+              "value": "78"
+            },
+            {
+              "title": "捆绑",
+              "value": "10"
+            },
+            {
+              "title": "捷克人",
+              "value": "100"
+            },
+            {
+              "title": "搞笑",
+              "value": "32"
+            },
+            {
+              "title": "撒尿",
+              "value": "211"
+            },
+            {
+              "title": "深发女",
+              "value": "11"
+            },
+            {
+              "title": "滑稽模仿",
+              "value": "201"
+            },
+            {
+              "title": "潮吹",
+              "value": "69"
+            },
+            {
+              "title": "火辣保姆",
+              "value": "89"
+            },
+            {
+              "title": "熟女",
+              "value": "28"
+            },
+            {
+              "title": "爆菊",
+              "value": "35"
+            },
+            {
+              "title": "片场直击",
+              "value": "141"
+            },
+            {
+              "title": "独家",
+              "value": "115"
+            },
+            {
+              "title": "男同",
+              "value": "63"
+            },
+            {
+              "title": "男性自慰",
+              "value": "92"
+            },
+            {
+              "title": "真人实拍",
+              "value": "31"
+            },
+            {
+              "title": "第一视角",
+              "value": "41"
+            },
+            {
+              "title": "粗暴性爱",
+              "value": "67"
+            },
+            {
+              "title": "素人",
+              "value": "3"
+            },
+            {
+              "title": "红毛",
+              "value": "42"
+            },
+            {
+              "title": "纹身女",
+              "value": "562"
+            },
+            {
+              "title": "继家庭幻想",
+              "value": "444"
+            },
+            {
+              "title": "老少欢",
+              "value": "181"
+            },
+            {
+              "title": "聚会",
+              "value": "53"
+            },
+            {
+              "title": "肌肉男",
+              "value": "512"
+            },
+            {
+              "title": "肥臀",
+              "value": "4"
+            },
+            {
+              "title": "脱衣舞",
+              "value": "33"
+            },
+            {
+              "title": "自述视频",
+              "value": "231"
+            },
+            {
+              "title": "舔屄",
+              "value": "131"
+            },
+            {
+              "title": "色情日漫",
+              "value": "36"
+            },
+            {
+              "title": "色情明星",
+              "value": "30"
+            },
+            {
+              "title": "视频激情",
+              "value": "61"
+            },
+            {
+              "title": "角色扮演",
+              "value": "81"
+            },
+            {
+              "title": "试镜",
+              "value": "90"
+            },
+            {
+              "title": "贫乳",
+              "value": "59"
+            },
+            {
+              "title": "跨性别",
+              "value": "83"
+            },
+            {
+              "title": "跨种族",
+              "value": "25"
+            },
+            {
+              "title": "轮交",
+              "value": "80"
+            },
+            {
+              "title": "辣妈",
+              "value": "29"
+            },
+            {
+              "title": "金发女",
+              "value": "9"
+            },
+            {
+              "title": "阿拉伯人",
+              "value": "98"
+            },
+            {
+              "title": "集体颜射",
+              "value": "14"
+            },
+            {
+              "title": "音乐",
+              "value": "121"
+            },
+            {
+              "title": "风情少女",
+              "value": "5"
+            },
+            {
+              "title": "高清色情片",
+              "value": "38"
+            },
+            {
+              "title": "黑人女",
+              "value": "17"
+            }
+          ]
+        },
+        {
+          "name": "country",
+          "title": "国家/地区",
+          "type": "enumeration",
+          "description": "选择国家或地区",
+          "value": "world",
+          "enumOptions": [
+            {
+              "title": "全球",
+              "value": "world"
+            },
+            {
+              "title": "日本",
+              "value": "jp"
+            },
+            {
+              "title": "韩国",
+              "value": "kr"
+            },
+            {
+              "title": "美国",
+              "value": "us"
+            },
+            {
+              "title": "英国",
+              "value": "gb"
+            },
+            {
+              "title": "法国",
+              "value": "fr"
+            },
+            {
+              "title": "德国",
+              "value": "de"
+            },
+            {
+              "title": "澳大利亚",
+              "value": "au"
+            },
+            {
+              "title": "俄罗斯",
+              "value": "ru"
+            },
+            {
+              "title": "塞尔维亚",
+              "value": "rs"
+            },
+            {
+              "title": "丹麦",
+              "value": "dk"
+            },
+            {
+              "title": "阿根廷",
+              "value": "ar"
+            },
+            {
+              "title": "奥地利",
+              "value": "at"
+            },
+            {
+              "title": "比利时",
+              "value": "be"
+            },
+            {
+              "title": "巴西",
+              "value": "br"
+            },
+            {
+              "title": "保加利亚",
+              "value": "bg"
+            },
+            {
+              "title": "加拿大",
+              "value": "ca"
+            },
+            {
+              "title": "智利",
+              "value": "cl"
+            },
+            {
+              "title": "克罗地亚",
+              "value": "hr"
+            },
+            {
+              "title": "捷克",
+              "value": "cz"
+            },
+            {
+              "title": "埃及",
+              "value": "eg"
+            },
+            {
+              "title": "芬兰",
+              "value": "fi"
+            },
+            {
+              "title": "希腊",
+              "value": "gr"
+            },
+            {
+              "title": "匈牙利",
+              "value": "hu"
+            },
+            {
+              "title": "印度",
+              "value": "in"
+            },
+            {
+              "title": "爱尔兰",
+              "value": "ie"
+            },
+            {
+              "title": "以色列",
+              "value": "il"
+            },
+            {
+              "title": "意大利",
+              "value": "it"
+            },
+            {
+              "title": "墨西哥",
+              "value": "mx"
+            },
+            {
+              "title": "摩洛哥",
+              "value": "ma"
+            },
+            {
+              "title": "荷兰",
+              "value": "nl"
+            },
+            {
+              "title": "新西兰",
+              "value": "nz"
+            },
+            {
+              "title": "挪威",
+              "value": "no"
+            },
+            {
+              "title": "巴基斯坦",
+              "value": "pk"
+            },
+            {
+              "title": "波兰",
+              "value": "pl"
+            },
+            {
+              "title": "葡萄牙",
+              "value": "pt"
+            },
+            {
+              "title": "罗马尼亚",
+              "value": "ro"
+            },
+            {
+              "title": "斯洛伐克",
+              "value": "sk"
+            },
+            {
+              "title": "西班牙",
+              "value": "es"
+            },
+            {
+              "title": "瑞典",
+              "value": "se"
+            },
+            {
+              "title": "瑞士",
+              "value": "ch"
+            },
+            {
+              "title": "乌克兰",
+              "value": "ua"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "时间范围",
+          "type": "enumeration",
+          "description": "选择统计时间范围",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "每周",
+              "value": ""
+            },
+            {
+              "title": "每天",
+              "value": "t"
+            },
+            {
+              "title": "每月",
+              "value": "m"
+            },
+            {
+              "title": "每年",
+              "value": "y"
+            },
+            {
+              "title": "迄今为止",
+              "value": "a"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "热门视频页码",
+          "value": "1"
+        }
+      ]
+    },
     {
       "id": "favorites",
       "title": "❤️ 我的最爱",
@@ -522,2785 +1228,6 @@ WidgetMetadata = {
           "value": "1"
         }
       ]
-    },
-    {
-      "id": "hotVideos",
-      "title": "🔥 热播视频",
-      "functionName": "getVideos",
-      "cacheDuration": 600,
-      "params": [
-        {
-          "name": "pageType",
-          "title": "区分页面类型",
-          "description": "区分页面类型",
-          "value": "ht",
-          "type": "constant"
-        },
-        {
-          "name": "p",
-          "title": "出品类型",
-          "type": "enumeration",
-          "description": "全部",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "专业",
-              "value": "professional"
-            },
-            {
-              "title": "自制",
-              "value": "homemade"
-            }
-          ]
-        },
-        {
-          "name": "hd",
-          "title": "分辨率",
-          "description": "默认全部",
-          "type": "enumeration",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "仅高清",
-              "value": "1"
-            }
-          ]
-        },
-        {
-          "name": "c",
-          "title": "视频类型",
-          "type": "enumeration",
-          "description": "筛选视频类型",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "已认证素人",
-              "value": "138"
-            },
-            {
-              "title": "已认证模特",
-              "value": "139"
-            },
-            {
-              "title": "亚洲人",
-              "value": "1"
-            },
-            {
-              "title": "已认证情侣",
-              "value": "482"
-            },
-            {
-              "title": "60帧",
-              "value": "105"
-            },
-            {
-              "title": "大学",
-              "value": "79"
-            },
-            {
-              "title": "18-25岁",
-              "value": "teen"
-            },
-            {
-              "title": "韩国人",
-              "value": "103"
-            },
-            {
-              "title": "日本人",
-              "value": "111"
-            },
-            {
-              "title": "校园",
-              "value": "88"
-            },
-            {
-              "title": "欧洲人",
-              "value": "55"
-            },
-            {
-              "title": "英国人",
-              "value": "96"
-            },
-            {
-              "title": "法国人",
-              "value": "94"
-            },
-            {
-              "title": "浪漫",
-              "value": "522"
-            },
-            {
-              "title": "女性自慰",
-              "value": "492"
-            },
-            {
-              "title": "女性高潮",
-              "value": "502"
-            },
-            {
-              "title": "3P",
-              "value": "65"
-            },
-            {
-              "title": "Cosplay",
-              "value": "241"
-            },
-            {
-              "title": "Gaming",
-              "value": "881"
-            },
-            {
-              "title": "Podcast",
-              "value": "891"
-            },
-            {
-              "title": "上班时观赏",
-              "value": "221"
-            },
-            {
-              "title": "乱交群欢",
-              "value": "2"
-            },
-            {
-              "title": "交互式",
-              "value": "108"
-            },
-            {
-              "title": "佩戴式阳具",
-              "value": "542"
-            },
-            {
-              "title": "俄国人",
-              "value": "99"
-            },
-            {
-              "title": "公众野战",
-              "value": "24"
-            },
-            {
-              "title": "内射中出",
-              "value": "15"
-            },
-            {
-              "title": "内嵌字幕",
-              "value": "732"
-            },
-            {
-              "title": "劲爆重口味",
-              "value": "21"
-            },
-            {
-              "title": "卡通",
-              "value": "86"
-            },
-            {
-              "title": "印度人",
-              "value": "101"
-            },
-            {
-              "title": "双性恋男",
-              "value": "76"
-            },
-            {
-              "title": "双龙入洞",
-              "value": "72"
-            },
-            {
-              "title": "口交",
-              "value": "13"
-            },
-            {
-              "title": "古典派",
-              "value": "43"
-            },
-            {
-              "title": "合集",
-              "value": "57"
-            },
-            {
-              "title": "名人",
-              "value": "12"
-            },
-            {
-              "title": "大号美女",
-              "value": "6"
-            },
-            {
-              "title": "女同",
-              "value": "27"
-            },
-            {
-              "title": "娇妻偷吃",
-              "value": "242"
-            },
-            {
-              "title": "射精",
-              "value": "16"
-            },
-            {
-              "title": "巨乳",
-              "value": "8"
-            },
-            {
-              "title": "巨屌",
-              "value": "7"
-            },
-            {
-              "title": "巴西人",
-              "value": "102"
-            },
-            {
-              "title": "德国人",
-              "value": "95"
-            },
-            {
-              "title": "性玩具",
-              "value": "23"
-            },
-            {
-              "title": "恋物癖",
-              "value": "18"
-            },
-            {
-              "title": "恋足",
-              "value": "93"
-            },
-            {
-              "title": "意大利人",
-              "value": "97"
-            },
-            {
-              "title": "手交",
-              "value": "20"
-            },
-            {
-              "title": "手淫",
-              "value": "22"
-            },
-            {
-              "title": "抽烟",
-              "value": "91"
-            },
-            {
-              "title": "拉丁裔美女",
-              "value": "26"
-            },
-            {
-              "title": "拳交",
-              "value": "19"
-            },
-            {
-              "title": "指交",
-              "value": "592"
-            },
-            {
-              "title": "按摩",
-              "value": "78"
-            },
-            {
-              "title": "捆绑",
-              "value": "10"
-            },
-            {
-              "title": "捷克人",
-              "value": "100"
-            },
-            {
-              "title": "搞笑",
-              "value": "32"
-            },
-            {
-              "title": "撒尿",
-              "value": "211"
-            },
-            {
-              "title": "深发女",
-              "value": "11"
-            },
-            {
-              "title": "滑稽模仿",
-              "value": "201"
-            },
-            {
-              "title": "潮吹",
-              "value": "69"
-            },
-            {
-              "title": "火辣保姆",
-              "value": "89"
-            },
-            {
-              "title": "熟女",
-              "value": "28"
-            },
-            {
-              "title": "爆菊",
-              "value": "35"
-            },
-            {
-              "title": "片场直击",
-              "value": "141"
-            },
-            {
-              "title": "独家",
-              "value": "115"
-            },
-            {
-              "title": "男同",
-              "value": "63"
-            },
-            {
-              "title": "男性自慰",
-              "value": "92"
-            },
-            {
-              "title": "真人实拍",
-              "value": "31"
-            },
-            {
-              "title": "第一视角",
-              "value": "41"
-            },
-            {
-              "title": "粗暴性爱",
-              "value": "67"
-            },
-            {
-              "title": "素人",
-              "value": "3"
-            },
-            {
-              "title": "红毛",
-              "value": "42"
-            },
-            {
-              "title": "纹身女",
-              "value": "562"
-            },
-            {
-              "title": "继家庭幻想",
-              "value": "444"
-            },
-            {
-              "title": "老少欢",
-              "value": "181"
-            },
-            {
-              "title": "聚会",
-              "value": "53"
-            },
-            {
-              "title": "肌肉男",
-              "value": "512"
-            },
-            {
-              "title": "肥臀",
-              "value": "4"
-            },
-            {
-              "title": "脱衣舞",
-              "value": "33"
-            },
-            {
-              "title": "自述视频",
-              "value": "231"
-            },
-            {
-              "title": "舔屄",
-              "value": "131"
-            },
-            {
-              "title": "色情日漫",
-              "value": "36"
-            },
-            {
-              "title": "色情明星",
-              "value": "30"
-            },
-            {
-              "title": "视频激情",
-              "value": "61"
-            },
-            {
-              "title": "角色扮演",
-              "value": "81"
-            },
-            {
-              "title": "试镜",
-              "value": "90"
-            },
-            {
-              "title": "贫乳",
-              "value": "59"
-            },
-            {
-              "title": "跨性别",
-              "value": "83"
-            },
-            {
-              "title": "跨种族",
-              "value": "25"
-            },
-            {
-              "title": "轮交",
-              "value": "80"
-            },
-            {
-              "title": "辣妈",
-              "value": "29"
-            },
-            {
-              "title": "金发女",
-              "value": "9"
-            },
-            {
-              "title": "阿拉伯人",
-              "value": "98"
-            },
-            {
-              "title": "集体颜射",
-              "value": "14"
-            },
-            {
-              "title": "音乐",
-              "value": "121"
-            },
-            {
-              "title": "风情少女",
-              "value": "5"
-            },
-            {
-              "title": "高清色情片",
-              "value": "38"
-            },
-            {
-              "title": "黑人女",
-              "value": "17"
-            }
-          ]
-        },
-        {
-          "name": "country",
-          "title": "国家/地区",
-          "type": "enumeration",
-          "description": "选择国家或地区",
-          "value": "world",
-          "enumOptions": [
-            {
-              "title": "全球",
-              "value": "world"
-            },
-            {
-              "title": "日本",
-              "value": "jp"
-            },
-            {
-              "title": "韩国",
-              "value": "kr"
-            },
-            {
-              "title": "美国",
-              "value": "us"
-            },
-            {
-              "title": "英国",
-              "value": "gb"
-            },
-            {
-              "title": "法国",
-              "value": "fr"
-            },
-            {
-              "title": "德国",
-              "value": "de"
-            },
-            {
-              "title": "澳大利亚",
-              "value": "au"
-            },
-            {
-              "title": "俄罗斯",
-              "value": "ru"
-            },
-            {
-              "title": "塞尔维亚",
-              "value": "rs"
-            },
-            {
-              "title": "丹麦",
-              "value": "dk"
-            },
-            {
-              "title": "阿根廷",
-              "value": "ar"
-            },
-            {
-              "title": "奥地利",
-              "value": "at"
-            },
-            {
-              "title": "比利时",
-              "value": "be"
-            },
-            {
-              "title": "巴西",
-              "value": "br"
-            },
-            {
-              "title": "保加利亚",
-              "value": "bg"
-            },
-            {
-              "title": "加拿大",
-              "value": "ca"
-            },
-            {
-              "title": "智利",
-              "value": "cl"
-            },
-            {
-              "title": "克罗地亚",
-              "value": "hr"
-            },
-            {
-              "title": "捷克",
-              "value": "cz"
-            },
-            {
-              "title": "埃及",
-              "value": "eg"
-            },
-            {
-              "title": "芬兰",
-              "value": "fi"
-            },
-            {
-              "title": "希腊",
-              "value": "gr"
-            },
-            {
-              "title": "匈牙利",
-              "value": "hu"
-            },
-            {
-              "title": "印度",
-              "value": "in"
-            },
-            {
-              "title": "爱尔兰",
-              "value": "ie"
-            },
-            {
-              "title": "以色列",
-              "value": "il"
-            },
-            {
-              "title": "意大利",
-              "value": "it"
-            },
-            {
-              "title": "墨西哥",
-              "value": "mx"
-            },
-            {
-              "title": "摩洛哥",
-              "value": "ma"
-            },
-            {
-              "title": "荷兰",
-              "value": "nl"
-            },
-            {
-              "title": "新西兰",
-              "value": "nz"
-            },
-            {
-              "title": "挪威",
-              "value": "no"
-            },
-            {
-              "title": "巴基斯坦",
-              "value": "pk"
-            },
-            {
-              "title": "波兰",
-              "value": "pl"
-            },
-            {
-              "title": "葡萄牙",
-              "value": "pt"
-            },
-            {
-              "title": "罗马尼亚",
-              "value": "ro"
-            },
-            {
-              "title": "斯洛伐克",
-              "value": "sk"
-            },
-            {
-              "title": "西班牙",
-              "value": "es"
-            },
-            {
-              "title": "瑞典",
-              "value": "se"
-            },
-            {
-              "title": "瑞士",
-              "value": "ch"
-            },
-            {
-              "title": "乌克兰",
-              "value": "ua"
-            }
-          ]
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page",
-          "description": "热门视频页码",
-          "value": "1"
-        }
-      ]
-    },
-    {
-      "id": "topViews",
-      "title": "👀 最多观看",
-      "functionName": "getVideos",
-      "cacheDuration": 600,
-      "params": [
-        {
-          "name": "pageType",
-          "title": "区分页面类型",
-          "description": "区分页面类型",
-          "value": "mv",
-          "type": "constant"
-        },
-        {
-          "name": "p",
-          "title": "出品类型",
-          "type": "enumeration",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "专业",
-              "value": "professional"
-            },
-            {
-              "title": "自制",
-              "value": "homemade"
-            }
-          ]
-        },
-        {
-          "name": "hd",
-          "title": "分辨率",
-          "description": "默认全部",
-          "type": "enumeration",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "仅高清",
-              "value": "1"
-            }
-          ]
-        },
-        {
-          "name": "c",
-          "title": "视频类型",
-          "type": "enumeration",
-          "description": "筛选视频类型",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "已认证素人",
-              "value": "138"
-            },
-            {
-              "title": "已认证模特",
-              "value": "139"
-            },
-            {
-              "title": "亚洲人",
-              "value": "1"
-            },
-            {
-              "title": "已认证情侣",
-              "value": "482"
-            },
-            {
-              "title": "60帧",
-              "value": "105"
-            },
-            {
-              "title": "大学",
-              "value": "79"
-            },
-            {
-              "title": "18-25岁",
-              "value": "teen"
-            },
-            {
-              "title": "韩国人",
-              "value": "103"
-            },
-            {
-              "title": "日本人",
-              "value": "111"
-            },
-            {
-              "title": "校园",
-              "value": "88"
-            },
-            {
-              "title": "欧洲人",
-              "value": "55"
-            },
-            {
-              "title": "英国人",
-              "value": "96"
-            },
-            {
-              "title": "法国人",
-              "value": "94"
-            },
-            {
-              "title": "浪漫",
-              "value": "522"
-            },
-            {
-              "title": "女性自慰",
-              "value": "492"
-            },
-            {
-              "title": "女性高潮",
-              "value": "502"
-            },
-            {
-              "title": "3P",
-              "value": "65"
-            },
-            {
-              "title": "Cosplay",
-              "value": "241"
-            },
-            {
-              "title": "Gaming",
-              "value": "881"
-            },
-            {
-              "title": "Podcast",
-              "value": "891"
-            },
-            {
-              "title": "上班时观赏",
-              "value": "221"
-            },
-            {
-              "title": "乱交群欢",
-              "value": "2"
-            },
-            {
-              "title": "交互式",
-              "value": "108"
-            },
-            {
-              "title": "佩戴式阳具",
-              "value": "542"
-            },
-            {
-              "title": "俄国人",
-              "value": "99"
-            },
-            {
-              "title": "公众野战",
-              "value": "24"
-            },
-            {
-              "title": "内射中出",
-              "value": "15"
-            },
-            {
-              "title": "内嵌字幕",
-              "value": "732"
-            },
-            {
-              "title": "劲爆重口味",
-              "value": "21"
-            },
-            {
-              "title": "卡通",
-              "value": "86"
-            },
-            {
-              "title": "印度人",
-              "value": "101"
-            },
-            {
-              "title": "双性恋男",
-              "value": "76"
-            },
-            {
-              "title": "双龙入洞",
-              "value": "72"
-            },
-            {
-              "title": "口交",
-              "value": "13"
-            },
-            {
-              "title": "古典派",
-              "value": "43"
-            },
-            {
-              "title": "合集",
-              "value": "57"
-            },
-            {
-              "title": "名人",
-              "value": "12"
-            },
-            {
-              "title": "大号美女",
-              "value": "6"
-            },
-            {
-              "title": "女同",
-              "value": "27"
-            },
-            {
-              "title": "娇妻偷吃",
-              "value": "242"
-            },
-            {
-              "title": "射精",
-              "value": "16"
-            },
-            {
-              "title": "巨乳",
-              "value": "8"
-            },
-            {
-              "title": "巨屌",
-              "value": "7"
-            },
-            {
-              "title": "巴西人",
-              "value": "102"
-            },
-            {
-              "title": "德国人",
-              "value": "95"
-            },
-            {
-              "title": "性玩具",
-              "value": "23"
-            },
-            {
-              "title": "恋物癖",
-              "value": "18"
-            },
-            {
-              "title": "恋足",
-              "value": "93"
-            },
-            {
-              "title": "意大利人",
-              "value": "97"
-            },
-            {
-              "title": "手交",
-              "value": "20"
-            },
-            {
-              "title": "手淫",
-              "value": "22"
-            },
-            {
-              "title": "抽烟",
-              "value": "91"
-            },
-            {
-              "title": "拉丁裔美女",
-              "value": "26"
-            },
-            {
-              "title": "拳交",
-              "value": "19"
-            },
-            {
-              "title": "指交",
-              "value": "592"
-            },
-            {
-              "title": "按摩",
-              "value": "78"
-            },
-            {
-              "title": "捆绑",
-              "value": "10"
-            },
-            {
-              "title": "捷克人",
-              "value": "100"
-            },
-            {
-              "title": "搞笑",
-              "value": "32"
-            },
-            {
-              "title": "撒尿",
-              "value": "211"
-            },
-            {
-              "title": "深发女",
-              "value": "11"
-            },
-            {
-              "title": "滑稽模仿",
-              "value": "201"
-            },
-            {
-              "title": "潮吹",
-              "value": "69"
-            },
-            {
-              "title": "火辣保姆",
-              "value": "89"
-            },
-            {
-              "title": "熟女",
-              "value": "28"
-            },
-            {
-              "title": "爆菊",
-              "value": "35"
-            },
-            {
-              "title": "片场直击",
-              "value": "141"
-            },
-            {
-              "title": "独家",
-              "value": "115"
-            },
-            {
-              "title": "男同",
-              "value": "63"
-            },
-            {
-              "title": "男性自慰",
-              "value": "92"
-            },
-            {
-              "title": "真人实拍",
-              "value": "31"
-            },
-            {
-              "title": "第一视角",
-              "value": "41"
-            },
-            {
-              "title": "粗暴性爱",
-              "value": "67"
-            },
-            {
-              "title": "素人",
-              "value": "3"
-            },
-            {
-              "title": "红毛",
-              "value": "42"
-            },
-            {
-              "title": "纹身女",
-              "value": "562"
-            },
-            {
-              "title": "继家庭幻想",
-              "value": "444"
-            },
-            {
-              "title": "老少欢",
-              "value": "181"
-            },
-            {
-              "title": "聚会",
-              "value": "53"
-            },
-            {
-              "title": "肌肉男",
-              "value": "512"
-            },
-            {
-              "title": "肥臀",
-              "value": "4"
-            },
-            {
-              "title": "脱衣舞",
-              "value": "33"
-            },
-            {
-              "title": "自述视频",
-              "value": "231"
-            },
-            {
-              "title": "舔屄",
-              "value": "131"
-            },
-            {
-              "title": "色情日漫",
-              "value": "36"
-            },
-            {
-              "title": "色情明星",
-              "value": "30"
-            },
-            {
-              "title": "视频激情",
-              "value": "61"
-            },
-            {
-              "title": "角色扮演",
-              "value": "81"
-            },
-            {
-              "title": "试镜",
-              "value": "90"
-            },
-            {
-              "title": "贫乳",
-              "value": "59"
-            },
-            {
-              "title": "跨性别",
-              "value": "83"
-            },
-            {
-              "title": "跨种族",
-              "value": "25"
-            },
-            {
-              "title": "轮交",
-              "value": "80"
-            },
-            {
-              "title": "辣妈",
-              "value": "29"
-            },
-            {
-              "title": "金发女",
-              "value": "9"
-            },
-            {
-              "title": "阿拉伯人",
-              "value": "98"
-            },
-            {
-              "title": "集体颜射",
-              "value": "14"
-            },
-            {
-              "title": "音乐",
-              "value": "121"
-            },
-            {
-              "title": "风情少女",
-              "value": "5"
-            },
-            {
-              "title": "高清色情片",
-              "value": "38"
-            },
-            {
-              "title": "黑人女",
-              "value": "17"
-            }
-          ]
-        },
-        {
-          "name": "sort_by",
-          "title": "时间范围",
-          "type": "enumeration",
-          "description": "选择统计时间范围",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "每周",
-              "value": ""
-            },
-            {
-              "title": "每天",
-              "value": "t"
-            },
-            {
-              "title": "每月",
-              "value": "m"
-            },
-            {
-              "title": "每年",
-              "value": "y"
-            },
-            {
-              "title": "迄今为止",
-              "value": "a"
-            }
-          ]
-        },
-        {
-          "name": "country",
-          "title": "国家/地区",
-          "type": "enumeration",
-          "description": "选择国家或地区",
-          "value": "world",
-          "enumOptions": [
-            {
-              "title": "全球",
-              "value": "world"
-            },
-            {
-              "title": "日本",
-              "value": "jp"
-            },
-            {
-              "title": "韩国",
-              "value": "kr"
-            },
-            {
-              "title": "美国",
-              "value": "us"
-            },
-            {
-              "title": "英国",
-              "value": "gb"
-            },
-            {
-              "title": "法国",
-              "value": "fr"
-            },
-            {
-              "title": "德国",
-              "value": "de"
-            },
-            {
-              "title": "澳大利亚",
-              "value": "au"
-            },
-            {
-              "title": "俄罗斯",
-              "value": "ru"
-            },
-            {
-              "title": "塞尔维亚",
-              "value": "rs"
-            },
-            {
-              "title": "丹麦",
-              "value": "dk"
-            },
-            {
-              "title": "阿根廷",
-              "value": "ar"
-            },
-            {
-              "title": "奥地利",
-              "value": "at"
-            },
-            {
-              "title": "比利时",
-              "value": "be"
-            },
-            {
-              "title": "巴西",
-              "value": "br"
-            },
-            {
-              "title": "保加利亚",
-              "value": "bg"
-            },
-            {
-              "title": "加拿大",
-              "value": "ca"
-            },
-            {
-              "title": "智利",
-              "value": "cl"
-            },
-            {
-              "title": "克罗地亚",
-              "value": "hr"
-            },
-            {
-              "title": "捷克",
-              "value": "cz"
-            },
-            {
-              "title": "埃及",
-              "value": "eg"
-            },
-            {
-              "title": "芬兰",
-              "value": "fi"
-            },
-            {
-              "title": "希腊",
-              "value": "gr"
-            },
-            {
-              "title": "匈牙利",
-              "value": "hu"
-            },
-            {
-              "title": "印度",
-              "value": "in"
-            },
-            {
-              "title": "爱尔兰",
-              "value": "ie"
-            },
-            {
-              "title": "以色列",
-              "value": "il"
-            },
-            {
-              "title": "意大利",
-              "value": "it"
-            },
-            {
-              "title": "墨西哥",
-              "value": "mx"
-            },
-            {
-              "title": "摩洛哥",
-              "value": "ma"
-            },
-            {
-              "title": "荷兰",
-              "value": "nl"
-            },
-            {
-              "title": "新西兰",
-              "value": "nz"
-            },
-            {
-              "title": "挪威",
-              "value": "no"
-            },
-            {
-              "title": "巴基斯坦",
-              "value": "pk"
-            },
-            {
-              "title": "波兰",
-              "value": "pl"
-            },
-            {
-              "title": "葡萄牙",
-              "value": "pt"
-            },
-            {
-              "title": "罗马尼亚",
-              "value": "ro"
-            },
-            {
-              "title": "斯洛伐克",
-              "value": "sk"
-            },
-            {
-              "title": "西班牙",
-              "value": "es"
-            },
-            {
-              "title": "瑞典",
-              "value": "se"
-            },
-            {
-              "title": "瑞士",
-              "value": "ch"
-            },
-            {
-              "title": "乌克兰",
-              "value": "ua"
-            }
-          ]
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page",
-          "description": "热门视频页码",
-          "value": "1"
-        }
-      ]
-    },
-    {
-      "id": "maxRating",
-      "title": "​🏆 最高评分",
-      "functionName": "getVideos",
-      "cacheDuration": 600,
-      "params": [
-        {
-          "name": "pageType",
-          "title": "区分页面类型",
-          "description": "区分页面类型",
-          "value": "tr",
-          "type": "constant"
-        },
-        {
-          "name": "p",
-          "title": "出品类型",
-          "type": "enumeration",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "专业",
-              "value": "professional"
-            },
-            {
-              "title": "自制",
-              "value": "homemade"
-            }
-          ]
-        },
-        {
-          "name": "hd",
-          "title": "分辨率",
-          "description": "默认全部",
-          "type": "enumeration",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "仅高清",
-              "value": "1"
-            }
-          ]
-        },
-        {
-          "name": "c",
-          "title": "视频类型",
-          "type": "enumeration",
-          "description": "筛选视频类型",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "已认证素人",
-              "value": "138"
-            },
-            {
-              "title": "已认证模特",
-              "value": "139"
-            },
-            {
-              "title": "亚洲人",
-              "value": "1"
-            },
-            {
-              "title": "已认证情侣",
-              "value": "482"
-            },
-            {
-              "title": "60帧",
-              "value": "105"
-            },
-            {
-              "title": "大学",
-              "value": "79"
-            },
-            {
-              "title": "18-25岁",
-              "value": "teen"
-            },
-            {
-              "title": "韩国人",
-              "value": "103"
-            },
-            {
-              "title": "日本人",
-              "value": "111"
-            },
-            {
-              "title": "校园",
-              "value": "88"
-            },
-            {
-              "title": "欧洲人",
-              "value": "55"
-            },
-            {
-              "title": "英国人",
-              "value": "96"
-            },
-            {
-              "title": "法国人",
-              "value": "94"
-            },
-            {
-              "title": "浪漫",
-              "value": "522"
-            },
-            {
-              "title": "女性自慰",
-              "value": "492"
-            },
-            {
-              "title": "女性高潮",
-              "value": "502"
-            },
-            {
-              "title": "3P",
-              "value": "65"
-            },
-            {
-              "title": "Cosplay",
-              "value": "241"
-            },
-            {
-              "title": "Gaming",
-              "value": "881"
-            },
-            {
-              "title": "Podcast",
-              "value": "891"
-            },
-            {
-              "title": "上班时观赏",
-              "value": "221"
-            },
-            {
-              "title": "乱交群欢",
-              "value": "2"
-            },
-            {
-              "title": "交互式",
-              "value": "108"
-            },
-            {
-              "title": "佩戴式阳具",
-              "value": "542"
-            },
-            {
-              "title": "俄国人",
-              "value": "99"
-            },
-            {
-              "title": "公众野战",
-              "value": "24"
-            },
-            {
-              "title": "内射中出",
-              "value": "15"
-            },
-            {
-              "title": "内嵌字幕",
-              "value": "732"
-            },
-            {
-              "title": "劲爆重口味",
-              "value": "21"
-            },
-            {
-              "title": "卡通",
-              "value": "86"
-            },
-            {
-              "title": "印度人",
-              "value": "101"
-            },
-            {
-              "title": "双性恋男",
-              "value": "76"
-            },
-            {
-              "title": "双龙入洞",
-              "value": "72"
-            },
-            {
-              "title": "口交",
-              "value": "13"
-            },
-            {
-              "title": "古典派",
-              "value": "43"
-            },
-            {
-              "title": "合集",
-              "value": "57"
-            },
-            {
-              "title": "名人",
-              "value": "12"
-            },
-            {
-              "title": "大号美女",
-              "value": "6"
-            },
-            {
-              "title": "女同",
-              "value": "27"
-            },
-            {
-              "title": "娇妻偷吃",
-              "value": "242"
-            },
-            {
-              "title": "射精",
-              "value": "16"
-            },
-            {
-              "title": "巨乳",
-              "value": "8"
-            },
-            {
-              "title": "巨屌",
-              "value": "7"
-            },
-            {
-              "title": "巴西人",
-              "value": "102"
-            },
-            {
-              "title": "德国人",
-              "value": "95"
-            },
-            {
-              "title": "性玩具",
-              "value": "23"
-            },
-            {
-              "title": "恋物癖",
-              "value": "18"
-            },
-            {
-              "title": "恋足",
-              "value": "93"
-            },
-            {
-              "title": "意大利人",
-              "value": "97"
-            },
-            {
-              "title": "手交",
-              "value": "20"
-            },
-            {
-              "title": "手淫",
-              "value": "22"
-            },
-            {
-              "title": "抽烟",
-              "value": "91"
-            },
-            {
-              "title": "拉丁裔美女",
-              "value": "26"
-            },
-            {
-              "title": "拳交",
-              "value": "19"
-            },
-            {
-              "title": "指交",
-              "value": "592"
-            },
-            {
-              "title": "按摩",
-              "value": "78"
-            },
-            {
-              "title": "捆绑",
-              "value": "10"
-            },
-            {
-              "title": "捷克人",
-              "value": "100"
-            },
-            {
-              "title": "搞笑",
-              "value": "32"
-            },
-            {
-              "title": "撒尿",
-              "value": "211"
-            },
-            {
-              "title": "深发女",
-              "value": "11"
-            },
-            {
-              "title": "滑稽模仿",
-              "value": "201"
-            },
-            {
-              "title": "潮吹",
-              "value": "69"
-            },
-            {
-              "title": "火辣保姆",
-              "value": "89"
-            },
-            {
-              "title": "熟女",
-              "value": "28"
-            },
-            {
-              "title": "爆菊",
-              "value": "35"
-            },
-            {
-              "title": "片场直击",
-              "value": "141"
-            },
-            {
-              "title": "独家",
-              "value": "115"
-            },
-            {
-              "title": "男同",
-              "value": "63"
-            },
-            {
-              "title": "男性自慰",
-              "value": "92"
-            },
-            {
-              "title": "真人实拍",
-              "value": "31"
-            },
-            {
-              "title": "第一视角",
-              "value": "41"
-            },
-            {
-              "title": "粗暴性爱",
-              "value": "67"
-            },
-            {
-              "title": "素人",
-              "value": "3"
-            },
-            {
-              "title": "红毛",
-              "value": "42"
-            },
-            {
-              "title": "纹身女",
-              "value": "562"
-            },
-            {
-              "title": "继家庭幻想",
-              "value": "444"
-            },
-            {
-              "title": "老少欢",
-              "value": "181"
-            },
-            {
-              "title": "聚会",
-              "value": "53"
-            },
-            {
-              "title": "肌肉男",
-              "value": "512"
-            },
-            {
-              "title": "肥臀",
-              "value": "4"
-            },
-            {
-              "title": "脱衣舞",
-              "value": "33"
-            },
-            {
-              "title": "自述视频",
-              "value": "231"
-            },
-            {
-              "title": "舔屄",
-              "value": "131"
-            },
-            {
-              "title": "色情日漫",
-              "value": "36"
-            },
-            {
-              "title": "色情明星",
-              "value": "30"
-            },
-            {
-              "title": "视频激情",
-              "value": "61"
-            },
-            {
-              "title": "角色扮演",
-              "value": "81"
-            },
-            {
-              "title": "试镜",
-              "value": "90"
-            },
-            {
-              "title": "贫乳",
-              "value": "59"
-            },
-            {
-              "title": "跨性别",
-              "value": "83"
-            },
-            {
-              "title": "跨种族",
-              "value": "25"
-            },
-            {
-              "title": "轮交",
-              "value": "80"
-            },
-            {
-              "title": "辣妈",
-              "value": "29"
-            },
-            {
-              "title": "金发女",
-              "value": "9"
-            },
-            {
-              "title": "阿拉伯人",
-              "value": "98"
-            },
-            {
-              "title": "集体颜射",
-              "value": "14"
-            },
-            {
-              "title": "音乐",
-              "value": "121"
-            },
-            {
-              "title": "风情少女",
-              "value": "5"
-            },
-            {
-              "title": "高清色情片",
-              "value": "38"
-            },
-            {
-              "title": "黑人女",
-              "value": "17"
-            }
-          ]
-        },
-        {
-          "name": "sort_by",
-          "title": "时间范围",
-          "type": "enumeration",
-          "description": "选择统计时间范围",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "每月",
-              "value": ""
-            },
-            {
-              "title": "每天",
-              "value": "t"
-            },
-            {
-              "title": "每周",
-              "value": "w"
-            },
-            {
-              "title": "每年",
-              "value": "y"
-            },
-            {
-              "title": "迄今为止",
-              "value": "a"
-            }
-          ]
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page",
-          "description": "最高评分视频页码",
-          "value": "1"
-        }
-      ]
-    },
-    {
-      "id": "latestFeatured",
-      "title": "💎 最新精选",
-      "functionName": "getVideos",
-      "cacheDuration": 600,
-      "params": [
-        {
-          "name": "c",
-          "title": "视频类型",
-          "type": "enumeration",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "已认证素人",
-              "value": "138"
-            },
-            {
-              "title": "已认证模特",
-              "value": "139"
-            },
-            {
-              "title": "亚洲人",
-              "value": "1"
-            },
-            {
-              "title": "已认证情侣",
-              "value": "482"
-            },
-            {
-              "title": "60帧",
-              "value": "105"
-            },
-            {
-              "title": "大学",
-              "value": "79"
-            },
-            {
-              "title": "18-25岁",
-              "value": "teen"
-            },
-            {
-              "title": "韩国人",
-              "value": "103"
-            },
-            {
-              "title": "日本人",
-              "value": "111"
-            },
-            {
-              "title": "校园",
-              "value": "88"
-            },
-            {
-              "title": "欧洲人",
-              "value": "55"
-            },
-            {
-              "title": "英国人",
-              "value": "96"
-            },
-            {
-              "title": "法国人",
-              "value": "94"
-            },
-            {
-              "title": "浪漫",
-              "value": "522"
-            },
-            {
-              "title": "女性自慰",
-              "value": "492"
-            },
-            {
-              "title": "女性高潮",
-              "value": "502"
-            },
-            {
-              "title": "3P",
-              "value": "65"
-            },
-            {
-              "title": "Cosplay",
-              "value": "241"
-            },
-            {
-              "title": "Gaming",
-              "value": "881"
-            },
-            {
-              "title": "Podcast",
-              "value": "891"
-            },
-            {
-              "title": "上班时观赏",
-              "value": "221"
-            },
-            {
-              "title": "乱交群欢",
-              "value": "2"
-            },
-            {
-              "title": "交互式",
-              "value": "108"
-            },
-            {
-              "title": "佩戴式阳具",
-              "value": "542"
-            },
-            {
-              "title": "俄国人",
-              "value": "99"
-            },
-            {
-              "title": "公众野战",
-              "value": "24"
-            },
-            {
-              "title": "内射中出",
-              "value": "15"
-            },
-            {
-              "title": "内嵌字幕",
-              "value": "732"
-            },
-            {
-              "title": "劲爆重口味",
-              "value": "21"
-            },
-            {
-              "title": "卡通",
-              "value": "86"
-            },
-            {
-              "title": "印度人",
-              "value": "101"
-            },
-            {
-              "title": "双性恋男",
-              "value": "76"
-            },
-            {
-              "title": "双龙入洞",
-              "value": "72"
-            },
-            {
-              "title": "口交",
-              "value": "13"
-            },
-            {
-              "title": "古典派",
-              "value": "43"
-            },
-            {
-              "title": "合集",
-              "value": "57"
-            },
-            {
-              "title": "名人",
-              "value": "12"
-            },
-            {
-              "title": "大号美女",
-              "value": "6"
-            },
-            {
-              "title": "女同",
-              "value": "27"
-            },
-            {
-              "title": "娇妻偷吃",
-              "value": "242"
-            },
-            {
-              "title": "射精",
-              "value": "16"
-            },
-            {
-              "title": "巨乳",
-              "value": "8"
-            },
-            {
-              "title": "巨屌",
-              "value": "7"
-            },
-            {
-              "title": "巴西人",
-              "value": "102"
-            },
-            {
-              "title": "德国人",
-              "value": "95"
-            },
-            {
-              "title": "性玩具",
-              "value": "23"
-            },
-            {
-              "title": "恋物癖",
-              "value": "18"
-            },
-            {
-              "title": "恋足",
-              "value": "93"
-            },
-            {
-              "title": "意大利人",
-              "value": "97"
-            },
-            {
-              "title": "手交",
-              "value": "20"
-            },
-            {
-              "title": "手淫",
-              "value": "22"
-            },
-            {
-              "title": "抽烟",
-              "value": "91"
-            },
-            {
-              "title": "拉丁裔美女",
-              "value": "26"
-            },
-            {
-              "title": "拳交",
-              "value": "19"
-            },
-            {
-              "title": "指交",
-              "value": "592"
-            },
-            {
-              "title": "按摩",
-              "value": "78"
-            },
-            {
-              "title": "捆绑",
-              "value": "10"
-            },
-            {
-              "title": "捷克人",
-              "value": "100"
-            },
-            {
-              "title": "搞笑",
-              "value": "32"
-            },
-            {
-              "title": "撒尿",
-              "value": "211"
-            },
-            {
-              "title": "深发女",
-              "value": "11"
-            },
-            {
-              "title": "滑稽模仿",
-              "value": "201"
-            },
-            {
-              "title": "潮吹",
-              "value": "69"
-            },
-            {
-              "title": "火辣保姆",
-              "value": "89"
-            },
-            {
-              "title": "熟女",
-              "value": "28"
-            },
-            {
-              "title": "爆菊",
-              "value": "35"
-            },
-            {
-              "title": "片场直击",
-              "value": "141"
-            },
-            {
-              "title": "独家",
-              "value": "115"
-            },
-            {
-              "title": "男同",
-              "value": "63"
-            },
-            {
-              "title": "男性自慰",
-              "value": "92"
-            },
-            {
-              "title": "真人实拍",
-              "value": "31"
-            },
-            {
-              "title": "第一视角",
-              "value": "41"
-            },
-            {
-              "title": "粗暴性爱",
-              "value": "67"
-            },
-            {
-              "title": "素人",
-              "value": "3"
-            },
-            {
-              "title": "红毛",
-              "value": "42"
-            },
-            {
-              "title": "纹身女",
-              "value": "562"
-            },
-            {
-              "title": "继家庭幻想",
-              "value": "444"
-            },
-            {
-              "title": "老少欢",
-              "value": "181"
-            },
-            {
-              "title": "聚会",
-              "value": "53"
-            },
-            {
-              "title": "肌肉男",
-              "value": "512"
-            },
-            {
-              "title": "肥臀",
-              "value": "4"
-            },
-            {
-              "title": "脱衣舞",
-              "value": "33"
-            },
-            {
-              "title": "自述视频",
-              "value": "231"
-            },
-            {
-              "title": "舔屄",
-              "value": "131"
-            },
-            {
-              "title": "色情日漫",
-              "value": "36"
-            },
-            {
-              "title": "色情明星",
-              "value": "30"
-            },
-            {
-              "title": "视频激情",
-              "value": "61"
-            },
-            {
-              "title": "角色扮演",
-              "value": "81"
-            },
-            {
-              "title": "试镜",
-              "value": "90"
-            },
-            {
-              "title": "贫乳",
-              "value": "59"
-            },
-            {
-              "title": "跨性别",
-              "value": "83"
-            },
-            {
-              "title": "跨种族",
-              "value": "25"
-            },
-            {
-              "title": "轮交",
-              "value": "80"
-            },
-            {
-              "title": "辣妈",
-              "value": "29"
-            },
-            {
-              "title": "金发女",
-              "value": "9"
-            },
-            {
-              "title": "阿拉伯人",
-              "value": "98"
-            },
-            {
-              "title": "集体颜射",
-              "value": "14"
-            },
-            {
-              "title": "音乐",
-              "value": "121"
-            },
-            {
-              "title": "风情少女",
-              "value": "5"
-            },
-            {
-              "title": "高清色情片",
-              "value": "38"
-            },
-            {
-              "title": "黑人女",
-              "value": "17"
-            }
-          ]
-        },
-        {
-          "name": "p",
-          "title": "出品类型",
-          "type": "enumeration",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "专业",
-              "value": "professional"
-            },
-            {
-              "title": "自制",
-              "value": "homemade"
-            }
-          ]
-        },
-        {
-          "name": "hd",
-          "title": "分辨率",
-          "type": "enumeration",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "仅高清",
-              "value": "1"
-            }
-          ]
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page",
-          "value": "1"
-        }
-      ]
-    },
-    {
-      "id": "newVideos",
-      "title": "​🆕 最新视频",
-      "functionName": "getVideos",
-      "cacheDuration": 600,
-      "params": [
-        {
-          "name": "pageType",
-          "title": "页面类型",
-          "value": "cm",
-          "type": "constant"
-        },
-        {
-          "name": "p",
-          "title": "出品类型",
-          "type": "enumeration",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "专业",
-              "value": "professional"
-            },
-            {
-              "title": "自制",
-              "value": "homemade"
-            }
-          ]
-        },
-        {
-          "name": "hd",
-          "title": "分辨率",
-          "type": "enumeration",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "仅高清",
-              "value": "1"
-            }
-          ]
-        },
-        {
-          "name": "c",
-          "title": "视频类型",
-          "type": "enumeration",
-          "value": "",
-          "enumOptions": [
-            {
-              "title": "全部",
-              "value": ""
-            },
-            {
-              "title": "已认证素人",
-              "value": "138"
-            },
-            {
-              "title": "已认证模特",
-              "value": "139"
-            },
-            {
-              "title": "亚洲人",
-              "value": "1"
-            },
-            {
-              "title": "已认证情侣",
-              "value": "482"
-            },
-            {
-              "title": "60帧",
-              "value": "105"
-            },
-            {
-              "title": "大学",
-              "value": "79"
-            },
-            {
-              "title": "18-25岁",
-              "value": "teen"
-            },
-            {
-              "title": "韩国人",
-              "value": "103"
-            },
-            {
-              "title": "日本人",
-              "value": "111"
-            },
-            {
-              "title": "校园",
-              "value": "88"
-            },
-            {
-              "title": "欧洲人",
-              "value": "55"
-            },
-            {
-              "title": "英国人",
-              "value": "96"
-            },
-            {
-              "title": "法国人",
-              "value": "94"
-            },
-            {
-              "title": "浪漫",
-              "value": "522"
-            },
-            {
-              "title": "女性自慰",
-              "value": "492"
-            },
-            {
-              "title": "女性高潮",
-              "value": "502"
-            },
-            {
-              "title": "3P",
-              "value": "65"
-            },
-            {
-              "title": "Cosplay",
-              "value": "241"
-            },
-            {
-              "title": "Gaming",
-              "value": "881"
-            },
-            {
-              "title": "Podcast",
-              "value": "891"
-            },
-            {
-              "title": "上班时观赏",
-              "value": "221"
-            },
-            {
-              "title": "乱交群欢",
-              "value": "2"
-            },
-            {
-              "title": "交互式",
-              "value": "108"
-            },
-            {
-              "title": "佩戴式阳具",
-              "value": "542"
-            },
-            {
-              "title": "俄国人",
-              "value": "99"
-            },
-            {
-              "title": "公众野战",
-              "value": "24"
-            },
-            {
-              "title": "内射中出",
-              "value": "15"
-            },
-            {
-              "title": "内嵌字幕",
-              "value": "732"
-            },
-            {
-              "title": "劲爆重口味",
-              "value": "21"
-            },
-            {
-              "title": "卡通",
-              "value": "86"
-            },
-            {
-              "title": "印度人",
-              "value": "101"
-            },
-            {
-              "title": "双性恋男",
-              "value": "76"
-            },
-            {
-              "title": "双龙入洞",
-              "value": "72"
-            },
-            {
-              "title": "口交",
-              "value": "13"
-            },
-            {
-              "title": "古典派",
-              "value": "43"
-            },
-            {
-              "title": "合集",
-              "value": "57"
-            },
-            {
-              "title": "名人",
-              "value": "12"
-            },
-            {
-              "title": "大号美女",
-              "value": "6"
-            },
-            {
-              "title": "女同",
-              "value": "27"
-            },
-            {
-              "title": "娇妻偷吃",
-              "value": "242"
-            },
-            {
-              "title": "射精",
-              "value": "16"
-            },
-            {
-              "title": "巨乳",
-              "value": "8"
-            },
-            {
-              "title": "巨屌",
-              "value": "7"
-            },
-            {
-              "title": "巴西人",
-              "value": "102"
-            },
-            {
-              "title": "德国人",
-              "value": "95"
-            },
-            {
-              "title": "性玩具",
-              "value": "23"
-            },
-            {
-              "title": "恋物癖",
-              "value": "18"
-            },
-            {
-              "title": "恋足",
-              "value": "93"
-            },
-            {
-              "title": "意大利人",
-              "value": "97"
-            },
-            {
-              "title": "手交",
-              "value": "20"
-            },
-            {
-              "title": "手淫",
-              "value": "22"
-            },
-            {
-              "title": "抽烟",
-              "value": "91"
-            },
-            {
-              "title": "拉丁裔美女",
-              "value": "26"
-            },
-            {
-              "title": "拳交",
-              "value": "19"
-            },
-            {
-              "title": "指交",
-              "value": "592"
-            },
-            {
-              "title": "按摩",
-              "value": "78"
-            },
-            {
-              "title": "捆绑",
-              "value": "10"
-            },
-            {
-              "title": "捷克人",
-              "value": "100"
-            },
-            {
-              "title": "搞笑",
-              "value": "32"
-            },
-            {
-              "title": "撒尿",
-              "value": "211"
-            },
-            {
-              "title": "深发女",
-              "value": "11"
-            },
-            {
-              "title": "滑稽模仿",
-              "value": "201"
-            },
-            {
-              "title": "潮吹",
-              "value": "69"
-            },
-            {
-              "title": "火辣保姆",
-              "value": "89"
-            },
-            {
-              "title": "熟女",
-              "value": "28"
-            },
-            {
-              "title": "爆菊",
-              "value": "35"
-            },
-            {
-              "title": "片场直击",
-              "value": "141"
-            },
-            {
-              "title": "独家",
-              "value": "115"
-            },
-            {
-              "title": "男同",
-              "value": "63"
-            },
-            {
-              "title": "男性自慰",
-              "value": "92"
-            },
-            {
-              "title": "真人实拍",
-              "value": "31"
-            },
-            {
-              "title": "第一视角",
-              "value": "41"
-            },
-            {
-              "title": "粗暴性爱",
-              "value": "67"
-            },
-            {
-              "title": "素人",
-              "value": "3"
-            },
-            {
-              "title": "红毛",
-              "value": "42"
-            },
-            {
-              "title": "纹身女",
-              "value": "562"
-            },
-            {
-              "title": "继家庭幻想",
-              "value": "444"
-            },
-            {
-              "title": "老少欢",
-              "value": "181"
-            },
-            {
-              "title": "聚会",
-              "value": "53"
-            },
-            {
-              "title": "肌肉男",
-              "value": "512"
-            },
-            {
-              "title": "肥臀",
-              "value": "4"
-            },
-            {
-              "title": "脱衣舞",
-              "value": "33"
-            },
-            {
-              "title": "自述视频",
-              "value": "231"
-            },
-            {
-              "title": "舔屄",
-              "value": "131"
-            },
-            {
-              "title": "色情日漫",
-              "value": "36"
-            },
-            {
-              "title": "色情明星",
-              "value": "30"
-            },
-            {
-              "title": "视频激情",
-              "value": "61"
-            },
-            {
-              "title": "角色扮演",
-              "value": "81"
-            },
-            {
-              "title": "试镜",
-              "value": "90"
-            },
-            {
-              "title": "贫乳",
-              "value": "59"
-            },
-            {
-              "title": "跨性别",
-              "value": "83"
-            },
-            {
-              "title": "跨种族",
-              "value": "25"
-            },
-            {
-              "title": "轮交",
-              "value": "80"
-            },
-            {
-              "title": "辣妈",
-              "value": "29"
-            },
-            {
-              "title": "金发女",
-              "value": "9"
-            },
-            {
-              "title": "阿拉伯人",
-              "value": "98"
-            },
-            {
-              "title": "集体颜射",
-              "value": "14"
-            },
-            {
-              "title": "音乐",
-              "value": "121"
-            },
-            {
-              "title": "风情少女",
-              "value": "5"
-            },
-            {
-              "title": "高清色情片",
-              "value": "38"
-            },
-            {
-              "title": "黑人女",
-              "value": "17"
-            }
-          ]
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page",
-          "value": "1"
-        }
-      ]
     }
   ],
   "search": {
@@ -3367,8 +1294,6 @@ WidgetMetadata = {
   }
 };
 
-// 通用工具函数 - 减少代码冗余
-// 将时间格式（如"7:34"）转换为秒数
 function convertDurationToSeconds(duration) {
     if (!duration) return 0;
     var parts = duration.split(':').map(function (part) { return parseInt(part, 10); });

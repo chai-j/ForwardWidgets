@@ -1,32 +1,46 @@
 WidgetMetadata = {
   "id": "chai.jable",
   "title": "Jable",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "requiredVersion": "0.0.1",
-  "description": "Jable 搜索、热门、分类与在线播放",
+  "description": "Jable 搜索、精选与分类浏览",
   "author": "chai-j",
   "site": "https://jable.tv",
   "detailCacheDuration": 60,
   "modules": [
     {
-      "title": "热门",
-      "description": "热门影片",
-      "requiresWebView": false,
+      "id": "featured",
+      "title": "精选浏览",
+      "description": "热门、最新和中文字幕影片",
       "functionName": "loadPage",
       "cacheDuration": 3600,
+      "requiresWebView": false,
       "params": [
         {
           "name": "url",
-          "title": "列表地址",
-          "type": "constant",
-          "description": "列表地址",
-          "value": "https://jable.tv/hot/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
+          "title": "列表类型",
+          "type": "enumeration",
+          "value": "https://jable.tv/hot/?mode=async&function=get_block&block_id=list_videos_common_videos_list",
+          "enumOptions": [
+            {
+              "title": "热门",
+              "value": "https://jable.tv/hot/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
+            },
+            {
+              "title": "最新",
+              "value": "https://jable.tv/new-release/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
+            },
+            {
+              "title": "中文",
+              "value": "https://jable.tv/categories/chinese-subtitle/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
+            }
+          ]
         },
         {
           "name": "sort_by",
           "title": "排序",
           "type": "enumeration",
-          "description": "排序",
+          "value": "video_viewed_today",
           "enumOptions": [
             {
               "title": "今日热门",
@@ -43,94 +57,18 @@ WidgetMetadata = {
             {
               "title": "所有时间",
               "value": "video_viewed"
-            }
-          ]
-        },
-        {
-          "name": "from",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ],
-      "id": "hot"
-    },
-    {
-      "title": "最新",
-      "description": "最新上市影片",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
-          "name": "url",
-          "title": "列表地址",
-          "type": "constant",
-          "description": "列表地址",
-          "value": "https://jable.tv/new-release/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
-        },
-        {
-          "name": "sort_by",
-          "title": "排序",
-          "type": "enumeration",
-          "description": "排序",
-          "enumOptions": [
+            },
             {
               "title": "最新发布",
               "value": "latest-updates"
             },
             {
-              "title": "最多观看",
-              "value": "video_viewed"
-            },
-            {
               "title": "最多收藏",
               "value": "most_favourited"
-            }
-          ]
-        },
-        {
-          "name": "from",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ],
-      "id": "latest"
-    },
-    {
-      "title": "中文",
-      "description": "中文字幕影片",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
-          "name": "url",
-          "title": "列表地址",
-          "type": "constant",
-          "description": "列表地址",
-          "value": "https://jable.tv/categories/chinese-subtitle/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
-        },
-        {
-          "name": "sort_by",
-          "title": "排序",
-          "type": "enumeration",
-          "description": "排序",
-          "enumOptions": [
+            },
             {
               "title": "最近更新",
               "value": "post_date"
-            },
-            {
-              "title": "最多观看",
-              "value": "video_viewed"
-            },
-            {
-              "title": "最多收藏",
-              "value": "most_favourited"
             }
           ]
         },
@@ -141,26 +79,72 @@ WidgetMetadata = {
           "description": "页码",
           "value": "1"
         }
-      ],
-      "id": "chinese"
+      ]
     },
     {
-      "title": "女优",
-      "description": "按女优分类浏览影片",
-      "requiresWebView": false,
+      "id": "categories",
+      "title": "分类浏览",
+      "description": "按女优、剧情、衣着、身材等分类浏览",
       "functionName": "loadPage",
       "cacheDuration": 3600,
+      "requiresWebView": false,
       "params": [
+        {
+          "name": "category",
+          "title": "分类组",
+          "type": "enumeration",
+          "value": "actresses",
+          "enumOptions": [
+            {
+              "title": "女优",
+              "value": "actresses"
+            },
+            {
+              "title": "衣着",
+              "value": "clothing"
+            },
+            {
+              "title": "剧情",
+              "value": "plot"
+            },
+            {
+              "title": "地点",
+              "value": "locations"
+            },
+            {
+              "title": "身材",
+              "value": "body"
+            },
+            {
+              "title": "角色",
+              "value": "roles"
+            },
+            {
+              "title": "交合",
+              "value": "acts"
+            },
+            {
+              "title": "玩法",
+              "value": "playstyles"
+            },
+            {
+              "title": "主题",
+              "value": "themes"
+            },
+            {
+              "title": "杂项",
+              "value": "misc"
+            }
+          ]
+        },
         {
           "name": "url",
           "title": "选择女优",
           "type": "enumeration",
           "belongTo": {
-            "paramName": "sort_by",
+            "paramName": "category",
             "value": [
-              "post_date",
-              "video_viewed",
-              "most_favourited"
+              "actresses"
             ]
           },
           "enumOptions": [
@@ -416,52 +400,13 @@ WidgetMetadata = {
           "value": "https://jable.tv/s1/models/yua-mikami/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
         },
         {
-          "name": "sort_by",
-          "title": "排序",
-          "type": "enumeration",
-          "description": "排序",
-          "enumOptions": [
-            {
-              "title": "最近更新",
-              "value": "post_date"
-            },
-            {
-              "title": "最多观看",
-              "value": "video_viewed"
-            },
-            {
-              "title": "最多收藏",
-              "value": "most_favourited"
-            }
-          ]
-        },
-        {
-          "name": "from",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ],
-      "id": "actresses"
-    },
-    {
-      "title": "衣着",
-      "description": "按衣着分类浏览影片",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
           "name": "url",
           "title": "选择衣着",
           "type": "enumeration",
           "belongTo": {
-            "paramName": "sort_by",
+            "paramName": "category",
             "value": [
-              "post_date",
-              "video_viewed",
-              "most_favourited"
+              "clothing"
             ]
           },
           "enumOptions": [
@@ -533,52 +478,13 @@ WidgetMetadata = {
           "value": "https://jable.tv/tags/black-pantyhose/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
         },
         {
-          "name": "sort_by",
-          "title": "排序",
-          "type": "enumeration",
-          "description": "排序",
-          "enumOptions": [
-            {
-              "title": "最近更新",
-              "value": "post_date"
-            },
-            {
-              "title": "最多观看",
-              "value": "video_viewed"
-            },
-            {
-              "title": "最多收藏",
-              "value": "most_favourited"
-            }
-          ]
-        },
-        {
-          "name": "from",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ],
-      "id": "clothing"
-    },
-    {
-      "title": "剧情",
-      "description": "按剧情分类浏览影片",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
           "name": "url",
           "title": "选择剧情",
           "type": "enumeration",
           "belongTo": {
-            "paramName": "sort_by",
+            "paramName": "category",
             "value": [
-              "post_date",
-              "video_viewed",
-              "most_favourited"
+              "plot"
             ]
           },
           "enumOptions": [
@@ -638,52 +544,13 @@ WidgetMetadata = {
           "value": "https://jable.tv/tags/affair/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
         },
         {
-          "name": "sort_by",
-          "title": "排序",
-          "type": "enumeration",
-          "description": "排序",
-          "enumOptions": [
-            {
-              "title": "最近更新",
-              "value": "post_date"
-            },
-            {
-              "title": "最多观看",
-              "value": "video_viewed"
-            },
-            {
-              "title": "最多收藏",
-              "value": "most_favourited"
-            }
-          ]
-        },
-        {
-          "name": "from",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ],
-      "id": "plot"
-    },
-    {
-      "title": "地点",
-      "description": "按地点分类浏览影片",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
           "name": "url",
           "title": "选择地点",
           "type": "enumeration",
           "belongTo": {
-            "paramName": "sort_by",
+            "paramName": "category",
             "value": [
-              "post_date",
-              "video_viewed",
-              "most_favourited"
+              "locations"
             ]
           },
           "enumOptions": [
@@ -743,52 +610,13 @@ WidgetMetadata = {
           "value": "https://jable.tv/tags/tram/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
         },
         {
-          "name": "sort_by",
-          "title": "排序",
-          "type": "enumeration",
-          "description": "排序",
-          "enumOptions": [
-            {
-              "title": "最近更新",
-              "value": "post_date"
-            },
-            {
-              "title": "最多观看",
-              "value": "video_viewed"
-            },
-            {
-              "title": "最多收藏",
-              "value": "most_favourited"
-            }
-          ]
-        },
-        {
-          "name": "from",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ],
-      "id": "locations"
-    },
-    {
-      "title": "身材",
-      "description": "按身材分类浏览影片",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
           "name": "url",
           "title": "选择身材",
           "type": "enumeration",
           "belongTo": {
-            "paramName": "sort_by",
+            "paramName": "category",
             "value": [
-              "post_date",
-              "video_viewed",
-              "most_favourited"
+              "body"
             ]
           },
           "enumOptions": [
@@ -844,52 +672,13 @@ WidgetMetadata = {
           "value": "https://jable.tv/tags/tall/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
         },
         {
-          "name": "sort_by",
-          "title": "排序",
-          "type": "enumeration",
-          "description": "排序",
-          "enumOptions": [
-            {
-              "title": "最近更新",
-              "value": "post_date"
-            },
-            {
-              "title": "最多观看",
-              "value": "video_viewed"
-            },
-            {
-              "title": "最多收藏",
-              "value": "most_favourited"
-            }
-          ]
-        },
-        {
-          "name": "from",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ],
-      "id": "body"
-    },
-    {
-      "title": "角色",
-      "description": "按角色分类浏览影片",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
           "name": "url",
           "title": "选择角色",
           "type": "enumeration",
           "belongTo": {
-            "paramName": "sort_by",
+            "paramName": "category",
             "value": [
-              "post_date",
-              "video_viewed",
-              "most_favourited"
+              "roles"
             ]
           },
           "enumOptions": [
@@ -953,52 +742,13 @@ WidgetMetadata = {
           "value": "https://jable.tv/tags/wife/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
         },
         {
-          "name": "sort_by",
-          "title": "排序",
-          "type": "enumeration",
-          "description": "排序",
-          "enumOptions": [
-            {
-              "title": "最近更新",
-              "value": "post_date"
-            },
-            {
-              "title": "最多观看",
-              "value": "video_viewed"
-            },
-            {
-              "title": "最多收藏",
-              "value": "most_favourited"
-            }
-          ]
-        },
-        {
-          "name": "from",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ],
-      "id": "roles"
-    },
-    {
-      "title": "交合",
-      "description": "按交合分类浏览影片",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
           "name": "url",
           "title": "选择交合",
           "type": "enumeration",
           "belongTo": {
-            "paramName": "sort_by",
+            "paramName": "category",
             "value": [
-              "post_date",
-              "video_viewed",
-              "most_favourited"
+              "acts"
             ]
           },
           "enumOptions": [
@@ -1046,52 +796,13 @@ WidgetMetadata = {
           "value": "https://jable.tv/tags/facial/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
         },
         {
-          "name": "sort_by",
-          "title": "排序",
-          "type": "enumeration",
-          "description": "排序",
-          "enumOptions": [
-            {
-              "title": "最近更新",
-              "value": "post_date"
-            },
-            {
-              "title": "最多观看",
-              "value": "video_viewed"
-            },
-            {
-              "title": "最多收藏",
-              "value": "most_favourited"
-            }
-          ]
-        },
-        {
-          "name": "from",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ],
-      "id": "acts"
-    },
-    {
-      "title": "玩法",
-      "description": "按玩法分类浏览影片",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
           "name": "url",
           "title": "选择玩法",
           "type": "enumeration",
           "belongTo": {
-            "paramName": "sort_by",
+            "paramName": "category",
             "value": [
-              "post_date",
-              "video_viewed",
-              "most_favourited"
+              "playstyles"
             ]
           },
           "enumOptions": [
@@ -1159,52 +870,13 @@ WidgetMetadata = {
           "value": "https://jable.tv/tags/outdoor/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
         },
         {
-          "name": "sort_by",
-          "title": "排序",
-          "type": "enumeration",
-          "description": "排序",
-          "enumOptions": [
-            {
-              "title": "最近更新",
-              "value": "post_date"
-            },
-            {
-              "title": "最多观看",
-              "value": "video_viewed"
-            },
-            {
-              "title": "最多收藏",
-              "value": "most_favourited"
-            }
-          ]
-        },
-        {
-          "name": "from",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ],
-      "id": "playstyles"
-    },
-    {
-      "title": "主题",
-      "description": "按主题分类浏览影片",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
           "name": "url",
           "title": "选择主题",
           "type": "enumeration",
           "belongTo": {
-            "paramName": "sort_by",
+            "paramName": "category",
             "value": [
-              "post_date",
-              "video_viewed",
-              "most_favourited"
+              "themes"
             ]
           },
           "enumOptions": [
@@ -1256,52 +928,13 @@ WidgetMetadata = {
           "value": "https://jable.tv/categories/roleplay/?mode=async&function=get_block&block_id=list_videos_common_videos_list"
         },
         {
-          "name": "sort_by",
-          "title": "排序",
-          "type": "enumeration",
-          "description": "排序",
-          "enumOptions": [
-            {
-              "title": "最近更新",
-              "value": "post_date"
-            },
-            {
-              "title": "最多观看",
-              "value": "video_viewed"
-            },
-            {
-              "title": "最多收藏",
-              "value": "most_favourited"
-            }
-          ]
-        },
-        {
-          "name": "from",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ],
-      "id": "themes"
-    },
-    {
-      "title": "杂项",
-      "description": "按杂项分类浏览影片",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
           "name": "url",
           "title": "选择杂项",
           "type": "enumeration",
           "belongTo": {
-            "paramName": "sort_by",
+            "paramName": "category",
             "value": [
-              "post_date",
-              "video_viewed",
-              "most_favourited"
+              "misc"
             ]
           },
           "enumOptions": [
@@ -1336,7 +969,7 @@ WidgetMetadata = {
           "name": "sort_by",
           "title": "排序",
           "type": "enumeration",
-          "description": "排序",
+          "value": "post_date",
           "enumOptions": [
             {
               "title": "最近更新",
@@ -1359,8 +992,7 @@ WidgetMetadata = {
           "description": "页码",
           "value": "1"
         }
-      ],
-      "id": "misc"
+      ]
     }
   ],
   "search": {

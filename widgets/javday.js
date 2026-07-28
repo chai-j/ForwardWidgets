@@ -1,405 +1,118 @@
 WidgetMetadata = {
   "id": "chai.javday",
   "title": "JAVDay",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "requiredVersion": "0.0.1",
-  "description": "JAVDay 搜索、榜单、分类与在线播放",
+  "description": "JAVDay 搜索、分类与在线播放",
   "author": "chai-j",
   "site": "https://javday.app",
   "detailCacheDuration": 60,
   "modules": [
     {
-      "title": "最新更新",
-      "description": "浏览最新更新视频",
-      "requiresWebView": false,
+      "id": "browse",
+      "title": "分类浏览",
+      "description": "合并最新、人气、有码、无码和厂商分类",
       "functionName": "loadPage",
       "cacheDuration": 3600,
+      "requiresWebView": false,
       "params": [
         {
           "name": "url",
-          "title": "列表地址",
-          "type": "constant",
-          "description": "列表地址",
-          "value": "https://javday.app/label/new/"
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page"
-        }
-      ],
-      "id": "latest"
-    },
-    {
-      "title": "人气系列",
-      "description": "浏览人气系列视频",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
-          "name": "url",
-          "title": "列表地址",
-          "type": "constant",
-          "description": "列表地址",
-          "value": "https://javday.app/label/hot/"
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page"
-        }
-      ],
-      "id": "popular"
-    },
-    {
-      "title": "新作上市",
-      "description": "浏览新作上市视频",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
-          "name": "url",
-          "title": "列表地址",
-          "type": "constant",
-          "description": "列表地址",
-          "value": "https://javday.app/category/new-release/"
-        },
-        {
-          "name": "sort_by",
-          "title": "排序方式",
+          "title": "列表类型",
           "type": "enumeration",
+          "value": "https://javday.app/label/new/",
           "enumOptions": [
             {
-              "title": "最新上架",
-              "value": "new"
+              "title": "最新更新",
+              "value": "https://javday.app/label/new/"
             },
             {
-              "title": "人气最高",
-              "value": "popular"
-            }
-          ],
-          "description": "选择视频排序方式",
-          "value": "new"
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page"
-        }
-      ],
-      "id": "newRelease"
-    },
-    {
-      "title": "有码视频",
-      "description": "浏览有码分类视频",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
-          "name": "url",
-          "title": "列表地址",
-          "type": "constant",
-          "description": "列表地址",
-          "value": "https://javday.app/category/censored/"
-        },
-        {
-          "name": "sort_by",
-          "title": "排序方式",
-          "type": "enumeration",
-          "enumOptions": [
-            {
-              "title": "最新上架",
-              "value": "new"
+              "title": "人气系列",
+              "value": "https://javday.app/label/hot/"
             },
             {
-              "title": "人气最高",
-              "value": "popular"
-            }
-          ],
-          "description": "选择视频排序方式",
-          "value": "popular"
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page"
-        }
-      ],
-      "id": "censored"
-    },
-    {
-      "title": "无码视频",
-      "description": "浏览无码分类视频",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
-          "name": "url",
-          "title": "列表地址",
-          "type": "constant",
-          "description": "列表地址",
-          "value": "https://javday.app/category/uncensored/"
-        },
-        {
-          "name": "sort_by",
-          "title": "排序方式",
-          "type": "enumeration",
-          "enumOptions": [
-            {
-              "title": "最新上架",
-              "value": "new"
+              "title": "新作上市",
+              "value": "https://javday.app/category/new-release/"
             },
             {
-              "title": "人气最高",
-              "value": "popular"
-            }
-          ],
-          "description": "选择视频排序方式",
-          "value": "new"
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page"
-        }
-      ],
-      "id": "uncensored"
-    },
-    {
-      "title": "无码流出",
-      "description": "浏览无码流出视频",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
-          "name": "url",
-          "title": "列表地址",
-          "type": "constant",
-          "description": "列表地址",
-          "value": "https://javday.app/category/uncensored-leaked/"
-        },
-        {
-          "name": "sort_by",
-          "title": "排序方式",
-          "type": "enumeration",
-          "enumOptions": [
-            {
-              "title": "最新上架",
-              "value": "new"
+              "title": "有码视频",
+              "value": "https://javday.app/category/censored/"
             },
             {
-              "title": "人气最高",
-              "value": "popular"
-            }
-          ],
-          "description": "选择视频排序方式",
-          "value": "new"
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page"
-        }
-      ],
-      "id": "leaked"
-    },
-    {
-      "title": "杏吧视频",
-      "description": "浏览杏吧分类视频",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
-          "name": "url",
-          "title": "列表地址",
-          "type": "constant",
-          "description": "列表地址",
-          "value": "https://javday.app/category/sex8/"
-        },
-        {
-          "name": "sort_by",
-          "title": "排序方式",
-          "type": "enumeration",
-          "enumOptions": [
-            {
-              "title": "最新上架",
-              "value": "new"
+              "title": "无码视频",
+              "value": "https://javday.app/category/uncensored/"
             },
             {
-              "title": "人气最高",
-              "value": "popular"
-            }
-          ],
-          "description": "选择视频排序方式",
-          "value": "popular"
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page"
-        }
-      ],
-      "id": "sex8"
-    },
-    {
-      "title": "玩偶姐姐",
-      "description": "浏览玩偶姐姐视频",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
-          "name": "url",
-          "title": "列表地址",
-          "type": "constant",
-          "description": "列表地址",
-          "value": "https://javday.app/category/hongkongdoll/"
-        },
-        {
-          "name": "sort_by",
-          "title": "排序方式",
-          "type": "enumeration",
-          "enumOptions": [
-            {
-              "title": "最新上架",
-              "value": "new"
+              "title": "无码流出",
+              "value": "https://javday.app/category/uncensored-leaked/"
             },
             {
-              "title": "人气最高",
-              "value": "popular"
-            }
-          ],
-          "description": "选择视频排序方式",
-          "value": "popular"
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page"
-        }
-      ],
-      "id": "hongkongdoll"
-    },
-    {
-      "title": "国产 AV",
-      "description": "浏览国产 AV视频",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
-          "name": "url",
-          "title": "列表地址",
-          "type": "constant",
-          "description": "列表地址",
-          "value": "https://javday.app/category/chinese-av/"
-        },
-        {
-          "name": "sort_by",
-          "title": "排序方式",
-          "type": "enumeration",
-          "enumOptions": [
-            {
-              "title": "最新上架",
-              "value": "new"
+              "title": "杏吧视频",
+              "value": "https://javday.app/category/sex8/"
             },
             {
-              "title": "人气最高",
-              "value": "popular"
-            }
-          ],
-          "description": "选择视频排序方式",
-          "value": "popular"
-        },
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page"
-        }
-      ],
-      "id": "chineseAv"
-    },
-    {
-      "title": "国产厂商",
-      "description": "按厂商标签浏览国产厂商视频",
-      "requiresWebView": false,
-      "functionName": "loadPage",
-      "cacheDuration": 3600,
-      "params": [
-        {
-          "name": "url",
-          "title": "厂商选择",
-          "type": "enumeration",
-          "belongTo": {
-            "paramName": "sort_by",
-            "value": [
-              "new",
-              "popular"
-            ]
-          },
-          "enumOptions": [
+              "title": "玩偶姐姐",
+              "value": "https://javday.app/category/hongkongdoll/"
+            },
             {
-              "title": "麻豆传媒",
+              "title": "国产 AV",
+              "value": "https://javday.app/category/chinese-av/"
+            },
+            {
+              "title": "国产厂商 · 麻豆传媒",
               "value": "https://javday.app/index.php/category/madou/"
             },
             {
-              "title": "果冻传媒",
+              "title": "国产厂商 · 果冻传媒",
               "value": "https://javday.app/index.php/category/91zhipianchang/"
             },
             {
-              "title": "天美传媒",
+              "title": "国产厂商 · 天美传媒",
               "value": "https://javday.app/index.php/category/timi/"
             },
             {
-              "title": "星空无限",
+              "title": "国产厂商 · 星空无限",
               "value": "https://javday.app/index.php/category/xingkong/"
             },
             {
-              "title": "皇家华人",
+              "title": "国产厂商 · 皇家华人",
               "value": "https://javday.app/index.php/category/royalasianstudio/"
             },
             {
-              "title": "蜜桃影像",
+              "title": "国产厂商 · 蜜桃影像",
               "value": "https://javday.app/index.php/category/mtgw/"
             },
             {
-              "title": "精东影业",
+              "title": "国产厂商 · 精东影业",
               "value": "https://javday.app/index.php/category/jdav/"
             },
             {
-              "title": "台湾 AV",
+              "title": "国产厂商 · 台湾 AV",
               "value": "https://javday.app/index.php/category/twav/"
             },
             {
-              "title": "JVID",
+              "title": "国产厂商 · JVID",
               "value": "https://javday.app/index.php/category/jvid/"
             },
             {
-              "title": "萝莉社",
+              "title": "国产厂商 · 萝莉社",
               "value": "https://javday.app/index.php/category/luolisheus/"
             },
             {
-              "title": "糖心VLOG",
+              "title": "国产厂商 · 糖心VLOG",
               "value": "https://javday.app/index.php/category/txvlog/"
             },
             {
-              "title": "Psychoporn TW",
+              "title": "国产厂商 · Psychoporn TW",
               "value": "https://javday.app/index.php/category/psychoporn-tw/"
             }
-          ],
-          "value": "https://javday.app/index.php/category/madou/",
-          "description": "选择要浏览的厂商"
+          ]
         },
         {
           "name": "sort_by",
-          "title": "🔢 排序方式",
+          "title": "排序方式",
           "type": "enumeration",
+          "value": "new",
           "enumOptions": [
             {
               "title": "最新上架",
@@ -409,17 +122,14 @@ WidgetMetadata = {
               "title": "人气最高",
               "value": "popular"
             }
-          ],
-          "value": "new",
-          "description": "选择视频排序方式"
+          ]
         },
         {
           "name": "page",
           "title": "页码",
           "type": "page"
         }
-      ],
-      "id": "studios"
+      ]
     }
   ],
   "search": {

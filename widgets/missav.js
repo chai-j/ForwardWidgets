@@ -1,55 +1,42 @@
 WidgetMetadata = {
   "id": "chai.missav",
   "title": "MissAV",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "requiredVersion": "0.0.1",
-  "description": "MissAV 搜索、热门、分类与在线播放",
+  "description": "MissAV 搜索、热门影片、分类与在线播放",
   "author": "chai-j",
   "site": "https://missav.ai",
   "detailCacheDuration": 300,
   "modules": [
     {
-      "id": "todayHot",
-      "title": "今日热门",
-      "description": "今日热门影片",
+      "id": "hot",
+      "title": "热门影片",
+      "description": "今日、本周、本月热门影片",
       "requiresWebView": false,
-      "functionName": "loadTodayHot",
+      "functionName": "loadHot",
       "cacheDuration": 1800,
       "params": [
         {
-          "name": "page",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ]
-    },
-    {
-      "id": "weeklyHot",
-      "title": "本周热门",
-      "description": "本周热门影片",
-      "requiresWebView": false,
-      "functionName": "loadWeeklyHot",
-      "cacheDuration": 1800,
-      "params": [
-        {
-          "name": "page",
-          "title": "页码",
-          "type": "page",
-          "description": "页码",
-          "value": "1"
-        }
-      ]
-    },
-    {
-      "id": "monthlyHot",
-      "title": "本月热门",
-      "description": "本月热门影片",
-      "requiresWebView": false,
-      "functionName": "loadMonthlyHot",
-      "cacheDuration": 1800,
-      "params": [
+          "name": "sort_by",
+          "title": "时间范围",
+          "type": "enumeration",
+          "description": "切换今日、本周或本月热门榜单",
+          "value": "today_views",
+          "enumOptions": [
+            {
+              "title": "今日热门",
+              "value": "today_views"
+            },
+            {
+              "title": "本周热门",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月热门",
+              "value": "monthly_views"
+            }
+          ]
+        },
         {
           "name": "page",
           "title": "页码",
@@ -1634,42 +1621,21 @@ async function searchVideos(params = {}) {
     return searchResults;
 }
 
-async function loadTodayHot(params = {}) {
-    const page = parseInt(params.page) || 1;
+const HOT_LIST_CONFIG = {
+    today_views: { path: "/dm291/cn/today-hot", sort: "today_views" },
+    weekly_views: { path: "/dm169/cn/weekly-hot", sort: "weekly_views" },
+    monthly_views: { path: "/dm257/cn/monthly-hot", sort: "monthly_views" },
+};
 
-    let url = "https://missav.ai/dm291/cn/today-hot?sort=today_views";
-
-    if (page > 1) {
-        url += `&page=${page}`;
-    }
-
+async function loadHot(params = {}) {
+    const config = HOT_LIST_CONFIG[params.sort_by] || HOT_LIST_CONFIG.today_views;
+    const page = parseInt(params.page, 10) || 1;
+    const url = appendQuery(MISSAV_BASE_URL + config.path, {
+        sort: config.sort,
+        page: page > 1 ? page : undefined,
+    });
     return await fetchVideoList(url);
 }
-
-async function loadWeeklyHot(params = {}) {
-    const page = parseInt(params.page) || 1;
-
-    let url = "https://missav.ai/dm169/cn/weekly-hot?sort=weekly_views";
-
-    if (page > 1) {
-        url += `&page=${page}`;
-    }
-
-    return await fetchVideoList(url);
-}
-
-async function loadMonthlyHot(params = {}) {
-    const page = parseInt(params.page) || 1;
-
-    let url = "https://missav.ai/dm257/cn/monthly-hot?sort=monthly_views";
-
-    if (page > 1) {
-        url += `&page=${page}`;
-    }
-
-    return await fetchVideoList(url);
-}
-
 async function loadNewRelease(params = {}) {
     const page = parseInt(params.page) || 1;
 

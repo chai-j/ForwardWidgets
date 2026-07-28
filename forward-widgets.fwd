@@ -1,50 +1,41 @@
 {
   "title": "chai-j 视频模块聚合",
-  "description": "由 chai-j 维护的 11 个 Forward 自定义视频模块",
+  "description": "由 chai-j 维护的 10 个 Forward 自定义视频模块",
   "icon": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/icon.png",
   "widgets": [
     {
       "id": "chai.missav",
       "title": "MissAV",
-      "description": "MissAV 搜索、热门、分类与在线播放",
+      "description": "MissAV 搜索、热门影片、分类与在线播放",
       "requiredVersion": "0.0.1",
-      "version": "3.1.0",
+      "version": "3.2.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/missav.js"
     },
     {
-      "id": "chai.missav-1",
-      "title": "MissAV-1",
-      "description": "MissAV-1 测试：合并热门榜单并支持时间范围切换",
-      "requiredVersion": "0.0.1",
-      "version": "3.2.0",
-      "author": "chai-j",
-      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/missav-1.js"
-    },
-    {
       "id": "chai.hanime1",
       "title": "Hanime1",
-      "description": "Hanime1 浏览、搜索、分类与多清晰度播放",
+      "description": "Hanime1 浏览、搜索、中文字幕与多清晰度播放",
       "requiredVersion": "0.0.1",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/hanime1.js"
     },
     {
       "id": "chai.jable",
       "title": "Jable",
-      "description": "Jable 搜索、热门、分类与在线播放",
+      "description": "Jable 搜索、精选与分类浏览",
       "requiredVersion": "0.0.1",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/jable.js"
     },
     {
       "id": "chai.javday",
       "title": "JAVDay",
-      "description": "JAVDay 搜索、榜单、分类与在线播放",
+      "description": "JAVDay 搜索、分类与在线播放",
       "requiredVersion": "0.0.1",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/javday.js"
     },
@@ -71,7 +62,7 @@
       "title": "Pornhub",
       "description": "Pornhub 搜索、艺人、榜单、筛选与在线播放",
       "requiredVersion": "0.0.1",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/pornhub.js"
     },
@@ -87,9 +78,9 @@
     {
       "id": "chai.91porny",
       "title": "91Porny",
-      "description": "91Porny 分类、搜索与在线播放",
+      "description": "91Porny 分类、来源切换、搜索与在线播放",
       "requiredVersion": "0.0.1",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/91porny.js"
     },
