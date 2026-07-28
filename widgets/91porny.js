@@ -2,7 +2,7 @@ WidgetMetadata = {
   "id": "chai.91porny",
   "title": "91Porny",
   "description": "91Porny 分类、来源切换、搜索与在线播放",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "requiredVersion": "0.0.1",
   "author": "chai-j",
   "site": "https://91porny.com",
@@ -108,7 +108,7 @@ WidgetMetadata = {
           }
         },
         {
-          "name": "sort_by",
+          "name": "sort_by_kedou",
           "title": "分类",
           "description": "分类",
           "type": "enumeration",
@@ -195,7 +195,7 @@ WidgetMetadata = {
           }
         },
         {
-          "name": "sort_by",
+          "name": "sort_by_vod",
           "title": "分类",
           "description": "分类",
           "type": "enumeration",
@@ -379,8 +379,8 @@ async function getVodList(params = {}) {
 
 async function getList(params = {}) {
   const source = params.source || "91porny";
-  if (source === "kedou") return getKedouList({ ...params, sort_by: params.sort_by || "chinese" });
-  if (source === "vod") return getVodList({ ...params, sort_by: params.sort_by || "" });
+  if (source === "kedou") return getKedouList({ ...params, sort_by: params.sort_by_kedou || "chinese" });
+  if (source === "vod") return getVodList({ ...params, sort_by: params.sort_by_vod || "" });
   return get91List({ ...params, sort_by: params.sort_by || "latest" });
 }
 async function loadDetail(link) {
