@@ -1,6 +1,6 @@
 {
   "title": "chai-j 视频模块聚合",
-  "description": "由 chai-j 维护的 9 个 Forward 自定义视频模块",
+  "description": "由 chai-j 维护的 10 个 Forward 自定义视频模块",
   "icon": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/icon.png",
   "widgets": [
     {
@@ -83,6 +83,15 @@
       "version": "2.0.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/91porny.js"
+    },
+    {
+      "id": "chai.91porn",
+      "title": "91Porn",
+      "description": "91Porn 分类、搜索与在线播放",
+      "requiredVersion": "0.0.1",
+      "version": "2.0.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/91porn.js"
     }
   ]
 }
