@@ -1,6 +1,6 @@
 {
   "title": "chai-j 视频模块聚合",
-  "description": "由 chai-j 维护的 10 个 Forward 自定义视频模块",
+  "description": "由 chai-j 维护的 8 个 Forward 自定义视频模块",
   "icon": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/icon.png",
   "widgets": [
     {
@@ -40,24 +40,6 @@
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/javday.js"
     },
     {
-      "id": "chai.javdb",
-      "title": "JAVDB",
-      "description": "通过 InfiniteAPI 浏览、搜索和播放 JAVDB 内容；使用前需配置 Token",
-      "requiredVersion": "0.0.1",
-      "version": "2.0.0",
-      "author": "chai-j",
-      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/javdb.js"
-    },
-    {
-      "id": "chai.javrate",
-      "title": "JAVRate",
-      "description": "JAVRate 艺人、标签、厂商分类与相关推荐",
-      "requiredVersion": "0.0.1",
-      "version": "2.0.0",
-      "author": "chai-j",
-      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/javrate.js"
-    },
-    {
       "id": "chai.pornhub",
       "title": "Pornhub",
       "description": "Pornhub 搜索、艺人、榜单、筛选与在线播放",
@@ -71,7 +53,7 @@
       "title": "XVideos",
       "description": "XVideos 最新视频、频道、演员与在线播放",
       "requiredVersion": "0.0.1",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/xvideos.js"
     },

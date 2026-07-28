@@ -1,7 +1,7 @@
 WidgetMetadata = {
   "id": "chai.xvideos",
   "title": "XVideos",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "requiredVersion": "0.0.1",
   "description": "XVideos 最新视频、频道、演员与在线播放",
   "author": "chai-j",
@@ -29,7 +29,7 @@ WidgetMetadata = {
       "functionName": "getChannelList",
       "params": [
         {
-          "name": "channel",
+          "name": "sort_by",
           "title": "频道",
           "type": "input",
           "value": "",
@@ -371,7 +371,7 @@ WidgetMetadata = {
       "functionName": "getPornstarsList",
       "params": [
         {
-          "name": "pornstar",
+          "name": "sort_by",
           "title": "色情明星",
           "type": "input",
           "placeholders": [
@@ -871,7 +871,7 @@ async function getNewList(params) {
 async function getChannelList(params) {
     const page = params.page ? Number.parseInt(params.page) : 0;
     try {
-        const resp = await widgetAPI.get(`${BASE_URL}/channels/${params.channel}/videos/best/${page}`);
+        const resp = await widgetAPI.get(`${BASE_URL}/channels/${params.sort_by}/videos/best/${page}`);
         const list = (resp.videos || []).map(formatXVideosItem).filter(Boolean);
         return list;
     } catch (error) {
@@ -882,7 +882,7 @@ async function getChannelList(params) {
 async function getPornstarsList(params) {
     const page = params.page ? Number.parseInt(params.page) : 0;
     try {
-        const resp = await widgetAPI.get(`${BASE_URL}/pornstars/${params.pornstar}/videos/best/${page}`);
+        const resp = await widgetAPI.get(`${BASE_URL}/pornstars/${params.sort_by}/videos/best/${page}`);
         const list = (resp.videos || []).map(formatXVideosItem).filter(Boolean);
         return list;
     } catch (error) {
