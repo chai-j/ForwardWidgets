@@ -1,8 +1,8 @@
 var WidgetMetadata = {
-    id: "missav_int",
+    id: "chai.missav",
     title: "MissAV",
-    description: "網路收集到的模塊",
-    author: "蝴蝶",
+    description: "MissAV 搜索、分类、榜单与播放",
+    author: "chai-j",
     site: "https://for-ward.vercel.app",
     version: "2.0.0",
     requiredVersion: "0.0.2",
