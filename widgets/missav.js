@@ -1,7 +1,7 @@
 WidgetMetadata = {
   "id": "chai.missav",
   "title": "MissAV",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "requiredVersion": "0.0.1",
   "description": "MissAV 搜索、热门影片、分类与在线播放",
   "author": "chai-j",
@@ -1462,16 +1462,6 @@ WidgetMetadata = {
           "value": "1"
         }
       ]
-    },
-    {
-      "id": "loadResource",
-      "title": "加载播放资源",
-      "description": "按需解析 MissAV 页面中的播放地址",
-      "functionName": "loadResource",
-      "type": "stream",
-      "cacheDuration": 0,
-      "requiresWebView": false,
-      "params": []
     }
   ],
   "search": {
@@ -1842,17 +1832,4 @@ async function loadDetail(link) {
         console.error("[MissAV] 详情请求失败:", error && error.message || error);
         return fallbackDetail(normalized, "暂时无法读取详情");
     }
-}
-
-async function loadResource(params = {}) {
-    const directUrl = normalizePlaybackUrl(params.videoUrl);
-    if (directUrl) return [{ name: "默认清晰度", description: "页面直链", url: directUrl, customHeaders: { ...MISSAV_HEADERS, Referer: params.link || MISSAV_BASE_URL + "/" }, playerType: "system" }];
-    const link = normalizeMissavUrl(params.link || params.id);
-    if (!link || !isVideoLink(link)) throw new Error("缺少 MissAV 播放页链接");
-    const response = await Widget.http.get(link, { headers: { ...MISSAV_HEADERS, Referer: link }, allow_redirects: true });
-    const html = String(response && response.data || "");
-    const $ = Widget.html.load(html);
-    const urls = extractPlaybackUrls($, html);
-    if (!urls.length) throw new Error("MissAV 页面没有找到可播放资源");
-    return urls.map((url, index) => ({ name: index === 0 ? "默认清晰度" : "备用线路 " + (index + 1), url, customHeaders: { ...MISSAV_HEADERS, Referer: link }, playerType: "system" }));
 }

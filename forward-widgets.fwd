@@ -8,16 +8,16 @@
       "title": "MissAV",
       "description": "MissAV 搜索、热门影片、分类与在线播放",
       "requiredVersion": "0.0.1",
-      "version": "3.2.0",
+      "version": "3.3.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/missav.js"
     },
     {
       "id": "chai.hanime1",
       "title": "Hanime1",
-      "description": "Hanime1 浏览、搜索、中文字幕与多清晰度播放",
+      "description": "Hanime1 浏览、搜索、中文字幕与在线播放",
       "requiredVersion": "0.0.1",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/hanime1.js"
     },
@@ -89,7 +89,7 @@
       "title": "91Porn",
       "description": "91Porn 分类、搜索与在线播放",
       "requiredVersion": "0.0.1",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/91porn.js"
     }

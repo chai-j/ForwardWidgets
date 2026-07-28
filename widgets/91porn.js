@@ -4,7 +4,7 @@ WidgetMetadata = {
   description: "91Porn 分类、搜索与在线播放",
   author: "chai-j",
   site: "https://91porn.com",
-  version: "2.0.0",
+  version: "2.1.0",
   requiredVersion: "0.0.1",
   detailCacheDuration: 60,
   globalParams: [
@@ -50,15 +50,6 @@ WidgetMetadata = {
           value: "1",
         },
       ],
-    },
-    {
-      id: "loadResource",
-      title: "加载资源",
-      description: "在播放时重新解析 91Porn 视频地址",
-      functionName: "loadResource",
-      type: "stream",
-      cacheDuration: 0,
-      params: [],
     },
   ],
   search: {
@@ -304,25 +295,4 @@ async function loadDetail(link) {
     console.error("91Porn 详情加载失败:", error);
     return null;
   }
-}
-
-async function loadResource(params = {}) {
-  const baseUrl = normalizeBaseUrl(params.base_url);
-  const candidates = [params.link, params.id]
-    .map((value) => absoluteUrl(value, baseUrl))
-    .filter(Boolean);
-  const detailUrl = candidates.find((value) => /view_video\.php|\/video\//i.test(value)) || candidates[0];
-  if (!detailUrl) return [];
-
-  const detail = await loadDetail(detailUrl);
-  if (!detail || !detail.videoUrl) return [];
-  return [
-    {
-      name: detail.title || "91Porn",
-      description: detail.description || "",
-      url: detail.videoUrl,
-      customHeaders: detail.customHeaders,
-      playerType: detail.playerType || "system",
-    },
-  ];
 }

@@ -1,9 +1,9 @@
 WidgetMetadata = {
   "id": "chai.hanime1",
   "title": "Hanime1",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "requiredVersion": "0.0.1",
-  "description": "Hanime1 浏览、搜索、中文字幕与多清晰度播放",
+  "description": "Hanime1 浏览、搜索、中文字幕与在线播放",
   "author": "chai-j",
   "site": "https://hanime1.me",
   "detailCacheDuration": 300,
@@ -125,15 +125,6 @@ WidgetMetadata = {
           "type": "page"
         }
       ]
-    },
-    {
-      "id": "loadResource",
-      "title": "加载播放资源",
-      "functionName": "loadResource",
-      "type": "stream",
-      "cacheDuration": 0,
-      "requiresWebView": false,
-      "params": []
     }
   ],
   "search": {
@@ -641,33 +632,4 @@ async function loadDetail(link) {
     console.error("[Hanime1] 详情请求失败:", error.message || error);
     throw error;
   }
-}
-
-async function loadResource(params) {
-  params = params || {};
-  var directUrl = cleanText(params.videoUrl);
-  if (directUrl && /^https?:\/\//i.test(directUrl)) {
-    return [{
-      name: "默认清晰度",
-      description: "页面直链",
-      url: directUrl,
-      customHeaders: playbackHeaders(params.link || HANIME_BASE_URL + "/"),
-      playerType: "system",
-    }];
-  }
-  var link = normalizeWatchUrl(params.link || params.id || "");
-  if (!link) throw new Error("缺少 Hanime1 播放页链接");
-  var response = await requestHtml(link, {}, HANIME_BASE_URL + "/");
-  var $ = Widget.html.load(response.html);
-  var sources = extractVideoSources($, response.html);
-  if (!sources.length) throw new Error("Hanime1 页面没有找到可播放资源");
-  return sources.map(function (source) {
-    return {
-      name: source.label,
-      description: source.type || (/\.m3u8(?:\?|$)/i.test(source.url) ? "HLS" : "MP4"),
-      url: source.url,
-      customHeaders: playbackHeaders(link),
-      playerType: "system",
-    };
-  });
 }
