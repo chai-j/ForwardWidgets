@@ -6,9 +6,9 @@
     {
       "id": "chai.missav",
       "title": "MissAV",
-      "description": "MissAV 搜索、分类、榜单与播放",
+      "description": "MissAV 搜索、热门、分类与在线播放",
       "requiredVersion": "0.0.1",
-      "version": "3.0.0",
+      "version": "3.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/missav.js"
     },

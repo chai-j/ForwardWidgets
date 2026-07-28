@@ -1,562 +1,1892 @@
 WidgetMetadata = {
-  id: "chai.missav",
-  title: "MissAV",
-  version: "3.0.0",
-  requiredVersion: "0.0.1",
-  description: "MissAV 搜索、分类、榜单与播放",
-  author: "chai-j",
-  site: "https://missav.ai",
-  detailCacheDuration: 300,
-  modules: [
+  "id": "chai.missav",
+  "title": "MissAV",
+  "version": "3.1.0",
+  "requiredVersion": "0.0.1",
+  "description": "MissAV 搜索、热门、分类与在线播放",
+  "author": "chai-j",
+  "site": "https://missav.ai",
+  "detailCacheDuration": 300,
+  "modules": [
     {
-      id: "recent",
-      title: "最近更新",
-      functionName: "loadRecent",
-      cacheDuration: 900,
-      requiresWebView: false,
-      params: [{ name: "page", title: "页码", type: "page" }],
-    },
-    {
-      id: "release",
-      title: "新作上市",
-      functionName: "loadRelease",
-      cacheDuration: 900,
-      requiresWebView: false,
-      params: [{ name: "page", title: "页码", type: "page" }],
-    },
-    {
-      id: "todayHot",
-      title: "今日热门",
-      functionName: "loadTodayHot",
-      cacheDuration: 900,
-      requiresWebView: false,
-      params: [{ name: "page", title: "页码", type: "page" }],
-    },
-    {
-      id: "weeklyHot",
-      title: "本周热门",
-      functionName: "loadWeeklyHot",
-      cacheDuration: 900,
-      requiresWebView: false,
-      params: [{ name: "page", title: "页码", type: "page" }],
-    },
-    {
-      id: "monthlyHot",
-      title: "本月热门",
-      functionName: "loadMonthlyHot",
-      cacheDuration: 900,
-      requiresWebView: false,
-      params: [{ name: "page", title: "页码", type: "page" }],
-    },
-    {
-      id: "chineseSubtitle",
-      title: "中文字幕",
-      functionName: "loadChineseSubtitle",
-      cacheDuration: 900,
-      requiresWebView: false,
-      params: [{ name: "page", title: "页码", type: "page" }],
-    },
-    {
-      id: "category",
-      title: "分类浏览",
-      functionName: "loadCategory",
-      cacheDuration: 900,
-      requiresWebView: false,
-      params: [
+      "id": "todayHot",
+      "title": "今日热门",
+      "description": "今日热门影片",
+      "requiresWebView": false,
+      "functionName": "loadTodayHot",
+      "cacheDuration": 1800,
+      "params": [
         {
-          name: "url",
-          title: "分类",
-          type: "enumeration",
-          value: "https://missav.ai/cn/new",
-          enumOptions: [
-            { title: "最近更新", value: "https://missav.ai/cn/new" },
-            { title: "新作上市", value: "https://missav.ai/cn/release" },
-            { title: "无码流出", value: "https://missav.ai/cn/uncensored-leak" },
-            { title: "FC2", value: "https://missav.ai/cn/fc2" },
-            { title: "HEYZO", value: "https://missav.ai/cn/heyzo" },
-            { title: "东京热", value: "https://missav.ai/cn/tokyohot" },
-            { title: "中文字幕", value: "https://missav.ai/cn/chinese-subtitle" },
-            { title: "高清", value: "https://missav.ai/cn/genres/高清" },
-            { title: "独家", value: "https://missav.ai/cn/genres/独家" },
-          ],
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "weeklyHot",
+      "title": "本周热门",
+      "description": "本周热门影片",
+      "requiresWebView": false,
+      "functionName": "loadWeeklyHot",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "monthlyHot",
+      "title": "本月热门",
+      "description": "本月热门影片",
+      "requiresWebView": false,
+      "functionName": "loadMonthlyHot",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "newRelease",
+      "title": "新作上市",
+      "description": "新作上市影片",
+      "requiresWebView": false,
+      "functionName": "loadNewRelease",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "chineseSubtitle",
+      "title": "中文字幕",
+      "description": "中文字幕影片",
+      "requiresWebView": false,
+      "functionName": "loadChineseSubtitle",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
         },
         {
-          name: "sort_by",
-          title: "排序",
-          type: "enumeration",
-          value: "released_at",
-          enumOptions: [
-            { title: "发行日期", value: "released_at" },
-            { title: "最近更新", value: "published_at" },
-            { title: "收藏数", value: "saved" },
-            { title: "今日浏览数", value: "today_views" },
-            { title: "本周浏览数", value: "weekly_views" },
-            { title: "本月浏览数", value: "monthly_views" },
-            { title: "总浏览数", value: "views" },
-          ],
-        },
-        { name: "page", title: "页码", type: "page" },
-      ],
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
     },
     {
-      id: "loadResource",
-      title: "加载播放资源",
-      functionName: "loadResource",
-      type: "stream",
-      cacheDuration: 0,
-      requiresWebView: false,
-      params: [],
+      "id": "uncensored",
+      "title": "无码影片库",
+      "description": "无码影片各分类",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择分类",
+          "type": "enumeration",
+          "description": "选择分类",
+          "enumOptions": [
+            {
+              "title": "无码流出",
+              "value": "https://missav.ai/dm621/cn/uncensored-leak"
+            },
+            {
+              "title": "FC2",
+              "value": "https://missav.ai/dm99/cn/fc2"
+            },
+            {
+              "title": "HEYZO",
+              "value": "https://missav.ai/dm319995/cn/heyzo"
+            },
+            {
+              "title": "东京热",
+              "value": "https://missav.ai/dm29/cn/tokyohot"
+            },
+            {
+              "title": "Caribbeancom",
+              "value": "https://missav.ai/dm1271239/cn/caribbeancom"
+            },
+            {
+              "title": "Gachinco",
+              "value": "https://missav.ai/dm135/cn/gachinco"
+            },
+            {
+              "title": "XXX-AV",
+              "value": "https://missav.ai/dm29/cn/xxxav"
+            },
+            {
+              "title": "人妻斩",
+              "value": "https://missav.ai/dm24/cn/marriedslash"
+            },
+            {
+              "title": "顽皮 4610",
+              "value": "https://missav.ai/dm19/cn/naughty4610"
+            },
+            {
+              "title": "顽皮 0930",
+              "value": "https://missav.ai/dm22/cn/naughty0930"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
     },
+    {
+      "id": "asianAv",
+      "title": "亚洲AV专区",
+      "description": "亚洲AV各分类",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择分类",
+          "type": "enumeration",
+          "description": "选择分类",
+          "enumOptions": [
+            {
+              "title": "麻豆传媒",
+              "value": "https://missav.ai/dm34/cn/madou"
+            },
+            {
+              "title": "韩国直播",
+              "value": "https://missav.ai/cn/klive"
+            },
+            {
+              "title": "中国直播",
+              "value": "https://missav.ai/cn/clive"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "quality",
+      "title": "影片质量类",
+      "description": "影片质量类 - 12个类型，748,863部影片",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择类型",
+          "type": "enumeration",
+          "description": "选择具体类型",
+          "enumOptions": [
+            {
+              "title": "高清 (248,852部)",
+              "value": "https://missav.ai/dm95/cn/genres/%E9%AB%98%E6%B8%85"
+            },
+            {
+              "title": "独家 (220,805部)",
+              "value": "https://missav.ai/dm136/cn/genres/%E7%8B%AC%E5%AE%B6"
+            },
+            {
+              "title": "单体作品 (185,259部)",
+              "value": "https://missav.ai/dm118/cn/genres/%E5%8D%95%E4%BD%93%E4%BD%9C%E5%93%81"
+            },
+            {
+              "title": "薄格 (93,610部)",
+              "value": "https://missav.ai/dm95/cn/genres/%E8%96%84%E6%A0%BC"
+            },
+            {
+              "title": "全高清 (FHD) (11928部)",
+              "value": "https://missav.ai/cn/genres/%E5%85%A8%E9%AB%98%E6%B8%85%20(FHD)"
+            },
+            {
+              "title": "低成本影片 (70部)",
+              "value": "https://missav.ai/cn/genres/%E4%BD%8E%E6%88%90%E6%9C%AC%E5%BD%B1%E7%89%87"
+            },
+            {
+              "title": "套装商品 (44部)",
+              "value": "https://missav.ai/cn/genres/%E5%A5%97%E8%A3%85%E5%95%86%E5%93%81"
+            },
+            {
+              "title": "限时特卖 (37部)",
+              "value": "https://missav.ai/cn/genres/%E9%99%90%E6%97%B6%E7%89%B9%E5%8D%96"
+            },
+            {
+              "title": "高清 (HD) (36部)",
+              "value": "https://missav.ai/cn/genres/%E9%AB%98%E6%B8%85%20%28HD%29"
+            },
+            {
+              "title": "协力作品 (32部)",
+              "value": "https://missav.ai/cn/genres/%E5%8D%8F%E5%8A%9B%E4%BD%9C%E5%93%81"
+            },
+            {
+              "title": "单一作品 (13部)",
+              "value": "https://missav.ai/cn/genres/%E5%8D%95%E4%B8%80%E4%BD%9C%E5%93%81"
+            },
+            {
+              "title": "仅限分发 (12部)",
+              "value": "https://missav.ai/cn/genres/%E4%BB%85%E9%99%90%E5%88%86%E5%8F%91"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "roles",
+      "title": "角色与身份",
+      "description": "角色与身份 - 23个类型，609,543部影片",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择类型",
+          "type": "enumeration",
+          "description": "选择具体类型",
+          "enumOptions": [
+            {
+              "title": "人妻 (123,405部)",
+              "value": "https://missav.ai/dm67/cn/genres/%E4%BA%BA%E5%A6%BB"
+            },
+            {
+              "title": "熟女 (111,004部)",
+              "value": "https://missav.ai/dm107/cn/genres/%E7%86%9F%E5%A5%B3"
+            },
+            {
+              "title": "素人 (97,868部)",
+              "value": "https://missav.ai/dm95/cn/genres/%E7%B4%A0%E4%BA%BA"
+            },
+            {
+              "title": "美少女 (89,506部)",
+              "value": "https://missav.ai/dm93/cn/genres/%E7%BE%8E%E5%B0%91%E5%A5%B3"
+            },
+            {
+              "title": "痴女 (71,969部)",
+              "value": "https://missav.ai/dm68/cn/genres/%E7%97%B4%E5%A5%B3"
+            },
+            {
+              "title": "女高中生 (62,542部)",
+              "value": "https://missav.ai/dm61/cn/genres/%E5%A5%B3%E9%AB%98%E4%B8%AD%E7%94%9F"
+            },
+            {
+              "title": "秘书 (997部)",
+              "value": "https://missav.ai/dm63/cn/genres/秘书"
+            },
+            {
+              "title": "美丽的成熟女人 (135部)",
+              "value": "https://missav.ai/cn/genres/美丽的成熟女人"
+            },
+            {
+              "title": "妈妈朋友 (98部)",
+              "value": "https://missav.ai/cn/genres/%E5%A6%88%E5%A6%88%E6%9C%8B%E5%8F%8B"
+            },
+            {
+              "title": "M女人 (77部)",
+              "value": "https://missav.ai/dm1/cn/genres/M%E5%A5%B3%E4%BA%BA"
+            },
+            {
+              "title": "成熟的女人 (32部)",
+              "value": "https://missav.ai/cn/genres/%E6%88%90%E7%86%9F%E7%9A%84%E5%A5%B3%E4%BA%BA"
+            },
+            {
+              "title": "家庭主妇 (32部)",
+              "value": "https://missav.ai/cn/genres/%E5%AE%B6%E5%BA%AD%E4%B8%BB%E5%A6%87"
+            },
+            {
+              "title": "成熟女人 / 已婚女人 (29部)",
+              "value": "https://missav.ai/cn/genres/%E6%88%90%E7%86%9F%E5%A5%B3%E4%BA%BA%20/%20%E5%B7%B2%E5%A9%9A%E5%A5%B3%E4%BA%BA"
+            },
+            {
+              "title": "其他学生 (21部)",
+              "value": "https://missav.ai/cn/genres/%E5%85%B6%E4%BB%96%E5%AD%A6%E7%94%9F"
+            },
+            {
+              "title": "大小姐 (19部)",
+              "value": "https://missav.ai/dm69/cn/genres/%E5%A4%A7%E5%B0%8F%E5%A7%90"
+            },
+            {
+              "title": "公主 (18部)",
+              "value": "https://missav.ai/cn/genres/%E5%85%AC%E4%B8%BB"
+            },
+            {
+              "title": "美丽的女孩 (12部)",
+              "value": "https://missav.ai/dm89/cn/genres/%E7%BE%8E%E4%B8%BD%E7%9A%84%E5%A5%B3%E5%AD%A9"
+            },
+            {
+              "title": "新娘 / 年轻的妻子 (10部)",
+              "value": "https://missav.ai/cn/genres/%E6%96%B0%E5%A8%98%20/%20%E5%B9%B4%E8%BD%BB%E7%9A%84%E5%A6%BB%E5%AD%90"
+            },
+            {
+              "title": "养女 (10部)",
+              "value": "https://missav.ai/dm1/cn/genres/%E5%85%BB%E5%A5%B3"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "sexActs",
+      "title": "性行为类型",
+      "description": "性行为类型 - 19个类型，759,620部影片",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择类型",
+          "type": "enumeration",
+          "description": "选择具体类型",
+          "enumOptions": [
+            {
+              "title": "中出 (198,292部)",
+              "value": "https://missav.ai/dm127/cn/genres/%E4%B8%AD%E5%87%BA"
+            },
+            {
+              "title": "口交 (95,026部)",
+              "value": "https://missav.ai/dm93/cn/genres/%E5%8F%A3%E4%BA%A4"
+            },
+            {
+              "title": "骑乘 (86,850部)",
+              "value": "https://missav.ai/dm82/cn/genres/%E9%AA%91%E4%B9%98"
+            },
+            {
+              "title": "潮吹 (73,825部)",
+              "value": "https://missav.ai/dm71/cn/genres/%E6%BD%AE%E5%90%B9"
+            },
+            {
+              "title": "乳交 (68,569部)",
+              "value": "https://missav.ai/dm67/cn/genres/%E4%B9%B3%E4%BA%A4"
+            },
+            {
+              "title": "颜射 (63,513部)",
+              "value": "https://missav.ai/dm59/cn/genres/%E9%A2%9C%E5%B0%84"
+            },
+            {
+              "title": "自慰 (60,648部)",
+              "value": "https://missav.ai/dm59/cn/genres/%E8%87%AA%E6%85%B0"
+            },
+            {
+              "title": "手淫 (58,635部)",
+              "value": "https://missav.ai/dm57/cn/genres/%E6%89%8B%E6%B7%AB"
+            },
+            {
+              "title": "内射精 (57部)",
+              "value": "https://missav.ai/dm77/cn/genres/%E5%86%85%E5%B0%84%E7%B2%BE"
+            },
+            {
+              "title": "极致高潮 (88部)",
+              "value": "https://missav.ai/dm19/cn/genres/%E6%9E%81%E8%87%B4%E9%AB%98%E6%BD%AE"
+            },
+            {
+              "title": "3P (26部)",
+              "value": "https://missav.ai/dm45/cn/genres/3P"
+            },
+            {
+              "title": "多人 (26部)",
+              "value": "https://missav.ai/cn/genres/%E5%A4%9A%E4%BA%BA"
+            },
+            {
+              "title": "狗狗式 (19部)",
+              "value": "https://missav.ai/cn/genres/%E7%8B%97%E7%8B%97%E5%BC%8F"
+            },
+            {
+              "title": "撒尿 (17部)",
+              "value": "https://missav.ai/cn/genres/%E6%92%92%E5%B0%BF"
+            },
+            {
+              "title": "盐吹 (16部)",
+              "value": "https://missav.ai/cn/genres/%E7%9B%90%E5%90%B9"
+            },
+            {
+              "title": "撒尿 (14部)",
+              "value": "https://missav.ai/dm12/cn/genres/%E6%92%92%E5%B0%BF"
+            },
+            {
+              "title": "3P / 4P (11部)",
+              "value": "https://missav.ai/cn/genres/3P%20/%204P"
+            },
+            {
+              "title": "洗澡 (26部)",
+              "value": "https://missav.ai/cn/genres/%E6%B4%97%E6%BE%A1"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "plotThemes",
+      "title": "情节与主题",
+      "description": "情节与主题 - 15个类型，363,926部影片",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择类型",
+          "type": "enumeration",
+          "description": "选择具体类型",
+          "enumOptions": [
+            {
+              "title": "企划 (67,686部)",
+              "value": "https://missav.ai/dm67/cn/genres/%E4%BC%81%E5%88%92"
+            },
+            {
+              "title": "乱伦 (56,481部)",
+              "value": "https://missav.ai/dm55/cn/genres/%E4%B9%B1%E4%BC%A6"
+            },
+            {
+              "title": "NTR (51,273部)",
+              "value": "https://missav.ai/dm51/cn/genres/NTR"
+            },
+            {
+              "title": "搭讪 (48,965部)",
+              "value": "https://missav.ai/dm48/cn/genres/%E6%90%AD%E8%AE%AA"
+            },
+            {
+              "title": "淫乱 (47,821部)",
+              "value": "https://missav.ai/dm47/cn/genres/%E6%B7%AB%E4%B9%B1"
+            },
+            {
+              "title": "剧情 (46,573部)",
+              "value": "https://missav.ai/dm46/cn/genres/%E5%89%A7%E6%83%85"
+            },
+            {
+              "title": "羞辱 (44,892部)",
+              "value": "https://missav.ai/dm44/cn/genres/%E7%BE%9E%E8%BE%B1"
+            },
+            {
+              "title": "妻子的出轨 / NTR / 戴绿帽子 (74部)",
+              "value": "https://missav.ai/cn/genres/%E5%A6%BB%E5%AD%90%E7%9A%84%E5%87%BA%E8%BD%A8%20/%20NTR%20/%20%E6%88%B4%E7%BB%BF%E5%B8%BD%E5%AD%90"
+            },
+            {
+              "title": "戴绿帽子 (39部)",
+              "value": "https://missav.ai/cn/genres/%E6%88%B4%E7%BB%BF%E5%B8%BD%E5%AD%90"
+            },
+            {
+              "title": "告白体验 (30部)",
+              "value": "https://missav.ai/cn/genres/%E5%91%8A%E7%99%BD%E4%BD%93%E9%AA%8C"
+            },
+            {
+              "title": "外遇妻子 / NTR / 戴绿帽子 (17部)",
+              "value": "https://missav.ai/cn/genres/%E5%A4%96%E9%81%87%E5%A6%BB%E5%AD%90%20/%20NTR%20/%20%E6%88%B4%E7%BB%BF%E5%B8%BD%E5%AD%90"
+            },
+            {
+              "title": "交往 (13部)",
+              "value": "https://missav.ai/cn/genres/%E4%BA%A4%E5%BE%80"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "specialPlay",
+      "title": "特殊玩法类",
+      "description": "特殊玩法 - 9个类型，85,102部影片",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择类型",
+          "type": "enumeration",
+          "description": "选择具体类型",
+          "enumOptions": [
+            {
+              "title": "多人运动 (53,962部)",
+              "value": "https://missav.ai/dm53/cn/genres/%E5%A4%9A%E4%BA%BA%E8%BF%90%E5%8A%A8"
+            },
+            {
+              "title": "拘束 (41,628部)",
+              "value": "https://missav.ai/dm41/cn/genres/%E6%8B%98%E6%9D%9F"
+            },
+            {
+              "title": "脏话 (63部)",
+              "value": "https://missav.ai/cn/genres/%E8%84%8F%E8%AF%9D"
+            },
+            {
+              "title": "催眠洗脑 (62部)",
+              "value": "https://missav.ai/cn/genres/%E5%82%AC%E7%9C%A0%E6%B4%97%E8%84%91"
+            },
+            {
+              "title": "口球 (51部)",
+              "value": "https://missav.ai/cn/genres/%E5%8F%A3%E7%90%83"
+            },
+            {
+              "title": "放置Play (31部)",
+              "value": "https://missav.ai/cn/genres/%E6%94%BE%E7%BD%AEPlay"
+            },
+            {
+              "title": "奴隶 (26部)",
+              "value": "https://missav.ai/dm6/cn/genres/%E5%A5%B4%E9%9A%B6"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "body",
+      "title": "身材特征类",
+      "description": "身材特征 - 14个类型，234,821部影片",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择类型",
+          "type": "enumeration",
+          "description": "选择具体类型",
+          "enumOptions": [
+            {
+              "title": "巨乳 (165,810部)",
+              "value": "https://missav.ai/dm112/cn/genres/%E5%B7%A8%E4%B9%B3"
+            },
+            {
+              "title": "苗条 (34,968部)",
+              "value": "https://missav.ai/dm34/cn/genres/%E8%8B%97%E6%9D%A1"
+            },
+            {
+              "title": "美乳 (33,527部)",
+              "value": "https://missav.ai/dm33/cn/genres/%E7%BE%8E%E4%B9%B3"
+            },
+            {
+              "title": "D罩杯 (79部)",
+              "value": "https://missav.ai/cn/genres/D%E7%BD%A9%E6%9D%AF"
+            },
+            {
+              "title": "背部 (73部)",
+              "value": "https://missav.ai/dm355/cn/genres/%E8%83%8C%E9%83%A8"
+            },
+            {
+              "title": "美丽的屁股 (60部)",
+              "value": "https://missav.ai/cn/genres/%E7%BE%8E%E4%B8%BD%E7%9A%84%E5%B1%81%E8%82%A1"
+            },
+            {
+              "title": "E罩杯以上的Judai（青少年） (55部)",
+              "value": "https://missav.ai/cn/genres/E%E7%BD%A9%E6%9D%AF%E4%BB%A5%E4%B8%8A%E7%9A%84Judai%EF%BC%88%E9%9D%92%E5%B0%91%E5%B9%B4%EF%BC%89"
+            },
+            {
+              "title": "甜屁股 (54部)",
+              "value": "https://missav.ai/cn/genres/%E7%94%9C%E5%B1%81%E8%82%A1"
+            },
+            {
+              "title": "美尻 (46部)",
+              "value": "https://missav.ai/cn/genres/%E7%BE%8E%E5%B0%BB"
+            },
+            {
+              "title": "性感的腿 (42部)",
+              "value": "https://missav.ai/cn/genres/%E6%80%A7%E6%84%9F%E7%9A%84%E8%85%BF"
+            },
+            {
+              "title": "大乳房 (31部)",
+              "value": "https://missav.ai/cn/genres/%E5%A4%A7%E4%B9%B3%E6%88%BF"
+            },
+            {
+              "title": "白皙的皮肤 (16部)",
+              "value": "https://missav.ai/cn/genres/%E7%99%BD%E7%9A%99%E7%9A%84%E7%9A%AE%E8%82%A4"
+            },
+            {
+              "title": "小乳房 (16部)",
+              "value": "https://missav.ai/cn/genres/%E5%B0%8F%E4%B9%B3%E6%88%BF"
+            },
+            {
+              "title": "皮肤黑 (44部)",
+              "value": "https://missav.ai/cn/genres/%E7%9A%AE%E8%82%A4%E9%BB%91"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "occupations",
+      "title": "职业角色类",
+      "description": "职业角色 - 8个类型，372部影片",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择类型",
+          "type": "enumeration",
+          "description": "选择具体类型",
+          "enumOptions": [
+            {
+              "title": "接待员 (97部)",
+              "value": "https://missav.ai/cn/genres/%E6%8E%A5%E5%BE%85%E5%91%98"
+            },
+            {
+              "title": "女导游 (92部)",
+              "value": "https://missav.ai/dm2/cn/genres/%E5%A5%B3%E5%AF%BC%E6%B8%B8"
+            },
+            {
+              "title": "啦啦队 (69部)",
+              "value": "https://missav.ai/cn/genres/%E5%95%A6%E5%95%A6%E9%98%9F"
+            },
+            {
+              "title": "空中小姐 CA (50部)",
+              "value": "https://missav.ai/cn/genres/%E7%A9%BA%E4%B8%AD%E5%B0%8F%E5%A7%90%20CA"
+            },
+            {
+              "title": "台湾模特儿 (20部)",
+              "value": "https://missav.ai/cn/genres/%E5%8F%B0%E6%B9%BE%E6%A8%A1%E7%89%B9%E5%84%BF"
+            },
+            {
+              "title": "迷你裙女警 (20部)",
+              "value": "https://missav.ai/dm1/cn/genres/%E8%BF%B7%E4%BD%A0%E8%A3%99%E5%A5%B3%E8%AD%A6"
+            },
+            {
+              "title": "色情明星 (14部)",
+              "value": "https://missav.ai/cn/genres/%E8%89%B2%E6%83%85%E6%98%8E%E6%98%9F"
+            },
+            {
+              "title": "演员 (10部)",
+              "value": "https://missav.ai/cn/genres/%E6%BC%94%E5%91%98"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "filming",
+      "title": "拍摄方式类",
+      "description": "拍摄方式 - 6个类型，78,894部影片",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择类型",
+          "type": "enumeration",
+          "description": "选择具体类型",
+          "enumOptions": [
+            {
+              "title": "自拍 (39,847部)",
+              "value": "https://missav.ai/dm39/cn/genres/%E8%87%AA%E6%8B%8D"
+            },
+            {
+              "title": "偷拍 (38,924部)",
+              "value": "https://missav.ai/dm38/cn/genres/%E5%81%B7%E6%8B%8D"
+            },
+            {
+              "title": "第一次拍摄 (48部)",
+              "value": "https://missav.ai/cn/genres/%E7%AC%AC%E4%B8%80%E6%AC%A1%E6%8B%8D%E6%91%84"
+            },
+            {
+              "title": "主观性 (16部)",
+              "value": "https://missav.ai/cn/genres/%E4%B8%BB%E8%A7%82%E6%80%A7"
+            },
+            {
+              "title": "记录 (15部)",
+              "value": "https://missav.ai/cn/genres/%E8%AE%B0%E5%BD%95"
+            },
+            {
+              "title": "按摩 (15部)",
+              "value": "https://missav.ai/dm6/cn/genres/%E6%8C%89%E6%91%A9"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "durationCollections",
+      "title": "时长合集类",
+      "description": "时长与合集 - 3个类型，73,839部影片",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择类型",
+          "type": "enumeration",
+          "description": "选择具体类型",
+          "enumOptions": [
+            {
+              "title": "4小时以上 (37,685部)",
+              "value": "https://missav.ai/dm37/cn/genres/4%E5%B0%8F%E6%97%B6%E4%BB%A5%E4%B8%8A"
+            },
+            {
+              "title": "合集 (36,142部)",
+              "value": "https://missav.ai/dm36/cn/genres/%E5%90%88%E9%9B%86"
+            },
+            {
+              "title": "超过工作时间 4 小时 (12部)",
+              "value": "https://missav.ai/cn/genres/%E8%B6%85%E8%BF%87%E5%B7%A5%E4%BD%9C%E6%97%B6%E9%97%B4%204%20%E5%B0%8F%E6%97%B6"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "styling",
+      "title": "服装造型类",
+      "description": "服装与造型 - 13个类型，657部影片",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择类型",
+          "type": "enumeration",
+          "description": "选择具体类型",
+          "enumOptions": [
+            {
+              "title": "裙子单声道 (75部)",
+              "value": "https://missav.ai/cn/genres/%E8%A3%99%E5%AD%90%E5%8D%95%E5%A3%B0%E9%81%93"
+            },
+            {
+              "title": "浴衣 (72部)",
+              "value": "https://missav.ai/dm1/cn/genres/%E6%B5%B4%E8%A1%A3"
+            },
+            {
+              "title": "中长发 (69部)",
+              "value": "https://missav.ai/dm1/cn/genres/%E4%B8%AD%E9%95%BF%E5%8F%91"
+            },
+            {
+              "title": "连裤袜的事 (67部)",
+              "value": "https://missav.ai/cn/genres/%E8%BF%9E%E8%A3%A4%E8%A2%9C%E7%9A%84%E4%BA%8B"
+            },
+            {
+              "title": "面具 (85部)",
+              "value": "https://missav.ai/cn/genres/%E9%9D%A2%E5%85%B7"
+            },
+            {
+              "title": "靴子 (44部)",
+              "value": "https://missav.ai/cn/genres/%E9%9D%B4%E5%AD%90"
+            },
+            {
+              "title": "卷发 (37部)",
+              "value": "https://missav.ai/cn/genres/%E5%8D%B7%E5%8F%91"
+            },
+            {
+              "title": "高跟鞋 (36部)",
+              "value": "https://missav.ai/cn/genres/%E9%AB%98%E8%B7%9F%E9%9E%8B"
+            },
+            {
+              "title": "围裙 (31部)",
+              "value": "https://missav.ai/dm25/cn/genres/%E5%9B%B4%E8%A3%99"
+            },
+            {
+              "title": "金发 (51部)",
+              "value": "https://missav.ai/cn/genres/%E9%87%91%E5%8F%91"
+            },
+            {
+              "title": "啡发 (76部)",
+              "value": "https://missav.ai/cn/genres/%E5%95%A1%E5%8F%91"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "specialTopics",
+      "title": "特殊题材类",
+      "description": "特殊题材 - 25个类型，901部影片",
+      "requiresWebView": false,
+      "functionName": "loadPage",
+      "cacheDuration": 1800,
+      "params": [
+        {
+          "name": "url",
+          "title": "选择类型",
+          "type": "enumeration",
+          "description": "选择具体类型",
+          "enumOptions": [
+            {
+              "title": "SF (95部)",
+              "value": "https://missav.ai/cn/genres/SF"
+            },
+            {
+              "title": "洛丽塔 (83部)",
+              "value": "https://missav.ai/cn/genres/%E6%B4%9B%E4%B8%BD%E5%A1%94"
+            },
+            {
+              "title": "御宅 (82部)",
+              "value": "https://missav.ai/cn/genres/%E5%BE%A1%E5%AE%85"
+            },
+            {
+              "title": "魔法少女 (75部)",
+              "value": "https://missav.ai/cn/genres/%E9%AD%94%E6%B3%95%E5%B0%91%E5%A5%B3"
+            },
+            {
+              "title": "游戏现实版 (39部)",
+              "value": "https://missav.ai/cn/genres/%E6%B8%B8%E6%88%8F%E7%8E%B0%E5%AE%9E%E7%89%88"
+            },
+            {
+              "title": "3D (38部)",
+              "value": "https://missav.ai/dm24/cn/genres/3D"
+            },
+            {
+              "title": "AI生成的作品 (37部)",
+              "value": "https://missav.ai/cn/genres/AI%E7%94%9F%E6%88%90%E7%9A%84%E4%BD%9C%E5%93%81"
+            },
+            {
+              "title": "动漫人物 (35部)",
+              "value": "https://missav.ai/cn/genres/%E5%8A%A8%E6%BC%AB%E4%BA%BA%E7%89%A9"
+            },
+            {
+              "title": "虚拟现实 (35部)",
+              "value": "https://missav.ai/cn/genres/%E8%99%9A%E6%8B%9F%E7%8E%B0%E5%AE%9E"
+            },
+            {
+              "title": "动画 (14部)",
+              "value": "https://missav.ai/cn/genres/%E5%8A%A8%E7%94%BB"
+            },
+            {
+              "title": "偶像 (13部)",
+              "value": "https://missav.ai/cn/genres/%E5%81%B6%E5%83%8F"
+            },
+            {
+              "title": "透过偶像 (32部)",
+              "value": "https://missav.ai/cn/genres/%E9%80%8F%E8%BF%87%E5%81%B6%E5%83%8F"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "排序",
+          "type": "enumeration",
+          "description": "排序方式",
+          "value": "released_at",
+          "enumOptions": [
+            {
+              "title": "发行日期",
+              "value": "released_at"
+            },
+            {
+              "title": "最近更新",
+              "value": "published_at"
+            },
+            {
+              "title": "收藏数",
+              "value": "saved"
+            },
+            {
+              "title": "今日浏览数",
+              "value": "today_views"
+            },
+            {
+              "title": "本周浏览数",
+              "value": "weekly_views"
+            },
+            {
+              "title": "本月浏览数",
+              "value": "monthly_views"
+            },
+            {
+              "title": "总浏览数",
+              "value": "views"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page",
+          "description": "页码",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "id": "loadResource",
+      "title": "加载播放资源",
+      "description": "按需解析 MissAV 页面中的播放地址",
+      "functionName": "loadResource",
+      "type": "stream",
+      "cacheDuration": 0,
+      "requiresWebView": false,
+      "params": []
+    }
   ],
-  search: {
-    title: "搜索影片",
-    functionName: "searchVideos",
-    params: [
-      { name: "keyword", title: "关键词", type: "input", value: "" },
+  "search": {
+    "title": "搜索影片",
+    "functionName": "searchVideos",
+    "params": [
       {
-        name: "sort_by",
-        title: "排序",
-        type: "enumeration",
-        value: "released_at",
-        enumOptions: [
-          { title: "发行日期", value: "released_at" },
-          { title: "最近更新", value: "published_at" },
-          { title: "收藏数", value: "saved" },
-          { title: "今日浏览数", value: "today_views" },
-          { title: "本周浏览数", value: "weekly_views" },
-          { title: "本月浏览数", value: "monthly_views" },
-          { title: "总浏览数", value: "views" },
-        ],
+        "name": "keyword",
+        "title": "搜索关键词",
+        "type": "input",
+        "description": "输入搜索关键词（演员名、番号、标题等）",
+        "value": ""
       },
-      { name: "page", title: "页码", type: "page" },
-    ],
-  },
+      {
+        "name": "sort_by",
+        "title": "排序",
+        "type": "enumeration",
+        "description": "排序方式",
+        "value": "released_at",
+        "enumOptions": [
+          {
+            "title": "发行日期",
+            "value": "released_at"
+          },
+          {
+            "title": "最近更新",
+            "value": "published_at"
+          },
+          {
+            "title": "收藏数",
+            "value": "saved"
+          },
+          {
+            "title": "今日浏览数",
+            "value": "today_views"
+          },
+          {
+            "title": "本周浏览数",
+            "value": "weekly_views"
+          },
+          {
+            "title": "本月浏览数",
+            "value": "monthly_views"
+          },
+          {
+            "title": "总浏览数",
+            "value": "views"
+          }
+        ]
+      },
+      {
+        "name": "page",
+        "title": "页码",
+        "type": "page",
+        "description": "页码",
+        "value": "1"
+      }
+    ]
+  }
 };
 
-var MISSAV_BASE_URL = "https://missav.ai";
-var MISSAV_USER_AGENT =
-  "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1";
-
-function cleanText(value) {
-  return String(value == null ? "" : value)
-    .replace(/\u00a0/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function decodeHtml(value) {
-  return String(value == null ? "" : value)
-    .replace(/&amp;/g, "&")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&#x2f;/gi, "/")
-    .replace(/&#x2F;/g, "/");
-}
-
-function missavHeaders(referer) {
-  return {
+const MISSAV_BASE_URL = "https://missav.ai";
+const MISSAV_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15";
+const MISSAV_HEADERS = {
     "User-Agent": MISSAV_USER_AGENT,
-    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.7",
-    Referer: referer || MISSAV_BASE_URL + "/cn",
-  };
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache",
+    "Referer": MISSAV_BASE_URL + "/"
+};
+
+function appendQuery(url, params) {
+    const entries = Object.entries(params || {}).filter((entry) => {
+        const value = entry[1];
+        return value !== undefined && value !== null && value !== "";
+    });
+    if (!entries.length) return url;
+    const separator = url.includes("?") ? "&" : "?";
+    return url + separator + entries.map((entry) => encodeURIComponent(entry[0]) + "=" + encodeURIComponent(entry[1])).join("&");
 }
 
-function isBlockedPage(html) {
-  return /Just a moment|Attention Required|cf-error-details|Cloudflare Ray ID|challenge-platform/i.test(
-    html || ""
-  );
+function normalizeMissavUrl(value) {
+    let url = String(value || "").trim().replace(/&amp;/g, "&");
+    if (url.startsWith("//")) url = "https:" + url;
+    if (url.startsWith("/")) url = MISSAV_BASE_URL + url;
+    if (!/^https?:\/\/missav\.ai(?:\/|$)/i.test(url)) return "";
+    return url.replace(/[?#].*$/, "").replace(/\/+$/, "");
 }
 
-function decodeUrlPart(value) {
-  try {
-    return decodeURIComponent(value);
-  } catch (_) {
-    return value;
-  }
+function extractVideoId(url) {
+    const pathValue = normalizeMissavUrl(url).split("/").pop() || "";
+    try {
+        return decodeURIComponent(pathValue).replace(/-uncensored-leak$/i, "");
+    } catch (_) {
+        return pathValue.replace(/-uncensored-leak$/i, "");
+    }
 }
 
-function normalizeUrl(value) {
-  var url = decodeHtml(cleanText(value));
-  if (!url || /^javascript:/i.test(url)) return "";
-  if (url.indexOf("//") === 0) url = "https:" + url;
-  if (url.charAt(0) === "/") url = MISSAV_BASE_URL + url;
-  if (!/^https?:\/\//i.test(url)) return "";
-  return url.split("#")[0];
+function isVideoLink(url) {
+    const normalized = normalizeMissavUrl(url);
+    const pathValue = normalized.replace(/^https?:\/\/missav\.ai/i, "");
+    const match = pathValue.match(/^\/(?:dm\d+\/)?cn\/([^/]+)$/i);
+    if (!match) return false;
+    return !/^(new|release|search|today-hot|weekly-hot|monthly-hot|chinese-subtitle|uncensored-leak|fc2|heyzo|tokyohot|genres|actress|actor|star|maker|label|vr)$/i.test(match[1]);
+}
+async function searchVideos(params = {}) {
+    const keyword = params.keyword ? params.keyword.trim() : '';
+    const page = parseInt(params.page) || 1;
+    const sortBy = params.sort_by;
+
+    if (!keyword) {
+        return [];
+    }
+
+    const isVideoCode = /^[A-Za-z]+-?\d+$/i.test(keyword);
+
+    const encodedKeyword = encodeURIComponent(keyword);
+    let url = `https://missav.ai/cn/search/${encodedKeyword}`;
+    let hasParams = false;
+
+    if (sortBy) {
+        url += `?sort=${sortBy}`;
+        hasParams = true;
+    }
+
+    if (page > 1) {
+        url += hasParams ? `&page=${page}` : `?page=${page}`;
+    }
+
+    const searchResults = await fetchVideoList(url);
+
+    if (isVideoCode && searchResults.length > 0) {
+        const normalizedKeyword = keyword.toUpperCase().replace(/-/g, '');
+        const filteredResults = searchResults.filter(video => {
+            const videoCode = extractVideoCodeFromTitle(video.title) || extractVideoCodeFromDescription(video.description);
+            if (videoCode) {
+                const normalizedVideoCode = videoCode.toUpperCase().replace(/-/g, '');
+                return normalizedVideoCode === normalizedKeyword;
+            }
+            return false;
+        });
+
+        return filteredResults;
+    }
+
+    return searchResults;
 }
 
-function isMissavHost(url) {
-  return /^https?:\/\/(?:www\.)?missav\.ai(?:\/|$)/i.test(String(url || ""));
+async function loadTodayHot(params = {}) {
+    const page = parseInt(params.page) || 1;
+
+    let url = "https://missav.ai/dm291/cn/today-hot?sort=today_views";
+
+    if (page > 1) {
+        url += `&page=${page}`;
+    }
+
+    return await fetchVideoList(url);
 }
 
-function urlPath(url) {
-  var match = String(url || "").match(/^https?:\/\/[^/]+(\/[^?#]*)/i);
-  return match ? match[1] : "";
+async function loadWeeklyHot(params = {}) {
+    const page = parseInt(params.page) || 1;
+
+    let url = "https://missav.ai/dm169/cn/weekly-hot?sort=weekly_views";
+
+    if (page > 1) {
+        url += `&page=${page}`;
+    }
+
+    return await fetchVideoList(url);
 }
 
-function isVideoUrl(url) {
-  if (!isMissavHost(url)) return false;
-  var path = urlPath(url).replace(/\/+$/, "");
-  // 当前站点有时会把地区路由前加上 dm 数字前缀；影片链接本身仍是
-  // /cn/<slug>，这里两种形式都接受，但不把 /cn 等导航链接当影片。
-  var match = path.match(/^\/(?:dm\d+\/)?[a-z]{2,3}\/([^/]+)$/i);
-  if (!match) return false;
-  var slug = decodeUrlPart(match[1]);
-  if (
-    /^(new|release|search|today-hot|weekly-hot|monthly-hot|chinese-subtitle|uncensored-leak|fc2|heyzo|tokyohot|genres|actress|actor|star|maker|label|vr|dm\d+)$/i.test(
-      slug
-    )
-  ) {
-    return false;
-  }
-  return /^[a-z0-9][a-z0-9-]*$/i.test(slug);
+async function loadMonthlyHot(params = {}) {
+    const page = parseInt(params.page) || 1;
+
+    let url = "https://missav.ai/dm257/cn/monthly-hot?sort=monthly_views";
+
+    if (page > 1) {
+        url += `&page=${page}`;
+    }
+
+    return await fetchVideoList(url);
 }
 
-function normalizeVideoUrl(value) {
-  var url = normalizeUrl(value);
-  return isVideoUrl(url) ? url : "";
+async function loadNewRelease(params = {}) {
+    const page = parseInt(params.page) || 1;
+
+    let url = "https://missav.ai/dm588/cn/release?sort=released_at";
+
+    if (page > 1) {
+        url += `&page=${page}`;
+    }
+
+    return await fetchVideoList(url);
 }
 
-function normalizeListingUrl(value) {
-  var url = normalizeUrl(value);
-  if (!url || !isMissavHost(url)) return MISSAV_BASE_URL + "/cn/new";
-  var path = urlPath(url);
-  if (!/^\/(?:dm\d+\/)?[a-z]{2,3}(?:\/|$)/i.test(path)) return MISSAV_BASE_URL + "/cn/new";
-  return url;
+async function loadChineseSubtitle(params = {}) {
+    const page = parseInt(params.page) || 1;
+    const sortBy = params.sort_by || "released_at";
+
+    let url = "https://missav.ai/dm265/cn/chinese-subtitle";
+    let hasParams = false;
+
+    if (sortBy) {
+        url += `?sort=${sortBy}`;
+        hasParams = true;
+    }
+
+    if (page > 1) {
+        url += hasParams ? `&page=${page}` : `?page=${page}`;
+    }
+
+    return await fetchVideoList(url);
 }
 
-function pageParams(params, defaultSort) {
-  params = params || {};
-  var result = {};
-  var sort = cleanText(params.sort_by || defaultSort || "");
-  var page = Math.max(1, parseInt(params.page, 10) || 1);
-  if (sort) result.sort = sort;
-  if (page > 1) result.page = String(page);
-  return result;
+async function loadPage(params = {}) {
+    const baseUrl = params.url || MISSAV_BASE_URL + "/cn/new";
+    const page = parseInt(params.page) || 1;
+    const sortBy = params.sort_by;
+
+    const url = appendQuery(baseUrl, {
+        sort: sortBy,
+        page: page > 1 ? page : undefined
+    });
+
+    return await fetchVideoList(url);
 }
 
-async function requestHtml(url, params) {
-  var response = await Widget.http.get(url, {
-    headers: missavHeaders(url),
-    params: params || {},
-    allow_redirects: true,
-  });
-  var status = Number(response && (response.statusCode || response.status) || 200);
-  var html = String(response && response.data || "");
-  if (status >= 400) throw new Error("MissAV 请求失败：HTTP " + status);
-  if (!html || isBlockedPage(html)) {
-    throw new Error("MissAV 被站点防护拦截，请稍后重试或更换网络");
-  }
-  return html;
-}
-
-async function fetchListing(url, params) {
-  try {
-    var html = await requestHtml(url, params);
-    var items = parseVideoList(html);
+async function fetchVideoList(url) {
+    const response = await Widget.http.get(url, { headers: MISSAV_HEADERS, allow_redirects: true });
+    const status = Number(response && (response.statusCode || response.status) || 200);
+    const html = String(response && response.data || "");
+    if (status >= 400) throw new Error("MissAV 请求失败: HTTP " + status);
+    if (!html || /Just a moment|Attention Required|cf-error-details|Cloudflare Ray ID/i.test(html)) {
+        throw new Error("MissAV 页面被站点防护拦截");
+    }
+    const items = parseVideoList(html);
     if (!items.length) throw new Error("MissAV 页面没有解析到影片条目");
     return items;
-  } catch (error) {
-    console.error("[MissAV] 列表请求失败:", error.message || error);
-    throw error;
-  }
 }
 
-async function searchVideos(params) {
-  params = params || {};
-  var keyword = cleanText(params.keyword);
-  if (!keyword) return [];
-  var url = MISSAV_BASE_URL + "/cn/search/" + encodeURIComponent(keyword);
-  return fetchListing(url, pageParams(params, "released_at"));
+function createPlaceholderItem(message = "暂时无法加载 MissAV 内容") {
+    const link = MISSAV_BASE_URL + "/cn";
+    return {
+        id: link,
+        type: "url",
+        title: "⚠️ " + message,
+        coverUrl: "https://via.placeholder.com/400x225/FF6B6B/FFFFFF?text=MissAV",
+        backdropPath: "https://via.placeholder.com/400x225/FF6B6B/FFFFFF?text=MissAV",
+        mediaType: "movie",
+        duration: 0,
+        durationText: "访问受限",
+        link: link,
+        description: message,
+        playerType: "system"
+    };
 }
-
-async function loadRecent(params) {
-  return fetchListing(MISSAV_BASE_URL + "/cn/new", pageParams(params, "published_at"));
-}
-
-async function loadRelease(params) {
-  return fetchListing(MISSAV_BASE_URL + "/cn/release", pageParams(params, "released_at"));
-}
-
-async function loadTodayHot(params) {
-  return fetchListing(MISSAV_BASE_URL + "/cn/today-hot", pageParams(params, "today_views"));
-}
-
-async function loadWeeklyHot(params) {
-  return fetchListing(MISSAV_BASE_URL + "/cn/weekly-hot", pageParams(params, "weekly_views"));
-}
-
-async function loadMonthlyHot(params) {
-  return fetchListing(MISSAV_BASE_URL + "/cn/monthly-hot", pageParams(params, "monthly_views"));
-}
-
-async function loadChineseSubtitle(params) {
-  return fetchListing(MISSAV_BASE_URL + "/cn/chinese-subtitle", pageParams(params, "released_at"));
-}
-
-async function loadCategory(params) {
-  params = params || {};
-  var url = params.genreId || params.peopleId || params.url || MISSAV_BASE_URL + "/cn/new";
-  return fetchListing(normalizeListingUrl(url), pageParams(params, "released_at"));
-}
-
-function imageValue($image) {
-  if (!$image || !$image.length) return "";
-  var value =
-    $image.attr("data-src") ||
-    $image.attr("data-original") ||
-    $image.attr("data-lazy-src") ||
-    $image.attr("src") ||
-    "";
-  return decodeHtml(cleanText(value));
-}
-
-function videoCodeFromUrl(url) {
-  var path = urlPath(url);
-  var value = path.split("/").pop() || "";
-  return decodeUrlPart(value)
-    .replace(/-uncensored-leak$/i, "")
-    .toUpperCase();
-}
-
 function parseVideoList(html) {
-  var $ = Widget.html.load(html);
-  var items = [];
-  var seen = {};
-
-  $("a[href]").each(function (_, element) {
-    var $link = $(element);
-    var link = normalizeVideoUrl($link.attr("href"));
-    if (!link || seen[link]) return;
-
-    var $image = $link.find("img").first();
-    if (!$image.length) $image = $link.closest("div").find("img").first();
-    if (!$image.length && !$link.attr("title")) return;
-
-    var title = cleanText(
-      $link.attr("title") ||
-        $image.attr("alt") ||
-        $link.find("[class*='title']").first().text() ||
-        $link.text()
-    );
-    var code = videoCodeFromUrl(link);
-    if (!title) title = code;
-    if (!title) return;
-
-    var cover = imageValue($image);
-    var duration = cleanText(
-      $link.find(".duration").first().text() ||
-        $link.closest("div").find(".duration").first().text()
-    );
-    seen[link] = true;
-    items.push({
-      id: link,
-      type: "url",
-      title: title,
-      coverUrl: cover || undefined,
-      posterPath: cover || undefined,
-      backdropPath: cover || "https://fourhoi.com/" + code + "/cover-t.jpg",
-      mediaType: "movie",
-      durationText: duration || undefined,
-      description: "番号: " + code,
-      link: link,
-      playerType: "system",
+    const $ = Widget.html.load(html);
+    const videos = [];
+    const seen = new Set();
+    $("a[href]").each((index, element) => {
+        const $link = $(element);
+        const fullVideoUrl = normalizeMissavUrl($link.attr("href"));
+        if (!fullVideoUrl || !isVideoLink(fullVideoUrl) || seen.has(fullVideoUrl)) return;
+        const $image = $link.find("img").first().length ? $link.find("img").first() : $link.closest("div").find("img").first();
+        if (!$image.length && !$link.attr("title")) return;
+        let imgSrc = String($image.attr("data-src") || $image.attr("data-original") || $image.attr("src") || "").trim();
+        if (imgSrc.startsWith("//")) imgSrc = "https:" + imgSrc;
+        if (imgSrc.startsWith("/")) imgSrc = MISSAV_BASE_URL + imgSrc;
+        const videoId = extractVideoId(fullVideoUrl);
+        let videoCode = videoId.toUpperCase().replace(/-CHINESE-SUBTITLE$/i, "").replace(/-UNCENSORED-LEAK$/i, "");
+        let title = String($link.attr("title") || $image.attr("alt") || $link.find("[class*=\"title\"]").first().text() || $link.text() || "").trim();
+        if (!title) title = videoCode;
+        if (title && !/[A-Z]+-?\d+/i.test(title)) title = videoCode + " " + title;
+        const durationText = String($link.find(".duration").first().text() || $link.closest("div").find(".duration").first().text() || "").trim();
+        seen.add(fullVideoUrl);
+        videos.push({
+            id: fullVideoUrl,
+            type: "url",
+            title: title,
+            coverUrl: imgSrc || undefined,
+            posterPath: imgSrc || undefined,
+            backdropPath: imgSrc || ("https://fourhoi.com/" + videoId + "/cover-t.jpg"),
+            mediaType: "movie",
+            durationText: durationText || undefined,
+            description: "番号: " + videoCode,
+            link: fullVideoUrl,
+            playerType: "system"
+        });
     });
-  });
-  return items;
+    return videos;
+}
+function extractVideoCodeFromTitle(title) {
+    if (!title) return null;
+    const match = title.match(/^([A-Za-z]+-?\d+)/i);
+    return match ? match[1] : null;
 }
 
-function sourceQuality(source) {
-  var match = String(source && source.label || "").match(/(\d{3,4})/);
-  return match ? parseInt(match[1], 10) : 0;
+function extractVideoCodeFromDescription(description) {
+    if (!description) return null;
+    const match = description.match(/\u756a\u53f7:\s*([A-Za-z]+-?\d+)/i);
+    return match ? match[1] : null;
 }
 
-function extractMediaSources($, html) {
-  var sources = [];
-  var seen = {};
+function normalizePlaybackUrl(value) {
+    const url = String(value || "").trim().replace(/\\\//g, "/");
+    return /^https?:\/\//i.test(url) && /\.(?:m3u8|mp4)(?:[?#]|$)/i.test(url) ? url : "";
+}
 
-  function addSource(url, label, type) {
-    var value = decodeHtml(cleanText(url)).replace(/\\\//g, "/");
-    if (!/^https?:\/\//i.test(value) || !/\.(?:m3u8|mp4)(?:[?#]|$)/i.test(value) || seen[value]) return;
-    seen[value] = true;
-    var text = cleanText(label);
-    var quality = text.match(/(\d{3,4})/);
-    sources.push({
-      url: value,
-      label: quality ? quality[1] + "p" : text || "默认清晰度",
-      type: cleanText(type),
+function extractPlaybackUrls($, html) {
+    const urls = [];
+    const seen = new Set();
+    const add = (value) => {
+        const url = normalizePlaybackUrl(value);
+        if (url && !seen.has(url)) { seen.add(url); urls.push(url); }
+    };
+    $("video source[src], source[src], video[src]").each((_, element) => add($(element).attr("src")));
+    const rawHtml = String(html || "").replace(/\\\//g, "/");
+    const matches = rawHtml.match(/https?:\/\/[^"'\s<>]+\.(?:m3u8|mp4)(?:\?[^"'\s<>]*)?/gi) || [];
+    matches.forEach(add);
+    $("script").each((_, element) => {
+        const script = String($(element).html() || "").replace(/\\\//g, "/");
+        const uuid = script.match(/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i);
+        if (uuid && /(?:surrit|nineyu)\.com|playlist\.m3u8/i.test(script)) add("https://surrit.com/" + uuid[0] + "/playlist.m3u8");
     });
-  }
-
-  $("video source[src], source[src]").each(function (_, element) {
-    var $source = $(element);
-    addSource(
-      $source.attr("src"),
-      $source.attr("size") || $source.attr("label") || $source.attr("res"),
-      $source.attr("type")
-    );
-  });
-  $("video[src]").each(function (_, element) {
-    var $video = $(element);
-    addSource($video.attr("src"), $video.attr("data-quality"), $video.attr("type"));
-  });
-
-  var rawHtml = String(html || "");
-  var escapedHtml = rawHtml.replace(/\\\//g, "/");
-  var matches = escapedHtml.match(
-    /https?:\/\/[^"'\s<>]+\.(?:m3u8|mp4)(?:\?[^"'\s<>]*)?/gi
-  ) || [];
-  for (var i = 0; i < matches.length && i < 30; i++) {
-    addSource(
-      matches[i].replace(/\\\//g, "/"),
-      "默认清晰度",
-      /\.m3u8(?:\?|$)/i.test(matches[i]) ? "application/x-mpegURL" : "video/mp4"
-    );
-  }
-
-  // MissAV 当前播放器通常把 surrit/nineyu 的 UUID 放在脚本变量里，
-  // 不一定直接渲染 <source>。兼容明文/转义 URL，以及旧版 seek 变量。
-  if (!sources.length) {
-    var playlistMatch = escapedHtml.match(
-      /https?:\/\/(?:surrit|nineyu)\.com\/[^"'\s<>]+\/playlist\.m3u8(?:\?[^"'\s<>]*)?/i
-    );
-    if (playlistMatch) {
-      addSource(playlistMatch[0], "默认清晰度", "application/x-mpegURL");
-    }
-  }
-  if (!sources.length) {
-    $("script").each(function (_, element) {
-      if (sources.length) return;
-      var script = String($(element).html() || "").replace(/\\\//g, "/");
-      if (!/(?:playlist\.m3u8|(?:^|[^a-z])seek(?:[^a-z]|$))/i.test(script)) return;
-      var uuid = script.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
-      if (uuid) addSource("https://surrit.com/" + uuid[0] + "/playlist.m3u8", "默认清晰度", "application/x-mpegURL");
-    });
-  }
-  sources.sort(function (a, b) {
-    return sourceQuality(b) - sourceQuality(a);
-  });
-  return sources;
+    return urls;
 }
 
-function firstMeta($, selector, attribute) {
-  var value = $(selector).first().attr(attribute || "content");
-  return cleanText(value);
+function parseDetailItem(link, html) {
+    const $ = Widget.html.load(html);
+    const videoId = extractVideoId(link);
+    const videoCode = videoId.toUpperCase().replace(/-CHINESE-SUBTITLE$/i, "");
+    const title = $("meta[property='og:title']").attr("content") || $("h1").first().text().trim() || $("title").text().replace(/\s*-\s*MissAV.*$/i, "").trim() || videoCode;
+    const description = $("meta[property='og:description']").attr("content") || $("meta[name='description']").attr("content") || ("番号: " + videoCode);
+    const cover = $("meta[property='og:image']").attr("content") || $("meta[name='twitter:image']").attr("content") || $("video").first().attr("poster") || "https://fourhoi.com/" + videoId + "/cover-t.jpg";
+    const sources = extractPlaybackUrls($, html);
+    const item = {
+        id: link,
+        type: "url",
+        title: title.trim(),
+        description: description.trim(),
+        coverUrl: cover,
+        posterPath: cover,
+        backdropPath: cover,
+        mediaType: "movie",
+        videoUrl: sources[0] || undefined,
+        link: link,
+        playerType: "system"
+    };
+    const relatedItems = parseVideoList(html).filter((related) => related.link !== link).slice(0, 12);
+    if (relatedItems.length) item.relatedItems = relatedItems;
+    if (sources.length) item.customHeaders = { ...MISSAV_HEADERS, Referer: link };
+    return item;
 }
 
-function parseReleaseDate(text) {
-  var match = cleanText(text).match(/(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/);
-  if (!match) return "";
-  return match[1] + "-" + String(match[2]).padStart(2, "0") + "-" + String(match[3]).padStart(2, "0");
-}
-
-function parseDetailTags($) {
-  var result = [];
-  var seen = {};
-  $("a[href*='/genres/'], .video-details a[href*='/cn/genres/']").each(function (_, element) {
-    var $link = $(element);
-    var id = normalizeListingUrl($link.attr("href"));
-    var title = cleanText($link.text());
-    if (!title || !id || seen[id]) return;
-    seen[id] = true;
-    result.push({ id: id, title: title });
-  });
-  return result.slice(0, 30);
-}
-
-function parsePeople($) {
-  var result = [];
-  var seen = {};
-  $("a[href*='/actress/'], a[href*='/actor/'], a[href*='/star/']").each(function (_, element) {
-    var $link = $(element);
-    var id = normalizeListingUrl($link.attr("href"));
-    var title = cleanText($link.text());
-    if (!title || !id || seen[id]) return;
-    seen[id] = true;
-    result.push({ id: id, title: title, role: "演员" });
-  });
-  return result.slice(0, 20);
-}
-
-function parseDetail(link, html) {
-  var $ = Widget.html.load(html);
-  var code = videoCodeFromUrl(link);
-  var title =
-    firstMeta($, "meta[property='og:title']") ||
-    cleanText($("h1").first().text()) ||
-    cleanText($("title").first().text()).replace(/\s*-\s*MissAV.*$/i, "") ||
-    code;
-  var description =
-    firstMeta($, "meta[property='og:description']") ||
-    firstMeta($, "meta[name='description']") ||
-    cleanText($(".video-description, .description").first().text());
-  var cover =
-    firstMeta($, "meta[property='og:image']") ||
-    firstMeta($, "meta[name='twitter:image']") ||
-    cleanText($("video").first().attr("poster"));
-  var detailText = cleanText($("body").text());
-  var releaseDate = parseReleaseDate(detailText);
-  var sources = extractMediaSources($, html);
-  var item = {
-    id: link,
-    type: "url",
-    title: title,
-    description: description || "番号: " + code,
-    coverUrl: cover || undefined,
-    posterPath: cover || undefined,
-    backdropPath: cover || "https://fourhoi.com/" + code + "/cover-t.jpg",
-    mediaType: "movie",
-    releaseDate: releaseDate || undefined,
-    videoUrl: sources.length ? sources[0].url : undefined,
-    genreItems: parseDetailTags($),
-    peoples: parsePeople($),
-    link: link,
-    playerType: "system",
-  };
-  if (sources.length) {
-    item.customHeaders = missavHeaders(link);
-  }
-  return item;
+function fallbackDetail(link, message) {
+    const videoId = extractVideoId(link);
+    const videoCode = videoId.toUpperCase().replace(/-CHINESE-SUBTITLE$/i, "");
+    const cover = "https://fourhoi.com/" + videoId + "/cover-t.jpg";
+    return {
+        id: link,
+        type: "url",
+        title: videoCode,
+        description: (message ? message + "\n" : "") + "番号: " + videoCode,
+        coverUrl: cover,
+        posterPath: cover,
+        backdropPath: cover,
+        mediaType: "movie",
+        link: link,
+        playerType: "system"
+    };
 }
 
 async function loadDetail(link) {
-  var normalized = normalizeVideoUrl(link);
-  if (!normalized) return null;
-  try {
-    var html = await requestHtml(normalized, {});
-    return parseDetail(normalized, html);
-  } catch (error) {
-    console.error("[MissAV] 详情请求失败:", error.message || error);
-    throw error;
-  }
+    const normalized = normalizeMissavUrl(link);
+    if (!normalized || !isVideoLink(normalized)) return null;
+    try {
+        const html = await (async () => {
+            const response = await Widget.http.get(normalized, { headers: { ...MISSAV_HEADERS, Referer: normalized }, allow_redirects: true });
+            const status = Number(response && (response.statusCode || response.status) || 200);
+            const data = String(response && response.data || "");
+            if (status >= 400 || !data || /Just a moment|Attention Required|cf-error-details|Cloudflare Ray ID/i.test(data)) throw new Error("MissAV 页面被站点防护拦截");
+            return data;
+        })();
+        return parseDetailItem(normalized, html);
+    } catch (error) {
+        console.error("[MissAV] 详情请求失败:", error && error.message || error);
+        return fallbackDetail(normalized, "暂时无法读取详情");
+    }
 }
 
-async function loadResource(params) {
-  params = params || {};
-  var directUrl = cleanText(params.videoUrl);
-  if (directUrl && /^(?:https?:\/\/)/i.test(directUrl)) {
-    return [{
-      name: "默认清晰度",
-      description: "页面直链",
-      url: directUrl,
-      customHeaders: missavHeaders(params.link || MISSAV_BASE_URL + "/cn"),
-      playerType: "system",
-    }];
-  }
-
-  var link = normalizeVideoUrl(params.link || params.id);
-  if (!link) throw new Error("缺少 MissAV 播放页链接");
-  var html = await requestHtml(link, {});
-  var $ = Widget.html.load(html);
-  var sources = extractMediaSources($, html);
-  if (!sources.length) throw new Error("MissAV 页面没有找到可播放资源");
-  return sources.map(function (source) {
-    return {
-      name: source.label,
-      description: source.type || "视频",
-      url: source.url,
-      customHeaders: missavHeaders(link),
-      playerType: "system",
-    };
-  });
+async function loadResource(params = {}) {
+    const directUrl = normalizePlaybackUrl(params.videoUrl);
+    if (directUrl) return [{ name: "默认清晰度", description: "页面直链", url: directUrl, customHeaders: { ...MISSAV_HEADERS, Referer: params.link || MISSAV_BASE_URL + "/" }, playerType: "system" }];
+    const link = normalizeMissavUrl(params.link || params.id);
+    if (!link || !isVideoLink(link)) throw new Error("缺少 MissAV 播放页链接");
+    const response = await Widget.http.get(link, { headers: { ...MISSAV_HEADERS, Referer: link }, allow_redirects: true });
+    const html = String(response && response.data || "");
+    const $ = Widget.html.load(html);
+    const urls = extractPlaybackUrls($, html);
+    if (!urls.length) throw new Error("MissAV 页面没有找到可播放资源");
+    return urls.map((url, index) => ({ name: index === 0 ? "默认清晰度" : "备用线路 " + (index + 1), url, customHeaders: { ...MISSAV_HEADERS, Referer: link }, playerType: "system" }));
 }
