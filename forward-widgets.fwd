@@ -1,6 +1,6 @@
 {
   "title": "chai-j 视频模块聚合",
-  "description": "由 chai-j 维护的 10 个 Forward 自定义视频模块",
+  "description": "由 chai-j 维护的 11 个 Forward 自定义视频模块",
   "icon": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/icon.png",
   "widgets": [
     {
@@ -11,6 +11,15 @@
       "version": "3.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/missav.js"
+    },
+    {
+      "id": "chai.missav-1",
+      "title": "MissAV-1",
+      "description": "MissAV-1 测试：合并热门榜单并支持时间范围切换",
+      "requiredVersion": "0.0.1",
+      "version": "3.2.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/missav-1.js"
     },
     {
       "id": "chai.hanime1",
