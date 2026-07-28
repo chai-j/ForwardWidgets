@@ -1571,7 +1571,7 @@ function normalizeMissavUrl(value) {
     let url = String(value || "").trim().replace(/&amp;/g, "&");
     if (url.startsWith("//")) url = "https:" + url;
     if (url.startsWith("/")) url = MISSAV_BASE_URL + url;
-    if (!/^https?:\/\/missav\.ai(?:\/|$)/i.test(url)) return "";
+    if (!/^https?:\/\/(?:www\.)?missav\.ai(?:\/|$)/i.test(url)) return "";
     return url.replace(/[?#].*$/, "").replace(/\/+$/, "");
 }
 
@@ -1586,7 +1586,7 @@ function extractVideoId(url) {
 
 function isVideoLink(url) {
     const normalized = normalizeMissavUrl(url);
-    const pathValue = normalized.replace(/^https?:\/\/missav\.ai/i, "");
+    const pathValue = normalized.replace(/^https?:\/\/(?:www\.)?missav\.ai/i, "");
     const match = pathValue.match(/^\/(?:dm\d+\/)?cn\/([^/]+)$/i);
     if (!match) return false;
     return !/^(new|release|search|today-hot|weekly-hot|monthly-hot|chinese-subtitle|uncensored-leak|fc2|heyzo|tokyohot|genres|actress|actor|star|maker|label|vr)$/i.test(match[1]);
