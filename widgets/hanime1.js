@@ -1,634 +1,597 @@
-var WidgetMetadata = {
-    id: "hanime1_me",
-    title: "Hanime1",
-    description: "浏览、筛选和播放 Hanime1 视频",
-    author: "chai-j",
-    site: "https://hanime1.me",
-    version: "1.0.0",
-    requiredVersion: "0.0.2",
-    detailCacheDuration: 300,
-    search: {
-        title: "搜索影片",
-        functionName: "searchVideos",
-        params: [
-            {
-                name: "keyword",
-                title: "搜索关键词",
-                type: "input",
-                description: "输入标题、作者或标签",
-                value: ""
-            },
-            {
-                name: "sort_by",
-                title: "排序",
-                type: "enumeration",
-                description: "搜索结果排序方式",
-                value: "new_release",
-                enumOptions: [
-                    { title: "最新上市", value: "new_release" },
-                    { title: "最新上传", value: "latest_upload" },
-                    { title: "本日排行", value: "daily_rank" },
-                    { title: "本周排行", value: "weekly_rank" },
-                    { title: "本月排行", value: "monthly_rank" },
-                    { title: "观看次数", value: "views" },
-                    { title: "时长最长", value: "duration" },
-                    { title: "他们在看", value: "watching" }
-                ]
-            },
-            {
-                name: "page",
-                title: "页码",
-                type: "page",
-                description: "搜索结果页码",
-                value: "1"
-            }
-        ]
+WidgetMetadata = {
+  id: "chai.hanime1",
+  title: "Hanime1",
+  version: "2.0.0",
+  requiredVersion: "0.0.1",
+  description: "Hanime1 浏览、搜索、分类与多清晰度播放",
+  author: "chai-j",
+  site: "https://hanime1.me",
+  detailCacheDuration: 300,
+  modules: [
+    {
+      id: "browse",
+      title: "分类浏览",
+      functionName: "loadVideos",
+      cacheDuration: 900,
+      requiresWebView: false,
+      params: [
+        {
+          name: "genre",
+          title: "影片类型",
+          type: "enumeration",
+          value: "all",
+          enumOptions: [
+            { title: "全部", value: "all" },
+            { title: "里番", value: "hentai" },
+            { title: "泡面番", value: "short_anime" },
+            { title: "Motion Anime", value: "motion" },
+            { title: "3DCG", value: "3dcg" },
+            { title: "2.5D", value: "2_5d" },
+            { title: "2D 动画", value: "2d" },
+            { title: "AI 生成", value: "ai" },
+            { title: "MMD", value: "mmd" },
+            { title: "Cosplay", value: "cosplay" },
+          ],
+        },
+        {
+          name: "sort_by",
+          title: "排序",
+          type: "enumeration",
+          value: "new_release",
+          enumOptions: [
+            { title: "最新上市", value: "new_release" },
+            { title: "最新上传", value: "latest_upload" },
+            { title: "本日排行", value: "daily_rank" },
+            { title: "本周排行", value: "weekly_rank" },
+            { title: "本月排行", value: "monthly_rank" },
+            { title: "观看次数", value: "views" },
+            { title: "时长最长", value: "duration" },
+            { title: "他们在看", value: "watching" },
+          ],
+        },
+        { name: "page", title: "页码", type: "page" },
+      ],
     },
-    modules: [
+    {
+      id: "chineseSubtitles",
+      title: "中文字幕",
+      functionName: "loadChineseSubtitles",
+      cacheDuration: 900,
+      requiresWebView: false,
+      params: [
         {
-            id: "browse",
-            title: "分类浏览",
-            description: "按影片类型和排序方式浏览 Hanime1",
-            type: "video",
-            requiresWebView: false,
-            functionName: "loadVideos",
-            cacheDuration: 900,
-            params: [
-                {
-                    name: "genre",
-                    title: "影片类型",
-                    type: "enumeration",
-                    description: "选择影片类型",
-                    value: "all",
-                    enumOptions: [
-                        { title: "全部", value: "all" },
-                        { title: "里番", value: "hentai" },
-                        { title: "泡面番", value: "short_anime" },
-                        { title: "Motion Anime", value: "motion" },
-                        { title: "3DCG", value: "3dcg" },
-                        { title: "2.5D", value: "2_5d" },
-                        { title: "2D 动画", value: "2d" },
-                        { title: "AI 生成", value: "ai" },
-                        { title: "MMD", value: "mmd" },
-                        { title: "Cosplay", value: "cosplay" }
-                    ]
-                },
-                {
-                    name: "sort_by",
-                    title: "排序",
-                    type: "enumeration",
-                    description: "排序方式",
-                    value: "new_release",
-                    enumOptions: [
-                        { title: "最新上市", value: "new_release" },
-                        { title: "最新上传", value: "latest_upload" },
-                        { title: "本日排行", value: "daily_rank" },
-                        { title: "本周排行", value: "weekly_rank" },
-                        { title: "本月排行", value: "monthly_rank" },
-                        { title: "观看次数", value: "views" },
-                        { title: "时长最长", value: "duration" },
-                        { title: "他们在看", value: "watching" }
-                    ]
-                },
-                {
-                    name: "page",
-                    title: "页码",
-                    type: "page",
-                    description: "列表页码",
-                    value: "1"
-                }
-            ]
+          name: "sort_by",
+          title: "排序",
+          type: "enumeration",
+          value: "new_release",
+          enumOptions: [
+            { title: "最新上市", value: "new_release" },
+            { title: "最新上传", value: "latest_upload" },
+            { title: "本日排行", value: "daily_rank" },
+            { title: "本周排行", value: "weekly_rank" },
+            { title: "本月排行", value: "monthly_rank" },
+          ],
         },
-        {
-            id: "chinese_subtitles",
-            title: "中文字幕",
-            description: "浏览带中文字幕标签的影片",
-            type: "video",
-            requiresWebView: false,
-            functionName: "loadChineseSubtitles",
-            cacheDuration: 900,
-            params: [
-                {
-                    name: "genre",
-                    title: "影片类型",
-                    type: "enumeration",
-                    description: "选择影片类型",
-                    value: "all",
-                    enumOptions: [
-                        { title: "全部", value: "all" },
-                        { title: "里番", value: "hentai" },
-                        { title: "泡面番", value: "short_anime" },
-                        { title: "Motion Anime", value: "motion" },
-                        { title: "3DCG", value: "3dcg" },
-                        { title: "2.5D", value: "2_5d" },
-                        { title: "2D 动画", value: "2d" },
-                        { title: "AI 生成", value: "ai" },
-                        { title: "MMD", value: "mmd" },
-                        { title: "Cosplay", value: "cosplay" }
-                    ]
-                },
-                {
-                    name: "sort_by",
-                    title: "排序",
-                    type: "enumeration",
-                    description: "排序方式",
-                    value: "new_release",
-                    enumOptions: [
-                        { title: "最新上市", value: "new_release" },
-                        { title: "最新上传", value: "latest_upload" },
-                        { title: "本日排行", value: "daily_rank" },
-                        { title: "本周排行", value: "weekly_rank" },
-                        { title: "本月排行", value: "monthly_rank" }
-                    ]
-                },
-                {
-                    name: "page",
-                    title: "页码",
-                    type: "page",
-                    description: "列表页码",
-                    value: "1"
-                }
-            ]
-        },
-        {
-            id: "loadResource",
-            title: "加载播放资源",
-            description: "播放时获取可用清晰度",
-            type: "stream",
-            requiresWebView: false,
-            functionName: "loadResource",
-            cacheDuration: 0,
-            params: []
-        }
-    ]
+        { name: "page", title: "页码", type: "page" },
+      ],
+    },
+    {
+      id: "loadResource",
+      title: "加载播放资源",
+      functionName: "loadResource",
+      type: "stream",
+      cacheDuration: 0,
+      requiresWebView: false,
+      params: [],
+    },
+  ],
+  search: {
+    title: "搜索影片",
+    functionName: "searchVideos",
+    params: [
+      { name: "keyword", title: "关键词", type: "input", value: "" },
+      {
+        name: "sort_by",
+        title: "排序",
+        type: "enumeration",
+        value: "new_release",
+        enumOptions: [
+          { title: "最新上市", value: "new_release" },
+          { title: "最新上传", value: "latest_upload" },
+          { title: "本日排行", value: "daily_rank" },
+          { title: "本周排行", value: "weekly_rank" },
+          { title: "本月排行", value: "monthly_rank" },
+          { title: "观看次数", value: "views" },
+          { title: "时长最长", value: "duration" },
+          { title: "他们在看", value: "watching" },
+        ],
+      },
+      { name: "page", title: "页码", type: "page" },
+    ],
+  },
 };
 
-var BASE_URL = "https://hanime1.me";
-var REQUEST_TIMEOUT = 15000;
-var USER_AGENT = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1";
+var HANIME_HOSTS = ["https://hanime1.com", "https://hanime1.me"];
+var HANIME_BASE_URL = HANIME_HOSTS[0];
+var HANIME_USER_AGENT =
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1";
 
-function getPageHeaders(referer) {
-    return {
-        "User-Agent": USER_AGENT,
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-        "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.7,en;q=0.6",
-        "Referer": referer || BASE_URL + "/"
-    };
+function cleanText(value) {
+  return String(value == null ? "" : value)
+    .replace(/\u00a0/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
-function getPlaybackHeaders(referer) {
-    return {
-        "User-Agent": USER_AGENT,
-        "Referer": referer || BASE_URL + "/"
-    };
+function decodeHtml(value) {
+  return String(value == null ? "" : value)
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&#x2f;/gi, "/")
+    .replace(/&#x2F;/g, "/");
+}
+
+function pageHeaders(referer) {
+  return {
+    "User-Agent": HANIME_USER_AGENT,
+    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.7,en;q=0.6",
+    Referer: referer || HANIME_BASE_URL + "/",
+  };
+}
+
+function playbackHeaders(referer) {
+  return {
+    "User-Agent": HANIME_USER_AGENT,
+    Referer: referer || HANIME_BASE_URL + "/",
+  };
 }
 
 function isBlockedPage(html) {
-    return /Just a moment|Attention Required|cf-error-details|Sorry, you have been blocked|Cloudflare Ray ID/i.test(html || "");
+  return /Just a moment|Attention Required|cf-error-details|Sorry, you have been blocked|Cloudflare Ray ID/i.test(
+    html || ""
+  );
 }
 
-async function fetchHtml(url, referer) {
-    var response = await Widget.http.get(url, {
-        headers: getPageHeaders(referer),
-        timeout: REQUEST_TIMEOUT,
-        allow_redirects: true
-    });
-    var status = Number(response && (response.statusCode || response.status) || 200);
-    var html = String(response && response.data || "");
-    if (status >= 400) {
-        throw new Error("Hanime1 请求失败：HTTP " + status);
-    }
-    if (!html || isBlockedPage(html)) {
-        throw new Error("Hanime1 站点防护拒绝了请求，请稍后重试或更换网络");
-    }
-    return html;
-}
-
-function cleanText(value) {
-    return String(value || "").replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
-}
-
-function decodeEntities(value) {
-    return String(value || "")
-        .replace(/&amp;/g, "&")
-        .replace(/&#x2F;/gi, "/")
-        .replace(/&#39;/g, "'")
-        .replace(/&quot;/g, "\"");
+function hostSwap(url, host) {
+  return String(url || "").replace(/^https?:\/\/[^/]+/i, host);
 }
 
 function normalizeSiteUrl(value) {
-    var url = decodeEntities(cleanText(value));
-    if (!url || /^javascript:/i.test(url)) return "";
-    if (url.indexOf("//") === 0) return "https:" + url;
-    if (url.indexOf("/") === 0) return BASE_URL + url;
-    if (!/^https?:\/\//i.test(url)) return BASE_URL + "/" + url;
-    return url;
+  var url = decodeHtml(cleanText(value));
+  if (!url || /^javascript:/i.test(url)) return "";
+  if (url.indexOf("//") === 0) url = "https:" + url;
+  if (url.charAt(0) === "/") url = HANIME_BASE_URL + url;
+  if (!/^https?:\/\//i.test(url)) url = HANIME_BASE_URL + "/" + url;
+  return url.split("#")[0];
 }
 
 function normalizeWatchUrl(value) {
-    var url = normalizeSiteUrl(value);
-    if (!/^https?:\/\/(?:www\.)?hanime1\.me\/watch\?v=\d+/i.test(url)) return "";
-    return url;
-}
-
-function normalizeImageUrl(value) {
-    var raw = decodeEntities(cleanText(value));
-    if (!raw) return "";
-    if (raw.indexOf(",") >= 0) raw = raw.split(",")[0];
-    raw = cleanText(raw).split(/\s+/)[0];
-    return normalizeSiteUrl(raw);
+  var url = normalizeSiteUrl(value);
+  if (!/^https?:\/\/(?:www\.)?hanime1\.(?:com|me)\/watch\?v=\d+/i.test(url)) return "";
+  return url;
 }
 
 function normalizeFilterUrl(value) {
-    var url = normalizeSiteUrl(value);
-    if (!/^https?:\/\/(?:www\.)?hanime1\.me\/(?:search|user\/)/i.test(url)) return "";
-    return url;
+  var url = normalizeSiteUrl(value);
+  if (!/^https?:\/\/(?:www\.)?hanime1\.(?:com|me)\/(?:search|user\/?)/i.test(url)) return "";
+  return url;
 }
 
-function appendPage(url, page) {
-    var pageNumber = Math.max(1, parseInt(page, 10) || 1);
-    if (pageNumber <= 1) return url;
-    var separator = url.indexOf("?") >= 0 ? "&" : "?";
-    return url + separator + "page=" + pageNumber;
+function imageValue(value) {
+  var raw = decodeHtml(cleanText(value));
+  if (!raw) return "";
+  // 仅对真正的 srcset（逗号后带宽度）取第一项，不破坏签名 URL 中的逗号。
+  if (/\s+\d+w(?:\s*,|$)/i.test(raw)) raw = raw.split(",")[0];
+  return cleanText(raw).split(/\s+/)[0];
 }
 
 function sortValue(value) {
-    var values = {
-        new_release: "最新上市",
-        latest_upload: "最新上傳",
-        daily_rank: "本日排行",
-        weekly_rank: "本週排行",
-        monthly_rank: "本月排行",
-        views: "觀看次數",
-        duration: "時長最長",
-        watching: "他們在看"
-    };
-    return values[value] || "";
+  var values = {
+    new_release: "最新上市",
+    latest_upload: "最新上傳",
+    daily_rank: "本日排行",
+    weekly_rank: "本週排行",
+    monthly_rank: "本月排行",
+    views: "觀看次數",
+    duration: "時長最長",
+    watching: "他們在看",
+  };
+  return values[value] || "";
 }
 
 function genreValue(value) {
-    var values = {
-        hentai: "裏番",
-        short_anime: "泡麵番",
-        motion: "Motion Anime",
-        "3dcg": "3DCG",
-        "2_5d": "2.5D",
-        "2d": "2D動畫",
-        ai: "AI生成",
-        mmd: "MMD",
-        cosplay: "Cosplay"
-    };
-    return values[value] || "";
+  var values = {
+    hentai: "裏番",
+    short_anime: "泡麵番",
+    motion: "Motion Anime",
+    "3dcg": "3DCG",
+    "2_5d": "2.5D",
+    "2d": "2D動畫",
+    ai: "AI生成",
+    mmd: "MMD",
+    cosplay: "Cosplay",
+  };
+  return values[value] || "";
 }
 
-function buildSearchUrl(params, fixedTags) {
-    params = params || {};
-    var query = [];
-    var keyword = cleanText(params.keyword);
-    var genre = genreValue(params.genre);
-    var sort = sortValue(params.sort_by);
-    var page = Math.max(1, parseInt(params.page, 10) || 1);
+function buildRequest(params, fixedTags) {
+  params = params || {};
+  var requestParams = {};
+  var keyword = cleanText(params.keyword);
+  var genre = genreValue(params.genre);
+  var sort = sortValue(params.sort_by);
+  var page = Math.max(1, parseInt(params.page, 10) || 1);
+  if (keyword) {
+    requestParams.query = keyword;
+    requestParams.broad = "on";
+  }
+  if (genre) requestParams.genre = genre;
+  if (sort) requestParams.sort = sort;
+  if (fixedTags && fixedTags.length) requestParams["tags[]"] = fixedTags[0];
+  if (page > 1) requestParams.page = String(page);
+  return { url: HANIME_BASE_URL + "/search", params: requestParams };
+}
 
-    if (keyword) {
-        query.push("query=" + encodeURIComponent(keyword));
-        query.push("broad=on");
+async function requestHtml(url, params, referer) {
+  var candidates = [url];
+  for (var i = 0; i < HANIME_HOSTS.length; i++) {
+    var candidate = hostSwap(url, HANIME_HOSTS[i]);
+    if (candidates.indexOf(candidate) < 0) candidates.push(candidate);
+  }
+
+  var lastError = null;
+  for (var j = 0; j < candidates.length; j++) {
+    try {
+      var response = await Widget.http.get(candidates[j], {
+        headers: pageHeaders(referer || candidates[j]),
+        params: params || {},
+        allow_redirects: true,
+      });
+      var status = Number(response && (response.statusCode || response.status) || 200);
+      var html = String(response && response.data || "");
+      if (status >= 400) throw new Error("HTTP " + status);
+      if (!html || isBlockedPage(html)) throw new Error("站点防护页面");
+      return { url: candidates[j], html: html };
+    } catch (error) {
+      lastError = error;
     }
-    if (genre) query.push("genre=" + encodeURIComponent(genre));
-    if (sort) query.push("sort=" + encodeURIComponent(sort));
-
-    var tags = fixedTags || [];
-    for (var i = 0; i < tags.length; i++) {
-        if (tags[i]) query.push("tags%5B%5D=" + encodeURIComponent(tags[i]));
-    }
-    if (page > 1) query.push("page=" + page);
-    return BASE_URL + "/search" + (query.length ? "?" + query.join("&") : "");
+  }
+  throw new Error("Hanime1 请求失败：" + (lastError && lastError.message || "未知错误"));
 }
 
-function findCardImage($, $card) {
-    var preferred = $card.find("img.main-thumb").first();
-    var src = preferred.attr("data-src") || preferred.attr("data-original") || preferred.attr("data-srcset") || preferred.attr("src");
-    if (src) return normalizeImageUrl(src);
-
-    var selected = "";
-    $card.find("img").each(function (_, image) {
-        if (selected) return;
-        var $image = $(image);
-        var candidate = $image.attr("data-src") || $image.attr("data-original") || $image.attr("data-srcset") || $image.attr("src") || "";
-        if (!candidate || /background|avatar|logo/i.test(candidate)) return;
-        selected = normalizeImageUrl(candidate);
-    });
-    return selected;
-}
-
-function cardToVideoItem($, element) {
-    var $card = $(element);
-    var href = $card.attr("href")
-        || $card.find("a.video-link").first().attr("href")
-        || $card.find("a.overlay").first().attr("href")
-        || "";
-    var link = normalizeWatchUrl(href);
-    if (!link) return null;
-
-    var title = cleanText(
-        $card.find(".title").first().text()
-        || $card.find(".card-mobile-title").first().text()
-        || $card.find(".home-rows-videos-title").first().text()
-        || $card.find("img").first().attr("alt")
-    );
-    if (!title) return null;
-
-    var cover = findCardImage($, $card);
-    var durationText = cleanText(
-        $card.find(".duration").first().text()
-        || $card.find(".card-mobile-duration").first().text()
-    );
-    var author = cleanText(
-        $card.find(".subtitle a").first().text()
-        || $card.find(".card-mobile-user").first().text()
-        || $card.find(".home-rows-videos-user").first().text()
-    );
-    var statistics = [];
-    $card.find(".stat-item").each(function (_, stat) {
-        var text = cleanText($(stat).text()).replace(/^thumb_up\s*/i, "");
-        if (text && statistics.indexOf(text) < 0) statistics.push(text);
-    });
-    var descriptionParts = [];
-    if (author) descriptionParts.push("作者：" + author);
-    if (statistics.length) descriptionParts.push(statistics.join(" · "));
-
-    return {
-        id: link,
-        type: "url",
-        title: title,
-        coverUrl: cover || undefined,
-        backdropPath: cover || undefined,
-        mediaType: "movie",
-        durationText: durationText || undefined,
-        description: descriptionParts.join("\n") || undefined,
-        link: link,
-        playerType: "system"
-    };
-}
-
-function parseVideoList(html) {
-    var $ = Widget.html.load(html);
-    var items = [];
-    var seen = {};
-
-    function addCandidates(selector) {
-        $(selector).each(function (_, element) {
-            var item = cardToVideoItem($, element);
-            if (!item || seen[item.link]) return;
-            seen[item.link] = true;
-            items.push(item);
-        });
-    }
-
-    addCandidates("div.video-item-container");
-    addCandidates(".content-padding-new .search-doujin-videos");
-    addCandidates(".home-rows-videos-wrapper > a[href*='/watch?v=']");
-    addCandidates("a[href*='/watch?v=']");
-    return items;
+function appendPage(url, page) {
+  var pageNumber = Math.max(1, parseInt(page, 10) || 1);
+  if (pageNumber <= 1) return url;
+  return url + (url.indexOf("?") >= 0 ? "&" : "?") + "page=" + pageNumber;
 }
 
 async function loadJumpedListing(params) {
-    params = params || {};
-    var target = normalizeFilterUrl(params.genreId || params.peopleId || "");
-    if (!target) return null;
-    target = appendPage(target, params.page);
-    var html = await fetchHtml(target, BASE_URL + "/");
-    return parseVideoList(html);
+  params = params || {};
+  var target = normalizeFilterUrl(params.genreId || params.peopleId || "");
+  if (!target) return null;
+  var response = await requestHtml(appendPage(target, params.page), {}, HANIME_BASE_URL + "/");
+  return parseVideoList(response.html);
 }
 
 async function searchVideos(params) {
-    var jumped = await loadJumpedListing(params);
-    if (jumped) return jumped;
-    var url = buildSearchUrl(params || {}, []);
-    var html = await fetchHtml(url, BASE_URL + "/");
-    return parseVideoList(html);
+  if (!cleanText(params && params.keyword)) return [];
+  var jumped = await loadJumpedListing(params);
+  if (jumped) return jumped;
+  var request = buildRequest(params || {}, []);
+  var response = await requestHtml(request.url, request.params, HANIME_BASE_URL + "/");
+  return parseVideoList(response.html);
 }
 
 async function loadVideos(params) {
-    var jumped = await loadJumpedListing(params);
-    if (jumped) return jumped;
-    var url = buildSearchUrl(params || {}, []);
-    var html = await fetchHtml(url, BASE_URL + "/");
-    return parseVideoList(html);
+  var jumped = await loadJumpedListing(params);
+  if (jumped) return jumped;
+  var request = buildRequest(params || {}, []);
+  var response = await requestHtml(request.url, request.params, HANIME_BASE_URL + "/");
+  return parseVideoList(response.html);
 }
 
 async function loadChineseSubtitles(params) {
-    var jumped = await loadJumpedListing(params);
-    if (jumped) return jumped;
-    var url = buildSearchUrl(params || {}, ["中文字幕"]);
-    var html = await fetchHtml(url, BASE_URL + "/");
-    return parseVideoList(html);
+  var jumped = await loadJumpedListing(params);
+  if (jumped) return jumped;
+  var request = buildRequest(params || {}, ["中文字幕"]);
+  var response = await requestHtml(request.url, request.params, HANIME_BASE_URL + "/");
+  return parseVideoList(response.html);
+}
+
+function normalizeCardLink(value) {
+  var url = normalizeSiteUrl(value);
+  return normalizeWatchUrl(url);
+}
+
+function cardImage($, $card) {
+  var $image = $card.find("img.main-thumb").first();
+  if (!$image.length) $image = $card.find("img").first();
+  return imageValue(
+    $image.attr("data-src") ||
+      $image.attr("data-original") ||
+      $image.attr("data-srcset") ||
+      $image.attr("src")
+  );
+}
+
+function cardToVideoItem($, element) {
+  var $card = $(element);
+  var href =
+    $card.attr("href") ||
+    $card.find("a.video-link").first().attr("href") ||
+    $card.find("a[href*='/watch?v=']").first().attr("href") ||
+    "";
+  var link = normalizeCardLink(href);
+  if (!link) return null;
+
+  var $image = $card.find("img.main-thumb").first();
+  var title = cleanText(
+    $card.attr("title") ||
+      $card.find(".title").first().text() ||
+      $card.find(".card-mobile-title").first().text() ||
+      ($image.length ? $image.attr("alt") : "")
+  );
+  if (!title) return null;
+
+  var cover = cardImage($, $card);
+  var duration = cleanText(
+    $card.find(".duration").first().text() ||
+      $card.find(".card-mobile-duration").first().text()
+  );
+  var author = cleanText(
+    $card.find(".subtitle a").first().text() ||
+      $card.find(".card-mobile-user").first().text() ||
+      $card.find(".home-rows-videos-user").first().text()
+  );
+  var stats = [];
+  $card.find(".stat-item").each(function (_, stat) {
+    var text = cleanText($(stat).text()).replace(/^thumb_up\s*/i, "");
+    if (text && stats.indexOf(text) < 0) stats.push(text);
+  });
+  var description = [];
+  if (author) description.push("作者：" + author);
+  if (stats.length) description.push(stats.join(" · "));
+
+  return {
+    id: link,
+    type: "url",
+    title: title,
+    coverUrl: cover || undefined,
+    posterPath: cover || undefined,
+    backdropPath: cover || undefined,
+    mediaType: "movie",
+    durationText: duration || undefined,
+    description: description.join("\n") || undefined,
+    link: link,
+    playerType: "system",
+  };
+}
+
+function parseVideoList(html) {
+  var $ = Widget.html.load(html);
+  var items = [];
+  var seen = {};
+  function addCandidates(selector) {
+    $(selector).each(function (_, element) {
+      var item = cardToVideoItem($, element);
+      if (!item || seen[item.link]) return;
+      seen[item.link] = true;
+      items.push(item);
+    });
+  }
+  addCandidates("div.video-item-container");
+  addCandidates(".content-padding-new .search-doujin-videos");
+  addCandidates(".home-rows-videos-wrapper > a[href*='/watch?v=']");
+  addCandidates("a.video-link[href*='/watch?v=']");
+  return items;
 }
 
 function jsonLdVideo($) {
-    var result = {};
-    $("script[type='application/ld+json']").each(function (_, element) {
-        if (result.name && result.thumbnailUrl) return;
-        try {
-            var parsed = JSON.parse($(element).html() || "null");
-            var values = Array.isArray(parsed) ? parsed : [parsed];
-            for (var i = 0; i < values.length; i++) {
-                var value = values[i] || {};
-                if (Array.isArray(value["@graph"])) values = values.concat(value["@graph"]);
-                if (value["@type"] === "VideoObject" || value.contentUrl || value.thumbnailUrl) {
-                    result = value;
-                    return;
-                }
-            }
-        } catch (_) {
-            // Ignore malformed metadata and continue with DOM fallbacks.
+  var result = {};
+  $("script[type='application/ld+json']").each(function (_, element) {
+    if (result.name && result.thumbnailUrl) return;
+    try {
+      var parsed = JSON.parse($(element).html() || "null");
+      var values = Array.isArray(parsed) ? parsed : [parsed];
+      for (var i = 0; i < values.length; i++) {
+        var value = values[i] || {};
+        if (Array.isArray(value["@graph"])) values = values.concat(value["@graph"]);
+        if (value["@type"] === "VideoObject" || value.contentUrl || value.thumbnailUrl) {
+          result = value;
+          return;
         }
-    });
-    return result;
+      }
+    } catch (_) {
+      // 忽略损坏的 JSON-LD，继续使用 DOM 兜底。
+    }
+  });
+  return result;
 }
 
 function sourceQuality(source) {
-    var match = String(source && source.label || "").match(/(\d{3,4})/);
-    return match ? parseInt(match[1], 10) : 0;
+  var match = String(source && source.label || "").match(/(\d{3,4})/);
+  return match ? parseInt(match[1], 10) : 0;
 }
 
 function extractVideoSources($, html) {
-    var sources = [];
-    var seen = {};
-
-    function addSource(url, label, type) {
-        var normalized = decodeEntities(cleanText(url));
-        if (!/^https?:\/\//i.test(normalized) || seen[normalized]) return;
-        seen[normalized] = true;
-        var cleanLabel = cleanText(label);
-        var qualityMatch = cleanLabel.match(/(\d{3,4})/);
-        sources.push({
-            url: normalized,
-            label: qualityMatch ? qualityMatch[1] + "p" : (cleanLabel || "默认清晰度"),
-            type: cleanText(type)
-        });
-    }
-
-    $("video#player source[src], video source[src]").each(function (_, element) {
-        var $source = $(element);
-        addSource(
-            $source.attr("src"),
-            $source.attr("size") || $source.attr("label") || $source.attr("res") || $source.attr("data-quality"),
-            $source.attr("type")
-        );
+  var sources = [];
+  var seen = {};
+  function addSource(url, label, type) {
+    var value = decodeHtml(cleanText(url));
+    if (!/^https?:\/\//i.test(value) || !/\.(?:mp4|m3u8)(?:[?#]|$)/i.test(value) || seen[value]) return;
+    seen[value] = true;
+    var cleanLabel = cleanText(label);
+    var quality = cleanLabel.match(/(\d{3,4})/);
+    sources.push({
+      url: value,
+      label: quality ? quality[1] + "p" : cleanLabel || "默认清晰度",
+      type: cleanText(type),
     });
-    $("video#player[src], video[src]").each(function (_, element) {
-        var $video = $(element);
-        addSource($video.attr("src"), $video.attr("data-quality") || "默认清晰度", $video.attr("type"));
-    });
+  }
+  $("video#player source[src], video source[src], source[src]").each(function (_, element) {
+    var $source = $(element);
+    addSource(
+      $source.attr("src"),
+      $source.attr("size") || $source.attr("label") || $source.attr("res") || $source.attr("data-quality"),
+      $source.attr("type")
+    );
+  });
+  $("video#player[src], video[src]").each(function (_, element) {
+    var $video = $(element);
+    addSource($video.attr("src"), $video.attr("data-quality"), $video.attr("type"));
+  });
+  var matches = String(html || "").match(
+    /https?:\/\/[^"'\s<>]+\.(?:mp4|m3u8)(?:\?[^"'\s<>]*)?/gi
+  ) || [];
+  for (var i = 0; i < matches.length && i < 30; i++) {
+    addSource(matches[i], "默认清晰度", /\.m3u8(?:\?|$)/i.test(matches[i]) ? "application/x-mpegURL" : "video/mp4");
+  }
+  sources.sort(function (a, b) {
+    return sourceQuality(b) - sourceQuality(a);
+  });
+  return sources;
+}
 
-    var sourceAssignment = String(html || "").match(/source\s*=\s*['\"](https?:\/\/[^'\"]+)['\"]/i);
-    if (sourceAssignment) addSource(sourceAssignment[1], "默认清晰度", "video/mp4");
+function firstMeta($, selector, attribute) {
+  return cleanText($(selector).first().attr(attribute || "content"));
+}
 
-    var mediaMatches = String(html || "").match(/https?:\/\/[^\"'\s<>]+\.(?:mp4|m3u8)(?:\?[^\"'\s<>]*)?/gi) || [];
-    for (var i = 0; i < mediaMatches.length && i < 20; i++) {
-        addSource(mediaMatches[i], "默认清晰度", /\.m3u8(?:\?|$)/i.test(mediaMatches[i]) ? "application/x-mpegURL" : "video/mp4");
-    }
-
-    sources.sort(function (a, b) {
-        return sourceQuality(b) - sourceQuality(a);
-    });
-    return sources;
+function parseReleaseDate(value) {
+  var match = cleanText(value).match(/(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/);
+  if (!match) return "";
+  return match[1] + "-" + String(match[2]).padStart(2, "0") + "-" + String(match[3]).padStart(2, "0");
 }
 
 function detailGenreItems($) {
-    var items = [];
-    var seen = {};
-    $(".single-video-tag a[href], a[href*='tags%5B%5D=']").each(function (_, element) {
-        if (items.length >= 40) return;
-        var $link = $(element);
-        var title = cleanText($link.text()).replace(/\s*\(\d+\)\s*$/, "");
-        var id = normalizeFilterUrl($link.attr("href"));
-        if (!title || !id || seen[id]) return;
-        seen[id] = true;
-        items.push({ id: id, title: title });
-    });
-    return items;
+  var result = [];
+  var seen = {};
+  $(".single-video-tag a[href], a[href*='tags%5B%5D='], a[href*='/search?genre=']").each(function (_, element) {
+    var $link = $(element);
+    var id = normalizeFilterUrl($link.attr("href"));
+    var title = cleanText($link.text()).replace(/\s*\(\d+\)\s*$/, "");
+    if (!id || !title || seen[id]) return;
+    seen[id] = true;
+    result.push({ id: id, title: title });
+  });
+  return result.slice(0, 30);
 }
 
 function detailPeople($) {
-    var people = [];
-    var seen = {};
-    $(".video-details-wrapper a[href*='/user/'], #video-artist-name[href*='/user/']").each(function (_, element) {
-        if (people.length >= 12) return;
-        var $link = $(element);
-        var id = normalizeFilterUrl($link.attr("href"));
-        var image = $link.find("img").first();
-        var title = cleanText(image.attr("alt") || $link.text());
-        if (!id || !title || seen[id]) return;
-        seen[id] = true;
-        people.push({
-            id: id,
-            title: title,
-            avatar: normalizeImageUrl(image.attr("data-src") || image.attr("src")) || undefined,
-            role: "作者"
-        });
+  var result = [];
+  var seen = {};
+  $(".video-details-wrapper a[href*='/user/'], #video-artist-name[href*='/user/']").each(function (_, element) {
+    var $link = $(element);
+    var id = normalizeFilterUrl($link.attr("href"));
+    var $image = $link.find("img").first();
+    var title = cleanText(($image.length && $image.attr("alt")) || $link.text());
+    if (!id || !title || seen[id]) return;
+    seen[id] = true;
+    result.push({
+      id: id,
+      title: title,
+      avatar: imageValue($image.attr("data-src") || $image.attr("src")) || undefined,
+      role: "作者",
     });
-    return people;
+  });
+  return result.slice(0, 20);
 }
 
 function cleanTitle(value) {
-    return cleanText(value)
-        .replace(/&nbsp;/gi, " ")
-        .replace(/\s*[-–|]\s*H動漫.*$/i, "")
-        .replace(/\s*[-–|]\s*Hanime1\.me.*$/i, "")
-        .trim();
+  return cleanText(value)
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s*[-–|]\s*H動漫.*$/i, "")
+    .replace(/\s*[-–|]\s*Hanime1\.me.*$/i, "")
+    .trim();
 }
 
 function parseDetail(link, html) {
-    var $ = Widget.html.load(html);
-    var jsonLd = jsonLdVideo($);
-    var title = cleanTitle(
-        $("#shareBtn-title").first().text()
-        || jsonLd.name
-        || $("meta[property='og:title']").attr("content")
-        || $("meta[name='twitter:title']").attr("content")
-        || $("h1, h3.title").first().text()
-        || $("title").text()
-    );
-    var description = cleanText(
-        $(".video-caption-text").first().text()
-        || jsonLd.description
-        || $("meta[property='og:description']").attr("content")
-        || $("meta[name='description']").attr("content")
-    );
-    var cover = normalizeImageUrl(
-        jsonLd.thumbnailUrl
-        || $("meta[property='og:image']").attr("content")
-        || $("meta[name='twitter:image']").attr("content")
-        || $("video#player").attr("poster")
-    );
-    var sources = extractVideoSources($, html);
-    var releaseDate = cleanText(jsonLd.uploadDate || jsonLd.datePublished);
-    if (!releaseDate) {
-        var dateMatch = cleanText($(".video-details-wrapper").text()).match(/\d{4}-\d{2}-\d{2}/);
-        if (dateMatch) releaseDate = dateMatch[0];
-    }
-
-    var relatedItems = parseVideoList(html).filter(function (item) {
-        return item.link !== link;
-    }).slice(0, 12);
-    var genreItems = detailGenreItems($);
-    var peoples = detailPeople($);
-
-    return {
-        id: link,
-        type: "url",
-        title: title || "Hanime1 视频",
-        description: description || undefined,
-        coverUrl: cover || undefined,
-        backdropPath: cover || undefined,
-        mediaType: "movie",
-        releaseDate: releaseDate || undefined,
-        videoUrl: sources.length ? sources[0].url : undefined,
-        genreItems: genreItems.length ? genreItems : undefined,
-        peoples: peoples.length ? peoples : undefined,
-        relatedItems: relatedItems.length ? relatedItems : undefined,
-        link: link,
-        playerType: "system",
-        customHeaders: sources.length ? getPlaybackHeaders(link) : undefined
-    };
+  var $ = Widget.html.load(html);
+  var jsonLd = jsonLdVideo($);
+  var title = cleanTitle(
+    $("#shareBtn-title").first().text() ||
+      jsonLd.name ||
+      firstMeta($, "meta[property='og:title']") ||
+      firstMeta($, "meta[name='twitter:title']") ||
+      $("h1, h3.title").first().text() ||
+      $("title").first().text()
+  );
+  var description = cleanText(
+    $(".video-caption-text").first().text() ||
+      jsonLd.description ||
+      firstMeta($, "meta[property='og:description']") ||
+      firstMeta($, "meta[name='description']")
+  );
+  var cover = imageValue(
+    jsonLd.thumbnailUrl ||
+      firstMeta($, "meta[property='og:image']") ||
+      firstMeta($, "meta[name='twitter:image']") ||
+      $("video#player").first().attr("poster")
+  );
+  var sources = extractVideoSources($, html);
+  var releaseDate = cleanText(jsonLd.uploadDate || jsonLd.datePublished) || parseReleaseDate($("body").text());
+  var relatedItems = parseVideoList(html).filter(function (item) {
+    return item.link !== link;
+  }).slice(0, 12);
+  var item = {
+    id: link,
+    type: "url",
+    title: title || "Hanime1 视频",
+    description: description || undefined,
+    coverUrl: cover || undefined,
+    posterPath: cover || undefined,
+    backdropPath: cover || undefined,
+    mediaType: "movie",
+    releaseDate: releaseDate || undefined,
+    videoUrl: sources.length ? sources[0].url : undefined,
+    genreItems: detailGenreItems($),
+    peoples: detailPeople($),
+    relatedItems: relatedItems.length ? relatedItems : undefined,
+    link: link,
+    playerType: "system",
+  };
+  if (sources.length) item.customHeaders = playbackHeaders(link);
+  return item;
 }
 
 async function loadDetail(link) {
-    var normalizedLink = normalizeWatchUrl(link);
-    if (!normalizedLink) throw new Error("无效的 Hanime1 详情链接");
-    var html = await fetchHtml(normalizedLink, BASE_URL + "/");
-    return parseDetail(normalizedLink, html);
+  var normalizedLink = normalizeWatchUrl(link);
+  if (!normalizedLink) return null;
+  try {
+    var response = await requestHtml(normalizedLink, {}, HANIME_BASE_URL + "/");
+    return parseDetail(normalizedLink, response.html);
+  } catch (error) {
+    console.error("[Hanime1] 详情请求失败:", error.message || error);
+    throw error;
+  }
 }
 
 async function loadResource(params) {
-    params = params || {};
-    var link = normalizeWatchUrl(params.link || params.id || "");
-    var directUrl = cleanText(params.videoUrl);
-
-    if (!link && /^https?:\/\//i.test(directUrl)) {
-        return [{
-            name: "默认清晰度",
-            description: "站点直链",
-            url: directUrl,
-            customHeaders: getPlaybackHeaders(BASE_URL + "/"),
-            playerType: "system"
-        }];
-    }
-    if (!link) throw new Error("缺少 Hanime1 播放页链接");
-
-    var html = await fetchHtml(link, BASE_URL + "/");
-    var $ = Widget.html.load(html);
-    var sources = extractVideoSources($, html);
-    if (!sources.length) throw new Error("未找到可播放资源，页面结构可能已更新");
-
-    return sources.map(function (source) {
-        return {
-            name: source.label,
-            description: source.type || (/\.m3u8(?:\?|$)/i.test(source.url) ? "HLS" : "MP4"),
-            url: source.url,
-            customHeaders: getPlaybackHeaders(link),
-            playerType: "system"
-        };
-    });
+  params = params || {};
+  var directUrl = cleanText(params.videoUrl);
+  if (directUrl && /^https?:\/\//i.test(directUrl)) {
+    return [{
+      name: "默认清晰度",
+      description: "页面直链",
+      url: directUrl,
+      customHeaders: playbackHeaders(params.link || HANIME_BASE_URL + "/"),
+      playerType: "system",
+    }];
+  }
+  var link = normalizeWatchUrl(params.link || params.id || "");
+  if (!link) throw new Error("缺少 Hanime1 播放页链接");
+  var response = await requestHtml(link, {}, HANIME_BASE_URL + "/");
+  var $ = Widget.html.load(response.html);
+  var sources = extractVideoSources($, response.html);
+  if (!sources.length) throw new Error("Hanime1 页面没有找到可播放资源");
+  return sources.map(function (source) {
+    return {
+      name: source.label,
+      description: source.type || (/\.m3u8(?:\?|$)/i.test(source.url) ? "HLS" : "MP4"),
+      url: source.url,
+      customHeaders: playbackHeaders(link),
+      playerType: "system",
+    };
+  });
 }
