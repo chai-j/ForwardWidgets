@@ -1,9 +1,9 @@
 WidgetMetadata = {
   id: "chai.wallhaven",
   title: "Wallhaven 壁纸",
-  version: "1.0.2",
+  version: "1.0.3",
   requiredVersion: "0.0.1",
-  description: "Wallhaven SFW 壁纸浏览、筛选、搜索与大图详情",
+  description: "Wallhaven SFW/Sketchy 壁纸浏览、筛选、搜索与大图详情",
   author: "chai-j",
   site: "https://wallhaven.cc",
   icon: "https://wallhaven.cc/favicon.ico",
@@ -12,7 +12,7 @@ WidgetMetadata = {
     {
       id: "browse",
       title: "壁纸浏览",
-      description: "按分类、排序、分辨率和比例浏览 SFW 壁纸",
+      description: "按分类、排序、分辨率和比例浏览 SFW/Sketchy 壁纸",
       functionName: "loadWallpapers",
       cacheDuration: 900,
       requiresWebView: false,
@@ -148,38 +148,10 @@ const WALLHAVEN_SORTING = ["date_added", "relevance", "views", "favorites", "top
 const WALLHAVEN_TOP_RANGES = ["1d", "3d", "1w", "1M", "3M", "6M", "1y"];
 const WALLHAVEN_RESOLUTIONS = ["", "1920x1080", "2560x1440", "3840x2160"];
 const WALLHAVEN_RATIOS = ["", "16x9", "16x10", "21x9", "9x16", "1x1"];
-const WALLHAVEN_DEBUG_PREFIX = "[WHDBG-102]";
+const WALLHAVEN_ALLOWED_PURITY = ["sfw", "sketchy"];
 
-function wallhavenDebug(event, details) {
-  let suffix = "";
-  if (details !== undefined) {
-    try {
-      suffix = " " + JSON.stringify(details);
-    } catch (_) {
-      suffix = " [details unavailable]";
-    }
-  }
-  console.log(WALLHAVEN_DEBUG_PREFIX + " " + event + suffix);
-}
-
-function wallhavenShape(value) {
-  let keys = [];
-  try {
-    keys = value && typeof value === "object" ? Object.keys(value).slice(0, 20) : [];
-  } catch (_) {}
-
-  let length = null;
-  try {
-    const candidate = Number(value && value.length);
-    if (Number.isInteger(candidate) && candidate >= 0) length = candidate;
-  } catch (_) {}
-
-  return {
-    type: typeof value,
-    isArray: Array.isArray(value),
-    length: length,
-    keys: keys,
-  };
+function wallhavenPurityAllowed(value) {
+  return WALLHAVEN_ALLOWED_PURITY.includes(String(value || "").toLowerCase());
 }
 
 function wallhavenChoice(value, allowed, fallback) {
@@ -206,18 +178,11 @@ function wallhavenStatus(response) {
 }
 
 async function requestWallhavenJson(url) {
-  wallhavenDebug("request.start", { url: url });
   const response = await Widget.http.get(url, {
     headers: WALLHAVEN_HEADERS,
     allow_redirects: true,
   });
   const status = wallhavenStatus(response);
-  wallhavenDebug("request.response", {
-    status: status,
-    response: wallhavenShape(response),
-    data: wallhavenShape(response && response.data),
-    runtimeURL: typeof URL,
-  });
   if (!response || status >= 400) {
     if (status === 429) throw new Error("Wallhaven API 请求过于频繁，请稍后再试");
     throw new Error("Wallhaven API 请求失败: HTTP " + status);
@@ -234,7 +199,6 @@ async function requestWallhavenJson(url) {
   if (!payload || typeof payload !== "object") {
     throw new Error("Wallhaven API 返回数据为空");
   }
-  wallhavenDebug("request.payload", wallhavenShape(payload));
   return payload;
 }
 
@@ -314,31 +278,19 @@ function wallhavenDescription(item) {
   return parts.join(" · ");
 }
 
-function mapWallhavenListItem(item, stats) {
+function mapWallhavenListItem(item) {
   if (!item || typeof item !== "object") {
-    if (stats) stats.invalidItem += 1;
     return null;
   }
-  if (String(item.purity || "").toLowerCase() !== "sfw") {
-    if (stats) stats.nonSfw += 1;
-    return null;
-  }
+  if (!wallhavenPurityAllowed(item.purity)) return null;
   const id = extractWallhavenId(item.id);
   const link = wallhavenPageUrl(id);
-  if (!id || !link) {
-    if (stats) stats.missingId += 1;
-    return null;
-  }
+  if (!id || !link) return null;
 
   const thumbs = item.thumbs || {};
   const largeThumb = safeWallhavenImageUrl(thumbs.large || thumbs.original || thumbs.small);
   const poster = safeWallhavenImageUrl(thumbs.original || thumbs.large || thumbs.small);
-  if (!largeThumb && !poster) {
-    if (stats) stats.missingImage += 1;
-    return null;
-  }
-
-  if (stats) stats.mapped += 1;
+  if (!largeThumb && !poster) return null;
 
   return {
     id: link,
@@ -370,7 +322,7 @@ async function loadWallpapers(params = {}) {
   const url = buildWallhavenUrl("/search", {
     q: wallhavenQueryFromParams(params),
     categories: categories,
-    purity: "100",
+    purity: "110",
     sorting: sorting,
     order: "desc",
     topRange: sorting === "toplist" ? topRange : "",
@@ -382,39 +334,10 @@ async function loadWallpapers(params = {}) {
   try {
     const payload = await requestWallhavenJson(url);
     const data = wallhavenArray(unwrapWallhavenData(payload));
-    wallhavenDebug("list.unwrapped", {
-      data: wallhavenShape(data),
-      firstItem: wallhavenShape(data[0]),
-      firstId: data[0] && String(data[0].id || ""),
-      firstPurity: data[0] && String(data[0].purity || ""),
-      firstPurityType: data[0] ? typeof data[0].purity : "undefined",
-      firstThumbs: wallhavenShape(data[0] && data[0].thumbs),
-      firstLargeThumbType: data[0] && data[0].thumbs ? typeof data[0].thumbs.large : "undefined",
-    });
     if (!data.length) throw new Error("Wallhaven API 没有返回可解析的壁纸条目");
-    const stats = {
-      invalidItem: 0,
-      nonSfw: 0,
-      missingId: 0,
-      missingImage: 0,
-      mapped: 0,
-    };
-    const items = data
-      .map(function (item) {
-        return mapWallhavenListItem(item, stats);
-      })
-      .filter(Boolean);
-    wallhavenDebug("list.mapping", {
-      input: data.length,
-      output: items.length,
-      stats: stats,
-    });
-    return items;
+    return data.map(mapWallhavenListItem).filter(Boolean);
   } catch (error) {
-    console.error(
-      WALLHAVEN_DEBUG_PREFIX + " list.error " +
-        (error && error.message ? error.message : String(error))
-    );
+    console.error("Wallhaven 壁纸列表加载失败:", error && error.message ? error.message : error);
     throw error;
   }
 }
@@ -432,7 +355,7 @@ function wallhavenDetailTitle(item) {
   const tags = wallhavenArray(item.tags);
   const names = tags
     .filter(function (tag) {
-      return tag && tag.purity === "sfw" && tag.name;
+      return tag && wallhavenPurityAllowed(tag.purity) && tag.name;
     })
     .slice(0, 3)
     .map(function (tag) {
@@ -460,7 +383,7 @@ async function loadDetail(link) {
   try {
     const payload = await requestWallhavenJson(buildWallhavenUrl("/w/" + id, {}));
     const item = unwrapWallhavenData(payload);
-    if (!item || item.purity !== "sfw") return null;
+    if (!item || !wallhavenPurityAllowed(item.purity)) return null;
 
     const pageUrl = wallhavenPageUrl(id);
     const fullImage = safeWallhavenImageUrl(item.path);
@@ -472,7 +395,7 @@ async function loadDetail(link) {
     const tags = wallhavenArray(item.tags);
     const genreItems = tags
       .filter(function (tag) {
-        return tag && tag.purity === "sfw" && /^\d+$/.test(String(tag.id)) && tag.name;
+        return tag && wallhavenPurityAllowed(tag.purity) && /^\d+$/.test(String(tag.id)) && tag.name;
       })
       .slice(0, 20)
       .map(function (tag) {
