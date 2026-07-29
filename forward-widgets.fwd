@@ -80,7 +80,7 @@
       "title": "黑料网·公开资讯",
       "description": "公开资讯浏览框架；过滤敏感内容，不解析媒体资源",
       "requiredVersion": "0.0.1",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/heiliao.js"
     }
