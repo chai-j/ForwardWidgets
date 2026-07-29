@@ -1,7 +1,7 @@
 WidgetMetadata = {
   id: "chai.heiliao-news",
   title: "黑料网·公开资讯",
-  version: "0.1.0",
+  version: "0.1.1",
   requiredVersion: "0.0.1",
   description: "公开资讯浏览框架；过滤敏感内容，不解析媒体资源",
   author: "chai-j",
@@ -58,44 +58,62 @@ const HEILIAO_SENSITIVE_PATTERN =
 
 function normalizeHeiliaoBaseUrl(value) {
   const raw = String(value || HEILIAO_DEFAULT_BASE_URL).trim();
-  try {
-    const parsed = new URL(raw);
-    const hostname = parsed.hostname.toLowerCase();
-    if (!/^https?:$/.test(parsed.protocol)) return HEILIAO_DEFAULT_BASE_URL;
-    if (hostname !== "heiliao.com" && !hostname.endsWith(".heiliao.com")) {
-      return HEILIAO_DEFAULT_BASE_URL;
-    }
-    return parsed.origin;
-  } catch (_) {
-    return HEILIAO_DEFAULT_BASE_URL;
-  }
+  const origin = parseHeiliaoOrigin(raw);
+  return origin ? origin.origin : HEILIAO_DEFAULT_BASE_URL;
 }
 
 function heiliaoAbsoluteUrl(value, baseUrl) {
   const raw = String(value || "").trim();
   if (!raw) return "";
-  try {
-    return new URL(raw, normalizeHeiliaoBaseUrl(baseUrl) + "/").toString();
-  } catch (_) {
-    return "";
-  }
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (raw.startsWith("//")) return "https:" + raw;
+  const base = normalizeHeiliaoBaseUrl(baseUrl);
+  return base + (raw.startsWith("/") ? raw : "/" + raw);
+}
+
+function parseHeiliaoOrigin(value) {
+  const match = String(value || "").trim().match(/^(https?):\/\/([^/?#]+)(?:[/?#]|$)/i);
+  if (!match) return null;
+  const protocol = match[1].toLowerCase();
+  const authority = match[2].toLowerCase();
+  const authorityMatch = authority.match(/^([a-z0-9.-]+)(?::\d+)?$/i);
+  if (!authorityMatch) return null;
+  const hostname = authorityMatch[1];
+  if (hostname !== "heiliao.com" && !hostname.endsWith(".heiliao.com")) return null;
+  return {
+    origin: protocol + "://" + authority,
+    protocol: protocol,
+    authority: authority,
+  };
 }
 
 function normalizeHeiliaoArticleUrl(value, baseUrl) {
-  const base = normalizeHeiliaoBaseUrl(baseUrl);
-  try {
-    const parsed = new URL(String(value || ""), base + "/");
-    if (parsed.origin !== new URL(base).origin) return "";
-    if (!/^\/archives\/\d+\/?$/.test(parsed.pathname)) return "";
-    return parsed.origin + parsed.pathname.replace(/\/?$/, "/");
-  } catch (_) {
+  const baseOrigin = parseHeiliaoOrigin(normalizeHeiliaoBaseUrl(baseUrl));
+  if (!baseOrigin) return "";
+
+  let raw = String(value || "").trim();
+  if (raw.startsWith("//")) raw = baseOrigin.protocol + ":" + raw;
+
+  let path = "";
+  if (/^https?:\/\//i.test(raw)) {
+    const absoluteOrigin = parseHeiliaoOrigin(raw);
+    if (!absoluteOrigin || absoluteOrigin.origin !== baseOrigin.origin) return "";
+    const remainder = raw.match(/^https?:\/\/[^/?#]+([\s\S]*)$/i);
+    path = remainder ? remainder[1] : "";
+  } else if (raw.startsWith("/")) {
+    path = raw;
+  } else {
     return "";
   }
+
+  path = path.split(/[?#]/, 1)[0];
+  if (!/^\/archives\/\d+\/?$/.test(path)) return "";
+  return baseOrigin.origin + path.replace(/\/?$/, "/");
 }
 
 function normalizeHeiliaoCategory(value) {
   const category = String(value || "");
-  return HEILIAO_SAFE_CATEGORIES.includes(category) ? category : HEILIAO_SAFE_CATEGORIES[0];
+  return HEILIAO_SAFE_CATEGORIES.indexOf(category) >= 0 ? category : HEILIAO_SAFE_CATEGORIES[0];
 }
 
 function buildHeiliaoListUrl(baseUrl, category, page) {
