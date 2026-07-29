@@ -1,6 +1,6 @@
 {
   "title": "chai-j 视频模块聚合",
-  "description": "由 chai-j 维护的 8 个 Forward 自定义视频模块",
+  "description": "由 chai-j 维护的 9 个 Forward 自定义模块",
   "icon": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/icon.png",
   "widgets": [
     {
@@ -74,6 +74,15 @@
       "version": "2.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/91porn.js"
+    },
+    {
+      "id": "chai.heiliao-news",
+      "title": "黑料网·公开资讯",
+      "description": "公开资讯浏览框架；过滤敏感内容，不解析媒体资源",
+      "requiredVersion": "0.0.1",
+      "version": "0.1.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/heiliao.js"
     }
   ]
 }
