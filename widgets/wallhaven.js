@@ -1,7 +1,7 @@
 WidgetMetadata = {
   id: "chai.wallhaven",
   title: "Wallhaven 壁纸",
-  version: "1.0.0",
+  version: "1.0.1",
   requiredVersion: "0.0.1",
   description: "Wallhaven SFW 壁纸浏览、筛选、搜索与大图详情",
   author: "chai-j",
@@ -197,6 +197,37 @@ async function requestWallhavenJson(url) {
   return payload;
 }
 
+function unwrapWallhavenData(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== "object") return payload;
+  return Object.prototype.hasOwnProperty.call(payload, "data") ? payload.data : payload;
+}
+
+function wallhavenArray(value) {
+  if (Array.isArray(value)) return value;
+  if (!value || typeof value !== "object") return [];
+
+  const length = Number(value.length);
+  if (Number.isInteger(length) && length >= 0) {
+    const items = [];
+    for (let index = 0; index < length; index += 1) {
+      if (value[index] != null) items.push(value[index]);
+    }
+    return items;
+  }
+
+  return Object.keys(value)
+    .filter(function (key) {
+      return /^\d+$/.test(key);
+    })
+    .sort(function (left, right) {
+      return Number(left) - Number(right);
+    })
+    .map(function (key) {
+      return value[key];
+    });
+}
+
 function extractWallhavenId(value) {
   const text = String(value || "").trim();
   if (/^[a-z0-9]{6}$/i.test(text)) return text.toLowerCase();
@@ -301,11 +332,12 @@ async function loadWallpapers(params = {}) {
 
   try {
     const payload = await requestWallhavenJson(url);
-    const data = Array.isArray(payload.data) ? payload.data : [];
+    const data = wallhavenArray(unwrapWallhavenData(payload));
+    if (!data.length) throw new Error("Wallhaven API 没有返回可解析的壁纸条目");
     return data.map(mapWallhavenListItem).filter(Boolean);
   } catch (error) {
     console.error("Wallhaven 壁纸列表加载失败:", error && error.message ? error.message : error);
-    return [];
+    throw error;
   }
 }
 
@@ -349,7 +381,7 @@ async function loadDetail(link) {
 
   try {
     const payload = await requestWallhavenJson(buildWallhavenUrl("/w/" + id, {}));
-    const item = payload.data;
+    const item = unwrapWallhavenData(payload);
     if (!item || item.purity !== "sfw") return null;
 
     const pageUrl = wallhavenPageUrl(id);
