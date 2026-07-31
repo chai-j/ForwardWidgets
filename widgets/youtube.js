@@ -8,10 +8,10 @@
 WidgetMetadata = {
   id: "chai.youtube",
   title: "YouTube",
-  description: "搜索、频道、播放列表和公开热门视频",
+  description: "搜索、频道、播放列表和公开热门视频，支持实验性嵌入播放",
   author: "chai-j",
   site: "https://www.youtube.com",
-  version: "1.2.3",
+  version: "1.3.0",
   requiredVersion: "0.0.1",
   detailCacheDuration: 600,
   globalParams: [
@@ -144,6 +144,15 @@ WidgetMetadata = {
         },
       ],
     },
+    {
+      id: "loadResource",
+      title: "YouTube 嵌入播放（实验）",
+      description: "使用 YouTube IFrame 播放器地址测试 Forward 播放器兼容性",
+      functionName: "loadResource",
+      type: "stream",
+      cacheDuration: 0,
+      params: [],
+    },
   ],
   // Forward 支持的全局搜索入口；同时在 modules 中保留“视频搜索”，方便直接找到。
   search: {
@@ -253,7 +262,7 @@ async function youtubeApi(path, query, params) {
   const response = await Widget.http.get(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "ForwardWidgets-YouTube/1.2.2",
+      "User-Agent": "ForwardWidgets-YouTube/1.3.0",
     },
   });
   return youtubePayload(response);
@@ -302,6 +311,36 @@ function youtubeThumbnail(snippet) {
   return choice && choice.url ? String(choice.url) : "";
 }
 
+function youtubeExtractVideoId(value) {
+  const text = youtubeText(value);
+  if (!text) return "";
+  if (/^[\w-]{6,}$/.test(text)) return text;
+  const queryMatch = /[?&]v=([\w-]{6,})/i.exec(text);
+  if (queryMatch) return queryMatch[1];
+  const pathMatch = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|shorts\/))([\w-]{6,})/i.exec(text);
+  return pathMatch ? pathMatch[1] : "";
+}
+
+function youtubeEmbedUrl(player, videoId) {
+  const id = youtubeText(videoId);
+  if (!id) return "";
+  const html = youtubeText(player && player.embedHtml);
+  const match = /<iframe\b[^>]*\bsrc=(?:"([^"]+)"|'([^']+)')/i.exec(html);
+  let source = match ? (match[1] || match[2] || "") : "";
+  source = source.replace(/&amp;/g, "&");
+  if (source.indexOf("//") === 0) source = "https:" + source;
+  if (!/^https?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/[\w-]+/i.test(source)) {
+    source = "https://www.youtube.com/embed/" + encodeURIComponent(id);
+  }
+  return source;
+}
+
+function youtubeEmbedPlaybackUrl(player, videoId) {
+  const source = youtubeEmbedUrl(player, videoId);
+  if (!source) return "";
+  return source + (source.indexOf("?") >= 0 ? "&" : "?") + "autoplay=1&playsinline=1";
+}
+
 function youtubeDuration(value) {
   const match = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/i.exec(youtubeText(value));
   if (!match) return {};
@@ -334,7 +373,7 @@ function youtubeLiveMetadata(snippet, liveStreamingDetails) {
   return {};
 }
 
-function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreamingDetails) {
+function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreamingDetails, player) {
   const videoId = youtubeText(id);
   if (!videoId || !snippet) return null;
   const title = youtubeDecodeText(snippet.title) || "YouTube 视频";
@@ -342,6 +381,7 @@ function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreaming
   const duration = youtubeDuration(contentDetails && contentDetails.duration);
   const views = statistics && statistics.viewCount != null ? String(statistics.viewCount) : "";
   const liveMetadata = youtubeLiveMetadata(snippet, liveStreamingDetails);
+  const embedUrl = youtubeEmbedPlaybackUrl(player, videoId);
   return Object.assign(
     {
       id: videoId,
@@ -357,7 +397,8 @@ function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreaming
       releaseDate: snippet.publishedAt || undefined,
       genreTitle: youtubeDecodeText(snippet.channelTitle) || undefined,
       rating: views ? views + " 次观看" : undefined,
-      playerType: "system",
+      videoUrl: embedUrl || undefined,
+      playerType: embedUrl ? "app" : "system",
     },
     duration,
     liveMetadata
@@ -367,7 +408,7 @@ function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreaming
 function youtubeVideoItems(items) {
   return youtubeArray(items)
     .map(function (item) {
-      return youtubeVideoItem(item.snippet, youtubeVideoId(item), item.contentDetails, item.statistics, item.liveStreamingDetails);
+      return youtubeVideoItem(item.snippet, youtubeVideoId(item), item.contentDetails, item.statistics, item.liveStreamingDetails, item.player);
     })
     .filter(Boolean);
 }
@@ -380,7 +421,7 @@ async function youtubeVideosByIds(ids, params) {
   });
   if (!unique.length) return [];
   const payload = await youtubeApi("/videos", {
-    part: "snippet,contentDetails,statistics,liveStreamingDetails",
+    part: "snippet,contentDetails,statistics,liveStreamingDetails,player",
     id: unique.join(","),
     maxResults: 50,
   }, params);
@@ -407,7 +448,8 @@ async function youtubeHydrateItems(items, params) {
         id,
         item.contentDetails,
         item.statistics,
-        item.liveStreamingDetails
+        item.liveStreamingDetails,
+        item.player
       );
     })
     .filter(Boolean);
@@ -492,7 +534,7 @@ async function loadTrendingVideos(params) {
   const region = youtubeRegionCode(options);
   const cacheKey = youtubePageCacheKey("trending", region, {});
   const payload = await youtubeApi("/videos", {
-    part: "snippet,contentDetails,statistics,liveStreamingDetails",
+    part: "snippet,contentDetails,statistics,liveStreamingDetails,player",
     chart: "mostPopular",
     maxResults: 20,
     regionCode: region,
@@ -526,20 +568,45 @@ async function loadChannelVideos(params) {
 
 async function loadDetail(link) {
   const value = youtubeText(link);
-  const id = youtubeExtractQueryParam(value, "v") || (/youtu\.be\/([^/?#]+)/i.exec(value) || [])[1] || (/youtube\.com\/shorts\/([^/?#]+)/i.exec(value) || [])[1] || value;
-  if (!/^[\w-]{6,}$/.test(id)) return null;
+  const id = youtubeExtractVideoId(value);
+  if (!id) return null;
   try {
     const items = await youtubeVideosByIds([id], {});
+    const embedUrl = youtubeEmbedPlaybackUrl(null, id);
     return items[0] || {
       id: id,
       type: "url",
       mediaType: "movie",
       link: "https://www.youtube.com/watch?v=" + encodeURIComponent(id),
       title: "YouTube 视频",
-      playerType: "system",
+      videoUrl: embedUrl,
+      playerType: "app",
     };
   } catch (error) {
     console.error("YouTube 详情加载失败:", error && error.message ? error.message : error);
     return null;
   }
+}
+
+async function loadResource(params) {
+  const options = params || {};
+  const id = youtubeExtractVideoId(options.videoUrl) ||
+    youtubeExtractVideoId(options.link) ||
+    youtubeExtractVideoId(options.id);
+  if (!id) throw new Error("无法从播放上下文中识别 YouTube 视频 ID");
+  const embedUrl = youtubeEmbedPlaybackUrl(null, id);
+  return [
+    {
+      name: "YouTube 嵌入播放器（应用）",
+      description: "实验线路 · IFrame Embed",
+      url: embedUrl,
+      playerType: "app",
+    },
+    {
+      name: "YouTube 嵌入播放器（系统）",
+      description: "实验线路 · 用于对比播放器兼容性",
+      url: embedUrl,
+      playerType: "system",
+    },
+  ];
 }
