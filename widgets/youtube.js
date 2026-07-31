@@ -8,10 +8,10 @@
 WidgetMetadata = {
   id: "chai.youtube",
   title: "YouTube",
-  description: "搜索、直播、频道、播放列表和公开热门视频",
+  description: "搜索、频道、播放列表和公开热门视频",
   author: "chai-j",
   site: "https://www.youtube.com",
-  version: "1.2.2",
+  version: "1.2.3",
   requiredVersion: "0.0.1",
   detailCacheDuration: 600,
   globalParams: [
@@ -59,45 +59,6 @@ WidgetMetadata = {
       requiresWebView: false,
       cacheDuration: 900,
       params: [
-        {
-          name: "page",
-          title: "页码",
-          type: "page",
-          value: "1",
-        },
-      ],
-    },
-    {
-      id: "youtube.live",
-      title: "直播",
-      description: "浏览正在直播、即将直播和已结束的公开直播",
-      functionName: "loadLiveVideos",
-      requiresWebView: false,
-      cacheDuration: 300,
-      params: [
-        {
-          name: "sort_by",
-          title: "直播状态",
-          type: "enumeration",
-          value: "live",
-          enumOptions: [
-            { value: "live", title: "正在直播" },
-            { value: "upcoming", title: "即将直播" },
-            { value: "completed", title: "已结束" },
-          ],
-        },
-        {
-          name: "keyword",
-          title: "关键词",
-          type: "input",
-          description: "可选；留空时浏览公开直播",
-        },
-        {
-          name: "channel_id",
-          title: "频道 ID / Handle",
-          type: "input",
-          description: "可选；例如 UC... 或 @Handle",
-        },
         {
           name: "page",
           title: "页码",
@@ -539,41 +500,6 @@ async function loadTrendingVideos(params) {
   }, options);
   rememberYoutubeNextPage(cacheKey, page, payload.nextPageToken);
   return youtubeVideoItems(payload.items);
-}
-
-async function loadLiveVideos(params) {
-  const options = params || {};
-  const eventType = ["live", "upcoming", "completed"].indexOf(String(options.sort_by)) >= 0
-    ? String(options.sort_by)
-    : "live";
-  const keyword = youtubeText(options.keyword);
-  const channelValue = youtubeText(options.channel_id);
-  const channel = channelValue ? await resolveYoutubeChannel(channelValue, options) : null;
-  const page = youtubePageNumber(options);
-  const region = youtubeRegionCode(options);
-  const order = eventType === "live" ? "viewCount" : "date";
-  const cacheKey = youtubePageCacheKey("live", keyword, {
-    eventType: eventType,
-    channelId: channel && channel.id,
-    region: region,
-    order: order,
-  });
-  const payload = await youtubeApi("/search", {
-    part: "snippet",
-    type: "video",
-    eventType: eventType,
-    q: keyword,
-    channelId: channel && channel.id,
-    order: order,
-    maxResults: 20,
-    regionCode: region,
-    pageToken: youtubePageToken(cacheKey, page),
-  }, options);
-  rememberYoutubeNextPage(cacheKey, page, payload.nextPageToken);
-  const searchItems = youtubeArray(payload.items);
-  const results = await youtubeHydrateItems(searchItems, options);
-  console.log("YouTube 直播数据：搜索 " + searchItems.length + " 条，解析 " + results.length + " 条");
-  return results;
 }
 
 async function loadPlaylistVideos(params) {
