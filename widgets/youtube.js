@@ -11,7 +11,7 @@ WidgetMetadata = {
   description: "搜索、频道、播放列表和公开热门视频，支持实验性嵌入播放",
   author: "chai-j",
   site: "https://www.youtube.com",
-  version: "1.3.0",
+  version: "1.3.1",
   requiredVersion: "0.0.1",
   detailCacheDuration: 600,
   globalParams: [
@@ -262,7 +262,7 @@ async function youtubeApi(path, query, params) {
   const response = await Widget.http.get(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "ForwardWidgets-YouTube/1.3.0",
+      "User-Agent": "ForwardWidgets-YouTube/1.3.1",
     },
   });
   return youtubePayload(response);
@@ -338,7 +338,15 @@ function youtubeEmbedUrl(player, videoId) {
 function youtubeEmbedPlaybackUrl(player, videoId) {
   const source = youtubeEmbedUrl(player, videoId);
   if (!source) return "";
-  return source + (source.indexOf("?") >= 0 ? "&" : "?") + "autoplay=1&playsinline=1";
+  return source + (source.indexOf("?") >= 0 ? "&" : "?") +
+    "autoplay=1&playsinline=1&origin=https%3A%2F%2Fwww.youtube.com&widget_referrer=https%3A%2F%2Fwww.youtube.com%2F";
+}
+
+function youtubeEmbedHeaders() {
+  return {
+    Referer: "https://www.youtube.com/",
+    Origin: "https://www.youtube.com",
+  };
 }
 
 function youtubeDuration(value) {
@@ -595,17 +603,27 @@ async function loadResource(params) {
     youtubeExtractVideoId(options.id);
   if (!id) throw new Error("无法从播放上下文中识别 YouTube 视频 ID");
   const embedUrl = youtubeEmbedPlaybackUrl(null, id);
+  const watchUrl = "https://www.youtube.com/watch?v=" + encodeURIComponent(id);
   return [
     {
-      name: "YouTube 嵌入播放器（应用）",
-      description: "实验线路 · IFrame Embed",
+      name: "YouTube 嵌入播放器（身份参数）",
+      description: "实验线路 · Origin + Referer",
       url: embedUrl,
+      customHeaders: youtubeEmbedHeaders(),
+      playerType: "app",
+    },
+    {
+      name: "YouTube 页面播放器",
+      description: "实验线路 · 直接打开 YouTube 页面",
+      url: watchUrl,
+      customHeaders: { Referer: "https://www.youtube.com/" },
       playerType: "app",
     },
     {
       name: "YouTube 嵌入播放器（系统）",
-      description: "实验线路 · 用于对比播放器兼容性",
+      description: "实验线路 · 系统播放器兼容性对比",
       url: embedUrl,
+      customHeaders: youtubeEmbedHeaders(),
       playerType: "system",
     },
   ];
