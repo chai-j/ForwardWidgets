@@ -11,7 +11,7 @@ WidgetMetadata = {
   description: "搜索、频道、播放列表和公开热门视频，支持自定义解析服务播放",
   author: "chai-j",
   site: "https://www.youtube.com",
-  version: "1.4.0",
+  version: "1.4.1",
   requiredVersion: "0.0.1",
   detailCacheDuration: 600,
   globalParams: [
@@ -159,8 +159,8 @@ WidgetMetadata = {
     },
     {
       id: "loadResource",
-      title: "YouTube 嵌入播放（实验）",
-      description: "使用 YouTube IFrame 播放器地址测试 Forward 播放器兼容性",
+      title: "YouTube 播放资源",
+      description: "起播时通过自定义解析服务生成临时播放地址；未配置时返回 Embed 测试线路",
       functionName: "loadResource",
       type: "stream",
       cacheDuration: 0,
@@ -275,7 +275,7 @@ async function youtubeApi(path, query, params) {
   const response = await Widget.http.get(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "ForwardWidgets-YouTube/1.4.0",
+      "User-Agent": "ForwardWidgets-YouTube/1.4.1",
     },
   });
   return youtubePayload(response);
@@ -394,7 +394,7 @@ function youtubeLiveMetadata(snippet, liveStreamingDetails) {
   return {};
 }
 
-function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreamingDetails, player) {
+function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreamingDetails) {
   const videoId = youtubeText(id);
   if (!videoId || !snippet) return null;
   const title = youtubeDecodeText(snippet.title) || "YouTube 视频";
@@ -402,7 +402,6 @@ function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreaming
   const duration = youtubeDuration(contentDetails && contentDetails.duration);
   const views = statistics && statistics.viewCount != null ? String(statistics.viewCount) : "";
   const liveMetadata = youtubeLiveMetadata(snippet, liveStreamingDetails);
-  const embedUrl = youtubeEmbedPlaybackUrl(player, videoId);
   return Object.assign(
     {
       id: videoId,
@@ -418,8 +417,8 @@ function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreaming
       releaseDate: snippet.publishedAt || undefined,
       genreTitle: youtubeDecodeText(snippet.channelTitle) || undefined,
       rating: views ? views + " 次观看" : undefined,
-      videoUrl: embedUrl || undefined,
-      playerType: embedUrl ? "app" : "system",
+      // 播放地址由 loadResource 在真正起播时生成；这里不要填 videoUrl，
+      // 否则客户端可能直接播放 Embed 地址而跳过 loadResource。
     },
     duration,
     liveMetadata
@@ -429,7 +428,7 @@ function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreaming
 function youtubeVideoItems(items) {
   return youtubeArray(items)
     .map(function (item) {
-      return youtubeVideoItem(item.snippet, youtubeVideoId(item), item.contentDetails, item.statistics, item.liveStreamingDetails, item.player);
+      return youtubeVideoItem(item.snippet, youtubeVideoId(item), item.contentDetails, item.statistics, item.liveStreamingDetails);
     })
     .filter(Boolean);
 }
@@ -442,7 +441,7 @@ async function youtubeVideosByIds(ids, params) {
   });
   if (!unique.length) return [];
   const payload = await youtubeApi("/videos", {
-    part: "snippet,contentDetails,statistics,liveStreamingDetails,player",
+    part: "snippet,contentDetails,statistics,liveStreamingDetails",
     id: unique.join(","),
     maxResults: 50,
   }, params);
@@ -469,8 +468,7 @@ async function youtubeHydrateItems(items, params) {
         id,
         item.contentDetails,
         item.statistics,
-        item.liveStreamingDetails,
-        item.player
+        item.liveStreamingDetails
       );
     })
     .filter(Boolean);
@@ -555,7 +553,7 @@ async function loadTrendingVideos(params) {
   const region = youtubeRegionCode(options);
   const cacheKey = youtubePageCacheKey("trending", region, {});
   const payload = await youtubeApi("/videos", {
-    part: "snippet,contentDetails,statistics,liveStreamingDetails,player",
+    part: "snippet,contentDetails,statistics,liveStreamingDetails",
     chart: "mostPopular",
     maxResults: 20,
     regionCode: region,
@@ -593,15 +591,12 @@ async function loadDetail(link) {
   if (!id) return null;
   try {
     const items = await youtubeVideosByIds([id], {});
-    const embedUrl = youtubeEmbedPlaybackUrl(null, id);
     return items[0] || {
       id: id,
       type: "url",
       mediaType: "movie",
       link: "https://www.youtube.com/watch?v=" + encodeURIComponent(id),
       title: "YouTube 视频",
-      videoUrl: embedUrl,
-      playerType: "app",
     };
   } catch (error) {
     console.error("YouTube 详情加载失败:", error && error.message ? error.message : error);
