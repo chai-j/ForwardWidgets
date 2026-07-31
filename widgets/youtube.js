@@ -2,16 +2,16 @@
  * ForwardWidgets - YouTube 公共 API 模块
  *
  * 这是 API Key 版本：请在导入后填写自己的 YouTube Data API v3 key。
- * 模块只返回 YouTube 页面链接，不抓取或转码视频媒体资源。
+ * 默认返回 YouTube 页面/Embed 地址；配置 resolver_url 后由外部服务返回临时播放资源。
  */
 
 WidgetMetadata = {
   id: "chai.youtube",
   title: "YouTube",
-  description: "搜索、频道、播放列表和公开热门视频，支持实验性嵌入播放",
+  description: "搜索、频道、播放列表和公开热门视频，支持自定义解析服务播放",
   author: "chai-j",
   site: "https://www.youtube.com",
-  version: "1.3.1",
+  version: "1.4.0",
   requiredVersion: "0.0.1",
   detailCacheDuration: 600,
   globalParams: [
@@ -20,6 +20,19 @@ WidgetMetadata = {
       title: "YouTube API Key",
       type: "input",
       description: "Google Cloud 中启用 YouTube Data API v3 后创建的 API Key",
+    },
+    {
+      name: "resolver_url",
+      title: "自定义解析服务地址",
+      type: "input",
+      value: "",
+      description: "可选；例如 https://resolver.example.com，不填则使用 Embed 测试线路",
+    },
+    {
+      name: "resolver_token",
+      title: "解析服务 Token",
+      type: "input",
+      description: "可选；与自定义解析服务的 RESOLVER_TOKEN 一致",
     },
     {
       name: "region_code",
@@ -262,7 +275,7 @@ async function youtubeApi(path, query, params) {
   const response = await Widget.http.get(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "ForwardWidgets-YouTube/1.3.1",
+      "User-Agent": "ForwardWidgets-YouTube/1.4.0",
     },
   });
   return youtubePayload(response);
@@ -596,12 +609,70 @@ async function loadDetail(link) {
   }
 }
 
+function youtubeResolverPayload(response) {
+  if (!response) throw new Error("解析服务没有返回数据");
+  const status = Number(response.statusCode || response.status || 200);
+  let payload = response.data !== undefined ? response.data : response.body;
+  if (typeof payload === "string") {
+    try {
+      payload = JSON.parse(payload);
+    } catch (_) {
+      throw new Error("解析服务返回了无法解析的响应");
+    }
+  }
+  if (status >= 400 || !payload || payload.error) {
+    const reason = payload && (payload.detail || payload.error || payload.message);
+    throw new Error("解析服务请求失败" + (reason ? ": " + String(reason) : " (HTTP " + status + ")"));
+  }
+  return payload;
+}
+
+function youtubeResolverEndpoint(value, videoId) {
+  const baseUrl = youtubeText(value).replace(/\/+$/, "");
+  if (!/^https?:\/\//i.test(baseUrl)) throw new Error("解析服务地址必须以 http:// 或 https:// 开头");
+  const endpoint = /\/v1\/resolve$/i.test(baseUrl) ? baseUrl : baseUrl + "/v1/resolve";
+  return endpoint + "?video_id=" + encodeURIComponent(videoId);
+}
+
+function youtubeResolverHeaders(value) {
+  const source = value && typeof value === "object" ? value : {};
+  const result = {};
+  ["User-Agent", "Referer", "Origin", "Accept", "Accept-Language"].forEach(function (name) {
+    if (source[name]) result[name] = String(source[name]);
+  });
+  return result;
+}
+
+async function youtubeResolverResource(params, videoId) {
+  const token = youtubeText(params && params.resolver_token);
+  const headers = { Accept: "application/json" };
+  if (token) {
+    headers.Authorization = "Bearer " + token;
+    headers["X-API-Key"] = token;
+  }
+  const response = await Widget.http.get(youtubeResolverEndpoint(params.resolver_url, videoId), { headers: headers });
+  const payload = youtubeResolverPayload(response);
+  const url = youtubeText(payload.url);
+  if (!/^https?:\/\//i.test(url)) throw new Error("解析服务没有返回有效的播放地址");
+  const details = [payload.ext, payload.protocol, payload.format_note].filter(Boolean).join(" · ");
+  return {
+    name: "自定义解析服务",
+    description: details || "yt-dlp 临时播放地址",
+    url: url,
+    customHeaders: youtubeResolverHeaders(payload.headers || payload.http_headers),
+    playerType: payload.player_type === "system" ? "system" : "app",
+  };
+}
+
 async function loadResource(params) {
   const options = params || {};
   const id = youtubeExtractVideoId(options.videoUrl) ||
     youtubeExtractVideoId(options.link) ||
     youtubeExtractVideoId(options.id);
   if (!id) throw new Error("无法从播放上下文中识别 YouTube 视频 ID");
+  if (youtubeText(options.resolver_url)) {
+    return [await youtubeResolverResource(options, id)];
+  }
   const embedUrl = youtubeEmbedPlaybackUrl(null, id);
   const watchUrl = "https://www.youtube.com/watch?v=" + encodeURIComponent(id);
   return [
