@@ -11,7 +11,7 @@ WidgetMetadata = {
   description: "搜索、直播、频道、播放列表和公开热门视频",
   author: "chai-j",
   site: "https://www.youtube.com",
-  version: "1.2.0",
+  version: "1.2.1",
   requiredVersion: "0.0.1",
   detailCacheDuration: 600,
   globalParams: [
@@ -24,9 +24,30 @@ WidgetMetadata = {
     {
       name: "region_code",
       title: "热门地区",
-      type: "input",
+      type: "enumeration",
       value: "US",
-      description: "两位国家/地区代码，例如 US、CN、JP",
+      enumOptions: [
+        { value: "US", title: "美国" },
+        { value: "HK", title: "中国香港" },
+        { value: "TW", title: "中国台湾" },
+        { value: "CN", title: "中国大陆" },
+        { value: "JP", title: "日本" },
+        { value: "KR", title: "韩国" },
+        { value: "SG", title: "新加坡" },
+        { value: "MY", title: "马来西亚" },
+        { value: "TH", title: "泰国" },
+        { value: "ID", title: "印度尼西亚" },
+        { value: "PH", title: "菲律宾" },
+        { value: "VN", title: "越南" },
+        { value: "IN", title: "印度" },
+        { value: "GB", title: "英国" },
+        { value: "CA", title: "加拿大" },
+        { value: "AU", title: "澳大利亚" },
+        { value: "DE", title: "德国" },
+        { value: "FR", title: "法国" },
+        { value: "BR", title: "巴西" },
+        { value: "MX", title: "墨西哥" },
+      ],
     },
   ],
   modules: [
@@ -271,7 +292,7 @@ async function youtubeApi(path, query, params) {
   const response = await Widget.http.get(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "ForwardWidgets-YouTube/1.2",
+      "User-Agent": "ForwardWidgets-YouTube/1.2.1",
     },
   });
   return youtubePayload(response);
