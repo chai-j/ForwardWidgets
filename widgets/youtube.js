@@ -11,7 +11,7 @@ WidgetMetadata = {
   description: "搜索、频道、播放列表和公开热门视频，支持自定义解析服务播放",
   author: "chai-j",
   site: "https://www.youtube.com",
-  version: "1.6.0",
+  version: "1.6.1",
   requiredVersion: "0.0.1",
   detailCacheDuration: 600,
   globalParams: [
@@ -237,7 +237,7 @@ function youtubeRememberResolverSettings(params) {
       }));
     }
   } catch (error) {
-    console.log("[YTDBG-160] resolver settings cache failed: " + (error && error.message ? error.message : error));
+    console.log("[YTDBG-161] resolver settings cache failed: " + (error && error.message ? error.message : error));
   }
 }
 
@@ -252,7 +252,7 @@ function youtubeResolverSettings(params) {
         if (!YOUTUBE_LAST_RESOLVER_TOKEN) YOUTUBE_LAST_RESOLVER_TOKEN = youtubeText(settings.resolver_token);
       }
     } catch (error) {
-      console.log("[YTDBG-160] resolver settings restore failed: " + (error && error.message ? error.message : error));
+      console.log("[YTDBG-161] resolver settings restore failed: " + (error && error.message ? error.message : error));
     }
   }
   return {
@@ -329,7 +329,7 @@ async function youtubeApi(path, query, params) {
   const response = await Widget.http.get(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "ForwardWidgets-YouTube/1.6.0",
+      "User-Agent": "ForwardWidgets-YouTube/1.6.1",
     },
   });
   return youtubePayload(response);
@@ -447,7 +447,7 @@ function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreaming
       rating: views ? views + " 次观看" : undefined,
       // Forward 点击列表条目播放时，会把这个 URL 交给 sourceLoader/loadSource。
       videoUrl: watchUrl,
-      playerType: "app",
+      playerType: "system",
     },
     duration,
     liveMetadata
@@ -638,7 +638,7 @@ async function loadDetail(link) {
       link: "https://www.youtube.com/watch?v=" + encodeURIComponent(id),
       title: "YouTube 视频",
       videoUrl: "https://www.youtube.com/watch?v=" + encodeURIComponent(id),
-      playerType: "app",
+      playerType: "system",
     };
   } catch (error) {
     console.error("YouTube 详情加载失败:", error && error.message ? error.message : error);
@@ -687,7 +687,7 @@ async function youtubeResolverResource(params, videoId) {
   headers.Authorization = "Bearer " + token;
   headers["X-API-Key"] = token;
   const response = await Widget.http.get(youtubeResolverEndpoint(params.resolver_url, videoId), { headers: headers });
-  console.log("[YTDBG-160] resolver response status=" + Number(response && (response.statusCode || response.status || 200)));
+  console.log("[YTDBG-161] resolver response status=" + Number(response && (response.statusCode || response.status || 200)));
   const payload = youtubeResolverPayload(response);
   const url = youtubeText(payload.url);
   if (!/^https?:\/\//i.test(url)) throw new Error("解析服务没有返回有效的播放地址");
@@ -707,16 +707,11 @@ async function loadSource(link) {
     if (!id) throw new Error("无法从 videoUrl 中识别 YouTube 视频 ID");
     const settings = youtubeResolverSettings({});
     if (!youtubeText(settings.resolver_url)) throw new Error("请先通过任一视频列表加载并保存解析服务设置");
-    console.log("[YTDBG-160] loadSource video_id=" + id + " resolver=custom");
+    console.log("[YTDBG-161] loadSource video_id=" + id + " resolver=custom");
     const resource = await youtubeResolverResource(settings, id);
-    return {
-      sourceUrl: resource.url,
-      customHeaders: resource.customHeaders,
-      headers: resource.customHeaders,
-      playerType: resource.playerType,
-    };
+    return { sourceUrl: resource.url };
   } catch (error) {
-    console.error("[YTDBG-160] loadSource failed: " + (error && error.message ? error.message : error));
+    console.error("[YTDBG-161] loadSource failed: " + (error && error.message ? error.message : error));
     return null;
   }
 }
@@ -731,6 +726,6 @@ async function loadResource(params) {
     youtubeExtractVideoId(options.link) ||
     youtubeExtractVideoId(options.id);
   if (!id) throw new Error("无法从播放上下文中识别 YouTube 视频 ID");
-  console.log("[YTDBG-160] loadResource video_id=" + id + " resolver=custom");
+  console.log("[YTDBG-161] loadResource video_id=" + id + " resolver=custom");
   return [await youtubeResolverResource(settings, id)];
 }
