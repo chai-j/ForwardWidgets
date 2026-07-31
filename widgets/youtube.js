@@ -11,7 +11,7 @@ WidgetMetadata = {
   description: "搜索、频道、播放列表和公开热门视频，支持自定义解析服务播放",
   author: "chai-j",
   site: "https://www.youtube.com",
-  version: "1.5.0",
+  version: "1.6.0",
   requiredVersion: "0.0.1",
   detailCacheDuration: 600,
   globalParams: [
@@ -197,14 +197,68 @@ WidgetMetadata = {
       },
     ],
   },
+  sourceLoader: {
+    title: "解析播放源",
+    functionName: "loadSource",
+    params: [],
+  },
 };
 
 const YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3";
 const YOUTUBE_PAGE_TOKENS = Object.create(null);
+const YOUTUBE_RESOLVER_SETTINGS_KEY = "__youtube_resolver_settings_v1";
 let YOUTUBE_LAST_API_KEY = "";
+let YOUTUBE_LAST_RESOLVER_URL = "";
+let YOUTUBE_LAST_RESOLVER_TOKEN = "";
 
 function youtubeText(value) {
   return String(value == null ? "" : value).trim();
+}
+
+function youtubeRememberResolverSettings(params) {
+  const options = params || {};
+  const hasUrl = Object.prototype.hasOwnProperty.call(options, "resolver_url");
+  const hasToken = Object.prototype.hasOwnProperty.call(options, "resolver_token");
+  if (!hasUrl && !hasToken) return;
+
+  if (hasUrl) YOUTUBE_LAST_RESOLVER_URL = youtubeText(options.resolver_url);
+  if (hasToken) YOUTUBE_LAST_RESOLVER_TOKEN = youtubeText(options.resolver_token);
+
+  if (!Widget.storage) return;
+  try {
+    if (!YOUTUBE_LAST_RESOLVER_URL && !YOUTUBE_LAST_RESOLVER_TOKEN) {
+      if (typeof Widget.storage.remove === "function") Widget.storage.remove(YOUTUBE_RESOLVER_SETTINGS_KEY);
+      return;
+    }
+    if (typeof Widget.storage.set === "function") {
+      Widget.storage.set(YOUTUBE_RESOLVER_SETTINGS_KEY, JSON.stringify({
+        resolver_url: YOUTUBE_LAST_RESOLVER_URL,
+        resolver_token: YOUTUBE_LAST_RESOLVER_TOKEN,
+      }));
+    }
+  } catch (error) {
+    console.log("[YTDBG-160] resolver settings cache failed: " + (error && error.message ? error.message : error));
+  }
+}
+
+function youtubeResolverSettings(params) {
+  youtubeRememberResolverSettings(params);
+  if ((!YOUTUBE_LAST_RESOLVER_URL || !YOUTUBE_LAST_RESOLVER_TOKEN) && Widget.storage && typeof Widget.storage.get === "function") {
+    try {
+      const cached = Widget.storage.get(YOUTUBE_RESOLVER_SETTINGS_KEY);
+      const settings = typeof cached === "string" ? JSON.parse(cached) : cached;
+      if (settings) {
+        if (!YOUTUBE_LAST_RESOLVER_URL) YOUTUBE_LAST_RESOLVER_URL = youtubeText(settings.resolver_url);
+        if (!YOUTUBE_LAST_RESOLVER_TOKEN) YOUTUBE_LAST_RESOLVER_TOKEN = youtubeText(settings.resolver_token);
+      }
+    } catch (error) {
+      console.log("[YTDBG-160] resolver settings restore failed: " + (error && error.message ? error.message : error));
+    }
+  }
+  return {
+    resolver_url: YOUTUBE_LAST_RESOLVER_URL,
+    resolver_token: YOUTUBE_LAST_RESOLVER_TOKEN,
+  };
 }
 
 function youtubeDecodeText(value) {
@@ -275,7 +329,7 @@ async function youtubeApi(path, query, params) {
   const response = await Widget.http.get(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "ForwardWidgets-YouTube/1.5.0",
+      "User-Agent": "ForwardWidgets-YouTube/1.6.0",
     },
   });
   return youtubePayload(response);
@@ -391,8 +445,9 @@ function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreaming
       releaseDate: snippet.publishedAt || undefined,
       genreTitle: youtubeDecodeText(snippet.channelTitle) || undefined,
       rating: views ? views + " 次观看" : undefined,
-      // 播放地址由 loadResource 在真正起播时生成；这里不要填 videoUrl，
-      // 否则客户端可能直接播放该地址而跳过 loadResource。
+      // Forward 点击列表条目播放时，会把这个 URL 交给 sourceLoader/loadSource。
+      videoUrl: watchUrl,
+      playerType: "app",
     },
     duration,
     liveMetadata
@@ -510,6 +565,7 @@ async function resolveYoutubeChannel(value, params) {
 
 async function searchVideos(params) {
   const options = params || {};
+  youtubeRememberResolverSettings(options);
   const keyword = youtubeText(options.keyword);
   if (!keyword) return [];
   const page = youtubePageNumber(options);
@@ -530,6 +586,7 @@ async function searchVideos(params) {
 
 async function loadTrendingVideos(params) {
   const options = params || {};
+  youtubeRememberResolverSettings(options);
   const page = youtubePageNumber(options);
   const region = youtubeRegionCode(options);
   const cacheKey = youtubePageCacheKey("trending", region, {});
@@ -546,6 +603,7 @@ async function loadTrendingVideos(params) {
 
 async function loadPlaylistVideos(params) {
   const options = params || {};
+  youtubeRememberResolverSettings(options);
   const playlist = youtubePlaylistId(options.playlist_id);
   const page = youtubePageNumber(options);
   const cacheKey = youtubePageCacheKey("playlist", playlist, {});
@@ -561,6 +619,7 @@ async function loadPlaylistVideos(params) {
 
 async function loadChannelVideos(params) {
   const options = params || {};
+  youtubeRememberResolverSettings(options);
   const resolved = await resolveYoutubeUploadsPlaylist(options.channel_id, options);
   const playlistOptions = Object.assign({}, options, { playlist_id: resolved.id });
   return loadPlaylistVideos(playlistOptions);
@@ -578,6 +637,8 @@ async function loadDetail(link) {
       mediaType: "movie",
       link: "https://www.youtube.com/watch?v=" + encodeURIComponent(id),
       title: "YouTube 视频",
+      videoUrl: "https://www.youtube.com/watch?v=" + encodeURIComponent(id),
+      playerType: "app",
     };
   } catch (error) {
     console.error("YouTube 详情加载失败:", error && error.message ? error.message : error);
@@ -626,7 +687,7 @@ async function youtubeResolverResource(params, videoId) {
   headers.Authorization = "Bearer " + token;
   headers["X-API-Key"] = token;
   const response = await Widget.http.get(youtubeResolverEndpoint(params.resolver_url, videoId), { headers: headers });
-  console.log("[YTDBG-150] resolver response status=" + Number(response && (response.statusCode || response.status || 200)));
+  console.log("[YTDBG-160] resolver response status=" + Number(response && (response.statusCode || response.status || 200)));
   const payload = youtubeResolverPayload(response);
   const url = youtubeText(payload.url);
   if (!/^https?:\/\//i.test(url)) throw new Error("解析服务没有返回有效的播放地址");
@@ -640,15 +701,36 @@ async function youtubeResolverResource(params, videoId) {
   };
 }
 
+async function loadSource(link) {
+  try {
+    const id = youtubeExtractVideoId(link);
+    if (!id) throw new Error("无法从 videoUrl 中识别 YouTube 视频 ID");
+    const settings = youtubeResolverSettings({});
+    if (!youtubeText(settings.resolver_url)) throw new Error("请先通过任一视频列表加载并保存解析服务设置");
+    console.log("[YTDBG-160] loadSource video_id=" + id + " resolver=custom");
+    const resource = await youtubeResolverResource(settings, id);
+    return {
+      sourceUrl: resource.url,
+      customHeaders: resource.customHeaders,
+      headers: resource.customHeaders,
+      playerType: resource.playerType,
+    };
+  } catch (error) {
+    console.error("[YTDBG-160] loadSource failed: " + (error && error.message ? error.message : error));
+    return null;
+  }
+}
+
 async function loadResource(params) {
   const options = params || {};
-  if (!youtubeText(options.resolver_url)) {
+  const settings = youtubeResolverSettings(options);
+  if (!youtubeText(settings.resolver_url)) {
     throw new Error("请先在模块设置中填写自定义解析服务地址");
   }
   const id = youtubeExtractVideoId(options.videoUrl) ||
     youtubeExtractVideoId(options.link) ||
     youtubeExtractVideoId(options.id);
   if (!id) throw new Error("无法从播放上下文中识别 YouTube 视频 ID");
-  console.log("[YTDBG-150] loadResource video_id=" + id + " resolver=custom");
-  return [await youtubeResolverResource(options, id)];
+  console.log("[YTDBG-160] loadResource video_id=" + id + " resolver=custom");
+  return [await youtubeResolverResource(settings, id)];
 }
