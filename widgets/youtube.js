@@ -11,7 +11,7 @@ WidgetMetadata = {
   description: "搜索、频道、播放列表和公开热门视频，支持自定义解析服务播放",
   author: "chai-j",
   site: "https://www.youtube.com",
-  version: "1.4.1",
+  version: "1.4.2",
   requiredVersion: "0.0.1",
   detailCacheDuration: 600,
   globalParams: [
@@ -159,7 +159,7 @@ WidgetMetadata = {
     },
     {
       id: "loadResource",
-      title: "YouTube 播放资源",
+      title: "加载资源",
       description: "起播时通过自定义解析服务生成临时播放地址；未配置时返回 Embed 测试线路",
       functionName: "loadResource",
       type: "stream",
@@ -275,7 +275,7 @@ async function youtubeApi(path, query, params) {
   const response = await Widget.http.get(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "ForwardWidgets-YouTube/1.4.1",
+      "User-Agent": "ForwardWidgets-YouTube/1.4.2",
     },
   });
   return youtubePayload(response);
@@ -397,6 +397,7 @@ function youtubeLiveMetadata(snippet, liveStreamingDetails) {
 function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreamingDetails) {
   const videoId = youtubeText(id);
   if (!videoId || !snippet) return null;
+  const watchUrl = "https://www.youtube.com/watch?v=" + encodeURIComponent(videoId);
   const title = youtubeDecodeText(snippet.title) || "YouTube 视频";
   const cover = youtubeThumbnail(snippet);
   const duration = youtubeDuration(contentDetails && contentDetails.duration);
@@ -404,10 +405,11 @@ function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreaming
   const liveMetadata = youtubeLiveMetadata(snippet, liveStreamingDetails);
   return Object.assign(
     {
-      id: videoId,
+      // type=url 的 id 按 Forward 模型应是对应 URL；解析服务仍可从 id/link 提取视频 ID。
+      id: watchUrl,
       type: "url",
       mediaType: "movie",
-      link: "https://www.youtube.com/watch?v=" + encodeURIComponent(videoId),
+      link: watchUrl,
       title: title,
       description: youtubeDecodeText(snippet.description) || undefined,
       coverUrl: cover || undefined,
@@ -433,6 +435,11 @@ function youtubeVideoItems(items) {
     .filter(Boolean);
 }
 
+function youtubeOutputVideoId(item) {
+  if (!item) return "";
+  return youtubeExtractVideoId(item.id) || youtubeExtractVideoId(item.link);
+}
+
 async function youtubeVideosByIds(ids, params) {
   const unique = [];
   youtubeArray(ids).forEach(function (id) {
@@ -447,7 +454,8 @@ async function youtubeVideosByIds(ids, params) {
   }, params);
   const byId = Object.create(null);
   youtubeVideoItems(payload.items).forEach(function (item) {
-    byId[item.id] = item;
+    const videoId = youtubeOutputVideoId(item);
+    if (videoId) byId[videoId] = item;
   });
   return unique.map(function (id) { return byId[id]; }).filter(Boolean);
 }
@@ -458,7 +466,8 @@ async function youtubeHydrateItems(items, params) {
   const hydratedItems = await youtubeVideosByIds(ids, params);
   const byId = Object.create(null);
   hydratedItems.forEach(function (item) {
-    byId[item.id] = item;
+    const videoId = youtubeOutputVideoId(item);
+    if (videoId) byId[videoId] = item;
   });
   return sourceItems
     .map(function (item) {
@@ -592,7 +601,7 @@ async function loadDetail(link) {
   try {
     const items = await youtubeVideosByIds([id], {});
     return items[0] || {
-      id: id,
+      id: "https://www.youtube.com/watch?v=" + encodeURIComponent(id),
       type: "url",
       mediaType: "movie",
       link: "https://www.youtube.com/watch?v=" + encodeURIComponent(id),
@@ -646,6 +655,7 @@ async function youtubeResolverResource(params, videoId) {
     headers["X-API-Key"] = token;
   }
   const response = await Widget.http.get(youtubeResolverEndpoint(params.resolver_url, videoId), { headers: headers });
+  console.log("[YTDBG-142] resolver response status=" + Number(response && (response.statusCode || response.status || 200)));
   const payload = youtubeResolverPayload(response);
   const url = youtubeText(payload.url);
   if (!/^https?:\/\//i.test(url)) throw new Error("解析服务没有返回有效的播放地址");
@@ -665,6 +675,7 @@ async function loadResource(params) {
     youtubeExtractVideoId(options.link) ||
     youtubeExtractVideoId(options.id);
   if (!id) throw new Error("无法从播放上下文中识别 YouTube 视频 ID");
+  console.log("[YTDBG-142] loadResource video_id=" + id + " resolver=" + (youtubeText(options.resolver_url) ? "custom" : "embed"));
   if (youtubeText(options.resolver_url)) {
     return [await youtubeResolverResource(options, id)];
   }
