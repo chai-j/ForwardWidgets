@@ -11,7 +11,7 @@ WidgetMetadata = {
   description: "搜索、直播、频道、播放列表和公开热门视频",
   author: "chai-j",
   site: "https://www.youtube.com",
-  version: "1.2.1",
+  version: "1.2.2",
   requiredVersion: "0.0.1",
   detailCacheDuration: 600,
   globalParams: [
@@ -292,7 +292,7 @@ async function youtubeApi(path, query, params) {
   const response = await Widget.http.get(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "ForwardWidgets-YouTube/1.2.1",
+      "User-Agent": "ForwardWidgets-YouTube/1.2.2",
     },
   });
   return youtubePayload(response);
@@ -312,6 +312,18 @@ function youtubePageToken(cacheKey, page) {
 
 function rememberYoutubeNextPage(cacheKey, page, token) {
   if (token) YOUTUBE_PAGE_TOKENS[cacheKey + "|" + page] = String(token);
+}
+
+function youtubeArray(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  const length = Number(value.length);
+  if (!Number.isFinite(length) || length < 0) return [];
+  const result = [];
+  for (let index = 0; index < length; index += 1) {
+    if (value[index] !== undefined && value[index] !== null) result.push(value[index]);
+  }
+  return result;
 }
 
 function youtubeVideoId(item) {
@@ -392,7 +404,7 @@ function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreaming
 }
 
 function youtubeVideoItems(items) {
-  return (Array.isArray(items) ? items : [])
+  return youtubeArray(items)
     .map(function (item) {
       return youtubeVideoItem(item.snippet, youtubeVideoId(item), item.contentDetails, item.statistics, item.liveStreamingDetails);
     })
@@ -401,7 +413,7 @@ function youtubeVideoItems(items) {
 
 async function youtubeVideosByIds(ids, params) {
   const unique = [];
-  (ids || []).forEach(function (id) {
+  youtubeArray(ids).forEach(function (id) {
     const value = youtubeText(id);
     if (value && unique.indexOf(value) < 0) unique.push(value);
   });
@@ -416,6 +428,28 @@ async function youtubeVideosByIds(ids, params) {
     byId[item.id] = item;
   });
   return unique.map(function (id) { return byId[id]; }).filter(Boolean);
+}
+
+async function youtubeHydrateItems(items, params) {
+  const sourceItems = youtubeArray(items);
+  const ids = sourceItems.map(youtubeVideoId).filter(Boolean);
+  const hydratedItems = await youtubeVideosByIds(ids, params);
+  const byId = Object.create(null);
+  hydratedItems.forEach(function (item) {
+    byId[item.id] = item;
+  });
+  return sourceItems
+    .map(function (item) {
+      const id = youtubeVideoId(item);
+      return byId[id] || youtubeVideoItem(
+        item.snippet,
+        id,
+        item.contentDetails,
+        item.statistics,
+        item.liveStreamingDetails
+      );
+    })
+    .filter(Boolean);
 }
 
 function youtubeExtractQueryParam(value, name) {
@@ -461,7 +495,7 @@ async function resolveYoutubeChannel(value, params) {
   if (ref.id) query.id = ref.id;
   else if (ref.handle) query.forHandle = ref.handle;
   const payload = await youtubeApi("/channels", query, params);
-  const channel = Array.isArray(payload.items) ? payload.items[0] : null;
+  const channel = youtubeArray(payload.items)[0] || null;
   const uploads = channel && channel.contentDetails && channel.contentDetails.relatedPlaylists && channel.contentDetails.relatedPlaylists.uploads;
   if (!channel || !channel.id) throw new Error("找不到该频道");
   return {
@@ -488,7 +522,7 @@ async function searchVideos(params) {
     pageToken: youtubePageToken(cacheKey, page),
   }, options);
   rememberYoutubeNextPage(cacheKey, page, payload.nextPageToken);
-  return youtubeVideosByIds((payload.items || []).map(youtubeVideoId), options);
+  return youtubeHydrateItems(payload.items, options);
 }
 
 async function loadTrendingVideos(params) {
@@ -536,7 +570,10 @@ async function loadLiveVideos(params) {
     pageToken: youtubePageToken(cacheKey, page),
   }, options);
   rememberYoutubeNextPage(cacheKey, page, payload.nextPageToken);
-  return youtubeVideosByIds((payload.items || []).map(youtubeVideoId), options);
+  const searchItems = youtubeArray(payload.items);
+  const results = await youtubeHydrateItems(searchItems, options);
+  console.log("YouTube 直播数据：搜索 " + searchItems.length + " 条，解析 " + results.length + " 条");
+  return results;
 }
 
 async function loadPlaylistVideos(params) {
@@ -551,7 +588,7 @@ async function loadPlaylistVideos(params) {
     pageToken: youtubePageToken(cacheKey, page),
   }, options);
   rememberYoutubeNextPage(cacheKey, page, payload.nextPageToken);
-  return youtubeVideosByIds((payload.items || []).map(youtubeVideoId), options);
+  return youtubeHydrateItems(payload.items, options);
 }
 
 async function loadChannelVideos(params) {
