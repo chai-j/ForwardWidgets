@@ -2,7 +2,7 @@
  * ForwardWidgets - YouTube 公共 API 模块
  *
  * 这是 API Key 版本：请在导入后填写自己的 YouTube Data API v3 key。
- * 默认返回 YouTube 页面/Embed 地址；配置 resolver_url 后由外部服务返回临时播放资源。
+ * 播放时仅通过自定义 resolver_url 返回临时播放资源。
  */
 
 WidgetMetadata = {
@@ -11,7 +11,7 @@ WidgetMetadata = {
   description: "搜索、频道、播放列表和公开热门视频，支持自定义解析服务播放",
   author: "chai-j",
   site: "https://www.youtube.com",
-  version: "1.4.2",
+  version: "1.5.0",
   requiredVersion: "0.0.1",
   detailCacheDuration: 600,
   globalParams: [
@@ -26,13 +26,13 @@ WidgetMetadata = {
       title: "自定义解析服务地址",
       type: "input",
       value: "",
-      description: "可选；例如 https://resolver.example.com，不填则使用 Embed 测试线路",
+      description: "必填；例如 https://resolver.example.com 或 http://服务器IP:8787",
     },
     {
       name: "resolver_token",
       title: "解析服务 Token",
       type: "input",
-      description: "可选；与自定义解析服务的 RESOLVER_TOKEN 一致",
+      description: "必填；与自定义解析服务的 RESOLVER_TOKEN 一致",
     },
     {
       name: "region_code",
@@ -160,7 +160,7 @@ WidgetMetadata = {
     {
       id: "loadResource",
       title: "加载资源",
-      description: "起播时通过自定义解析服务生成临时播放地址；未配置时返回 Embed 测试线路",
+      description: "起播时通过自定义解析服务生成临时播放地址",
       functionName: "loadResource",
       type: "stream",
       cacheDuration: 0,
@@ -275,7 +275,7 @@ async function youtubeApi(path, query, params) {
   const response = await Widget.http.get(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "ForwardWidgets-YouTube/1.4.2",
+      "User-Agent": "ForwardWidgets-YouTube/1.5.0",
     },
   });
   return youtubePayload(response);
@@ -332,34 +332,6 @@ function youtubeExtractVideoId(value) {
   if (queryMatch) return queryMatch[1];
   const pathMatch = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|shorts\/))([\w-]{6,})/i.exec(text);
   return pathMatch ? pathMatch[1] : "";
-}
-
-function youtubeEmbedUrl(player, videoId) {
-  const id = youtubeText(videoId);
-  if (!id) return "";
-  const html = youtubeText(player && player.embedHtml);
-  const match = /<iframe\b[^>]*\bsrc=(?:"([^"]+)"|'([^']+)')/i.exec(html);
-  let source = match ? (match[1] || match[2] || "") : "";
-  source = source.replace(/&amp;/g, "&");
-  if (source.indexOf("//") === 0) source = "https:" + source;
-  if (!/^https?:\/\/(?:www\.)?youtube(?:-nocookie)?\.com\/embed\/[\w-]+/i.test(source)) {
-    source = "https://www.youtube.com/embed/" + encodeURIComponent(id);
-  }
-  return source;
-}
-
-function youtubeEmbedPlaybackUrl(player, videoId) {
-  const source = youtubeEmbedUrl(player, videoId);
-  if (!source) return "";
-  return source + (source.indexOf("?") >= 0 ? "&" : "?") +
-    "autoplay=1&playsinline=1&origin=https%3A%2F%2Fwww.youtube.com&widget_referrer=https%3A%2F%2Fwww.youtube.com%2F";
-}
-
-function youtubeEmbedHeaders() {
-  return {
-    Referer: "https://www.youtube.com/",
-    Origin: "https://www.youtube.com",
-  };
 }
 
 function youtubeDuration(value) {
@@ -420,7 +392,7 @@ function youtubeVideoItem(snippet, id, contentDetails, statistics, liveStreaming
       genreTitle: youtubeDecodeText(snippet.channelTitle) || undefined,
       rating: views ? views + " 次观看" : undefined,
       // 播放地址由 loadResource 在真正起播时生成；这里不要填 videoUrl，
-      // 否则客户端可能直接播放 Embed 地址而跳过 loadResource。
+      // 否则客户端可能直接播放该地址而跳过 loadResource。
     },
     duration,
     liveMetadata
@@ -649,13 +621,12 @@ function youtubeResolverHeaders(value) {
 
 async function youtubeResolverResource(params, videoId) {
   const token = youtubeText(params && params.resolver_token);
+  if (!token) throw new Error("请先在模块设置中填写解析服务 Token");
   const headers = { Accept: "application/json" };
-  if (token) {
-    headers.Authorization = "Bearer " + token;
-    headers["X-API-Key"] = token;
-  }
+  headers.Authorization = "Bearer " + token;
+  headers["X-API-Key"] = token;
   const response = await Widget.http.get(youtubeResolverEndpoint(params.resolver_url, videoId), { headers: headers });
-  console.log("[YTDBG-142] resolver response status=" + Number(response && (response.statusCode || response.status || 200)));
+  console.log("[YTDBG-150] resolver response status=" + Number(response && (response.statusCode || response.status || 200)));
   const payload = youtubeResolverPayload(response);
   const url = youtubeText(payload.url);
   if (!/^https?:\/\//i.test(url)) throw new Error("解析服务没有返回有效的播放地址");
@@ -671,37 +642,13 @@ async function youtubeResolverResource(params, videoId) {
 
 async function loadResource(params) {
   const options = params || {};
+  if (!youtubeText(options.resolver_url)) {
+    throw new Error("请先在模块设置中填写自定义解析服务地址");
+  }
   const id = youtubeExtractVideoId(options.videoUrl) ||
     youtubeExtractVideoId(options.link) ||
     youtubeExtractVideoId(options.id);
   if (!id) throw new Error("无法从播放上下文中识别 YouTube 视频 ID");
-  console.log("[YTDBG-142] loadResource video_id=" + id + " resolver=" + (youtubeText(options.resolver_url) ? "custom" : "embed"));
-  if (youtubeText(options.resolver_url)) {
-    return [await youtubeResolverResource(options, id)];
-  }
-  const embedUrl = youtubeEmbedPlaybackUrl(null, id);
-  const watchUrl = "https://www.youtube.com/watch?v=" + encodeURIComponent(id);
-  return [
-    {
-      name: "YouTube 嵌入播放器（身份参数）",
-      description: "实验线路 · Origin + Referer",
-      url: embedUrl,
-      customHeaders: youtubeEmbedHeaders(),
-      playerType: "app",
-    },
-    {
-      name: "YouTube 页面播放器",
-      description: "实验线路 · 直接打开 YouTube 页面",
-      url: watchUrl,
-      customHeaders: { Referer: "https://www.youtube.com/" },
-      playerType: "app",
-    },
-    {
-      name: "YouTube 嵌入播放器（系统）",
-      description: "实验线路 · 系统播放器兼容性对比",
-      url: embedUrl,
-      customHeaders: youtubeEmbedHeaders(),
-      playerType: "system",
-    },
-  ];
+  console.log("[YTDBG-150] loadResource video_id=" + id + " resolver=custom");
+  return [await youtubeResolverResource(options, id)];
 }
