@@ -1,7 +1,7 @@
 WidgetMetadata = {
   id: "chai.heiliao",
   title: "黑料网",
-  version: "1.0.1",
+  version: "1.0.2",
   requiredVersion: "0.0.1",
   description: "分类浏览、详情和视频流解析；自动过滤投放内容、列表广告与播放器前后贴广告",
   author: "chai-j",
@@ -16,15 +16,6 @@ WidgetMetadata = {
     },
   ],
   modules: [
-    {
-      id: "loadResource",
-      title: "加载资源",
-      description: "从文章页播放器配置中提取无广告 HLS/MP4 线路",
-      functionName: "loadHeiliaoStream",
-      type: "stream",
-      cacheDuration: 0,
-      params: [],
-    },
     {
       id: "browse",
       title: "分类浏览",
@@ -250,7 +241,6 @@ function parseHeiliaoArticleCards(html, baseUrl) {
     if (!link || seen.has(link)) return;
     const title = heiliaoText(card.find(".top-rank-text").first().text());
     if (!title) return;
-    const cover = normalizeHeiliaoBaseUrl(baseUrl) + "/static/v4/__base/images/common/logo-nav.png";
 
     seen.add(link);
     items.push({
@@ -259,10 +249,6 @@ function parseHeiliaoArticleCards(html, baseUrl) {
       mediaType: "movie",
       link: link,
       title: title,
-      coverUrl: cover,
-      posterPath: cover,
-      detailPoster: cover,
-      backdropPath: cover,
     });
   });
 
@@ -272,7 +258,6 @@ function parseHeiliaoArticleCards(html, baseUrl) {
     if (!link || seen.has(link)) return;
     const title = heiliaoText(anchor.text());
     if (!title) return;
-    const cover = normalizeHeiliaoBaseUrl(baseUrl) + "/static/v4/__base/images/common/logo-nav.png";
 
     seen.add(link);
     items.push({
@@ -281,12 +266,49 @@ function parseHeiliaoArticleCards(html, baseUrl) {
       mediaType: "movie",
       link: link,
       title: title,
-      coverUrl: cover,
-      posterPath: cover,
-      detailPoster: cover,
-      backdropPath: cover,
     });
   });
+  return items;
+}
+
+function applyHeiliaoCover(item, cover) {
+  const url = heiliaoText(cover);
+  if (!url) return item;
+  item.coverUrl = url;
+  item.posterPath = url;
+  item.detailPoster = url;
+  item.backdropPath = url;
+  return item;
+}
+
+function isHeiliaoPlaceholderCover(value) {
+  return /\/(?:logo-nav|logo2)\.[a-z0-9]+(?:[?#]|$)/i.test(heiliaoText(value));
+}
+
+function extractHeiliaoDetailCover(html, baseUrl) {
+  const players = parseHeiliaoPlayers(html, baseUrl);
+  const playerCover = players[0] && players[0].pic;
+  if (playerCover && !isHeiliaoPlaceholderCover(playerCover)) return playerCover;
+
+  const $ = Widget.html.load(html);
+  const images = collectHeiliaoDetailImages($, baseUrl);
+  const metaCover = heiliaoAbsoluteUrl(heiliaoMeta($, "meta[property='og:image']"), baseUrl);
+  if (metaCover && !isHeiliaoPlaceholderCover(metaCover)) return metaCover;
+  return images[0] || "";
+}
+
+async function enrichHeiliaoArticleCovers(items, baseUrl) {
+  const pending = items.filter(function (item) {
+    return !item.coverUrl || isHeiliaoPlaceholderCover(item.coverUrl);
+  });
+  for (let offset = 0; offset < pending.length; offset += 6) {
+    const batch = pending.slice(offset, offset + 6);
+    await Promise.all(batch.map(async function (item) {
+      try {
+        applyHeiliaoCover(item, extractHeiliaoDetailCover(await fetchHeiliaoHtml(item.link), baseUrl));
+      } catch (_) {}
+    }));
+  }
   return items;
 }
 
@@ -294,7 +316,8 @@ async function loadArticles(params = {}) {
   const baseUrl = normalizeHeiliaoBaseUrl(params.base_url);
   const url = buildHeiliaoListUrl(baseUrl, params.sort_by, params.page);
   try {
-    return parseHeiliaoArticleCards(await fetchHeiliaoHtml(url), baseUrl);
+    const items = parseHeiliaoArticleCards(await fetchHeiliaoHtml(url), baseUrl);
+    return await enrichHeiliaoArticleCovers(items, baseUrl);
   } catch (error) {
     console.error("黑料网列表加载失败:", error && error.message ? error.message : error);
     throw error;
@@ -376,39 +399,6 @@ function parseHeiliaoPlayers(html, baseUrl) {
   return players;
 }
 
-function heiliaoPlaybackHeaders(articleUrl) {
-  return {
-    "User-Agent": HEILIAO_HEADERS["User-Agent"],
-    Accept: "*/*",
-    Referer: articleUrl || HEILIAO_DEFAULT_BASE_URL + "/",
-    Origin: normalizeHeiliaoBaseUrl(articleUrl || HEILIAO_DEFAULT_BASE_URL),
-  };
-}
-
-function heiliaoPlayerResources(players, articleUrl, targetUrl) {
-  const resources = [];
-  const targetKey = heiliaoMediaKey(targetUrl);
-  let selected = players;
-  if (targetKey) {
-    const matched = players.filter(function (player) {
-      return player.routes.some(function (route) { return heiliaoMediaKey(route.url) === targetKey; });
-    });
-    if (matched.length) selected = matched;
-  }
-  selected.forEach(function (player, playerIndex) {
-    player.routes.forEach(function (route) {
-      resources.push({
-        name: (selected.length > 1 ? "视频 " + (playerIndex + 1) + " · " : "") + route.name,
-        description: "无广告直连 · HLS/MP4",
-        url: route.url,
-        customHeaders: heiliaoPlaybackHeaders(articleUrl),
-        playerType: "app",
-      });
-    });
-  });
-  return resources;
-}
-
 function collectHeiliaoDetailImages($, baseUrl) {
   const images = [];
   const seen = new Set();
@@ -483,25 +473,4 @@ async function loadDetail(link) {
     console.error("黑料网详情加载失败:", error && error.message ? error.message : error);
     throw error;
   }
-}
-
-async function loadHeiliaoStream(params = {}) {
-  const baseUrl = normalizeHeiliaoBaseUrl(params.base_url || params.link || params.id);
-  const articleUrl = normalizeHeiliaoArticleUrl(params.link || params.id, baseUrl);
-  const targetUrl = isHeiliaoMediaUrl(params.videoUrl) ? heiliaoText(params.videoUrl) : "";
-  if (articleUrl) {
-    const players = parseHeiliaoPlayers(await fetchHeiliaoHtml(articleUrl), baseUrl);
-    const resources = heiliaoPlayerResources(players, articleUrl, targetUrl);
-    if (resources.length) return resources;
-  }
-  if (targetUrl) {
-    return [{
-      name: "视频线路",
-      description: "无广告直连 · HLS/MP4",
-      url: targetUrl,
-      customHeaders: heiliaoPlaybackHeaders(articleUrl || baseUrl + "/"),
-      playerType: "app",
-    }];
-  }
-  return [];
 }
