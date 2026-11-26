@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox",
   title: "TVBox 源",
-  version: "1.4.1",
+  version: "1.5.1",
   requiredVersion: "0.0.6",
   description: "从内置 TVBox 配置里浏览 JSON 采集站（type 为 1，接口路径包含 provide/vod）。下拉是单选；要再用别的地址，填到「追加配置地址」。带账号密码的源不会写入公开模块。",
   author: "chai-j",
@@ -17,7 +17,6 @@ var WidgetMetadata = {
         { title: "全部内置配置", value: "all" },
         { title: "只用追加地址", value: "none" },
         { title: "Moon TVBox 合并站", value: "moon" },
-        { title: "饭太硬", value: "fty" },
         { title: "Cluntop 影视资源", value: "fun" },
         { title: "福利影视资源", value: "fuli" },
         { title: "TVBox 官方推荐站", value: "tvboxorg" },
@@ -116,9 +115,8 @@ var SEARCH_LIMIT = 8;
 var CACHE_MS = 5 * 60 * 1000;
 var PRESETS = [
   { id: "moon", title: "Moon TVBox 合并站", url: "https://raw.githubusercontent.com/heart1016/tvbox/refs/heads/main/moon_tvbox_sites_merged.json" },
-  { id: "fty", title: "饭太硬", url: "https://raw.githubusercontent.com/qist/tvbox/master/fty.json" },
   { id: "fun", title: "Cluntop 影视资源", url: "https://raw.githubusercontent.com/cluntop/tvbox/refs/heads/main/fun.json" },
-  { id: "fuli", title: "福利影视资源", url: "https://raw.githubusercontent.com/ddavidaurora/TVbox-interface/99cc2162519721d023843f230deaa453cf8d0570/tvbox-福利.json" },
+  { id: "fuli", title: "福利影视资源", url: "https://raw.githubusercontent.com/ddavidaurora/TVbox-interface/99cc2162519721d023843f230deaa453cf8d0570/tvbox-%E7%A6%8F%E5%88%A9.json" },
   { id: "tvboxorg", title: "TVBox 官方推荐站", url: "https://raw.githubusercontent.com/TVboxorg/TVbox/main/dist/official.json" },
   { id: "xptv", title: "XPTV 综合站", url: "https://raw.githubusercontent.com/fangkuia/XPTV/main/all.json" },
   { id: "hd9211", title: "Tvbox1 资源站", url: "https://raw.githubusercontent.com/hd9211/Tvbox1/main/zy.json" },
@@ -528,43 +526,98 @@ function extractSites(doc) {
   return [];
 }
 
+function apiFingerprint(api) {
+  let raw = String(api || "").trim();
+  const hashAt = raw.indexOf("#");
+  if (hashAt >= 0) raw = raw.slice(0, hashAt);
+  raw = raw.replace(/\/+$/, "").toLowerCase();
+  const at = raw.indexOf("//");
+  if (at < 0) return raw;
+  const rest = raw.slice(at + 2);
+  const slash = rest.indexOf("/");
+  const host = slash < 0 ? rest : rest.slice(0, slash);
+  const tail = slash < 0 ? "" : rest.slice(slash);
+  return raw.slice(0, at) + "//" + host.replace(/:80$/, "").replace(/:443$/, "") + tail;
+}
+
+function shortHash(value) {
+  let hash = 2166136261;
+  const text = String(value || "");
+  for (let i = 0; i < text.length; i++) {
+    hash ^= text.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return (hash >>> 0).toString(16);
+}
+
 function addSite(site, allow, seen, sites) {
   if (!isJsonCms(site)) return;
-  const key = String(site.key || "").trim();
-  if (!key || seen[key]) return;
+  const api = String(site.api).trim();
+  const fingerprint = "api:" + apiFingerprint(api);
+  if (!apiFingerprint(api) || seen[fingerprint]) return;
+  const name = String(site.name || "").trim();
+  const key = String(site.key || "").trim() || ("cms:" + shortHash(apiFingerprint(api)));
   if (allow.length && allow.indexOf(key) < 0) return;
-  seen[key] = true;
+  seen[fingerprint] = true;
   sites.push({
     key: key,
-    name: String(site.name || key),
-    api: String(site.api).trim(),
+    name: name || key,
+    api: api,
     playUrl: String(site.playUrl || "").trim(),
     searchable: !(site.searchable === 0 || site.searchable === "0")
   });
 }
 
+function parseConfigText(text) {
+  const original = String(text || "").replace(/^﻿/, "").trim();
+  if (!original) throw new Error("配置内容是空的");
+  if (/^[a-f0-9]{32}$/i.test(original)) throw new Error("这是 md5 校验文件，不是 TVBox 配置");
+  if (/^<!doctype html/i.test(original) || /^<html/i.test(original)) throw new Error("这是网页，不是 TVBox 配置");
+  try { return JSON.parse(original); } catch (e) { /* 尝试清洗注释和异常字符 */ }
+  let cleaned = original.replace(/\/\*[\s\S]*?\*\//g, "");
+  cleaned = cleaned.replace(/^[ \t]*\/\/[^\n]*(?:\r?\n|$)/gm, "");
+  try { return JSON.parse(cleaned); } catch (e) { /* 继续修复字符串内换行 */ }
+  let inside = false;
+  let escaped = false;
+  let fixed = "";
+  for (let i = 0; i < cleaned.length; i++) {
+    const ch = cleaned[i];
+    if (inside) {
+      if (escaped) {
+        fixed += ch;
+        escaped = false;
+        continue;
+      }
+      if (ch === "\\") {
+        fixed += ch;
+        escaped = true;
+        continue;
+      }
+      if (ch === '"') {
+        fixed += ch;
+        inside = false;
+        continue;
+      }
+      if (ch === "\r") continue;
+      if (ch === "\n") continue;
+      const code = ch.charCodeAt(0);
+      fixed += code < 32 ? " " : ch;
+      continue;
+    }
+    if (ch === '"') inside = true;
+    fixed += ch;
+  }
+  try { return JSON.parse(fixed); } catch (e) { throw new Error("配置不是 JSON"); }
+}
+
 function asObject(data) {
   if (data && typeof data === "object") return data;
-  if (typeof data === "string") {
-    const text = data.replace(/^﻿/, "").trim();
-    if (!text) throw new Error("配置内容是空的");
-    if (/^[a-f0-9]{32}$/i.test(text)) throw new Error("这是 md5 校验文件，不是 TVBox 配置");
-    if (/^<!doctype html/i.test(text) || /^<html/i.test(text)) throw new Error("这是网页，不是 TVBox 配置");
-    try { return JSON.parse(text); } catch (e) { throw new Error("配置不是 JSON"); }
-  }
+  if (typeof data === "string") return parseConfigText(data);
   throw new Error("配置不是 JSON");
 }
 
 async function loadConfigDoc(url) {
-  const data = await httpGet(url);
-  if (data && typeof data === "object") return data;
-  if (typeof data === "string") {
-    const text = data.replace(/^﻿/, "").trim();
-    if (!text) throw new Error("配置内容是空的");
-    if (/^[a-f0-9]{32}$/i.test(text)) throw new Error("这是 md5 校验文件，不是 TVBox 配置");
-    if (/^<!doctype html/i.test(text) || /^<html/i.test(text)) throw new Error("这是网页，不是 TVBox 配置");
-  }
-  return asObject(data);
+  return asObject(await httpGet(url));
 }
 
 function splitList(value) {
