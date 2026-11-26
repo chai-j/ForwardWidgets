@@ -1,9 +1,9 @@
 var WidgetMetadata = {
   id: "chai.tvbox",
   title: "TVBox 源",
-  version: "1.1.1",
+  version: "1.2.0",
   requiredVersion: "0.0.6",
-  description: "从内置 TVBox 配置里浏览 JSON 采集站（type 为 1，接口路径包含 provide/vod）。下拉是单选；要再用别的地址，填到「追加配置地址」。jar、js、py 爬虫和 md5 校验文件不会运行。",
+  description: "从内置 TVBox 配置里浏览 JSON 采集站（type 为 1，接口路径包含 provide/vod），并从 JS 插件包中提取采集接口。下拉是单选；要再用别的地址，填到「追加配置地址」。带账号密码的源不会写入公开模块。",
   author: "chai-j",
   detailCacheDuration: 120,
   globalParams: [
@@ -12,7 +12,7 @@ var WidgetMetadata = {
       title: "内置配置",
       type: "enumeration",
       value: "all",
-      description: "默认使用全部内置地址。Rex 参数不能多选，要只用其中一份就在这里改；要再加地址，填下一项。导航网页、Venera 索引和 .js.md5 不是采集配置。",
+      description: "默认使用全部内置地址。Rex 参数不能多选，要只用其中一份就在这里改；要再加地址，填下一项。JS 插件包只提取里面的采集接口，不执行爬虫代码。",
       enumOptions: [
         { title: "全部内置源", value: "all" },
         { title: "只用追加地址", value: "none" },
@@ -22,10 +22,11 @@ var WidgetMetadata = {
         { title: "福利", value: "fuli" },
         { title: "饭太硬导航（网页）", value: "fty-nav" },
         { title: "Venera 索引", value: "venera" },
-        { title: "kstore（md5）", value: "kstore" },
-        { title: "xiaosage（md5）", value: "xiaosage" },
-        { title: "Yswag（md5）", value: "yswag" },
-        { title: "lmentor（md5）", value: "lmentor" }
+        { title: "catpaw（JS，需认证）", value: "catpaw" },
+        { title: "kstore（JS）", value: "kstore" },
+        { title: "xiaosage（JS）", value: "xiaosage" },
+        { title: "Yswag（JS）", value: "yswag" },
+        { title: "lmentor（JS）", value: "lmentor" }
       ]
     },
     {
@@ -120,6 +121,7 @@ var PRESETS = [
   { id: "fuli", title: "福利", url: "https://raw.githubusercontent.com/ddavidaurora/TVbox-interface/99cc2162519721d023843f230deaa453cf8d0570/tvbox-福利.json" },
   { id: "fty-nav", title: "饭太硬导航", url: "https://fty.888484.xyz/tv" },
   { id: "venera", title: "Venera 索引", url: "https://cdn.jsdelivr.net/gh/venera-app/venera-configs@main/index.json" },
+  { id: "catpaw", title: "catpaw", url: "https://catpaw.douer.me/index.js.md5" },
   { id: "kstore", title: "kstore", url: "https://9280.kstore.vip/cat/index.js.md5" },
   { id: "xiaosage", title: "xiaosage", url: "https://xiaosage.361123.xyz/index.js.md5" },
   { id: "yswag", title: "Yswag", url: "https://raw.githubusercontent.com/Yswag/xptv-extensions/refs/heads/jstv/index.js.md5" },
@@ -463,7 +465,7 @@ async function enabledSites(params) {
   if (!urls.length) throw new Error("请选择一个内置配置，或填写追加地址");
   const fetched = await mapPool(urls, 4, async function (url) {
     try {
-      return { doc: asObject(await httpGet(url)) };
+      return { doc: await loadConfigDoc(url) };
     } catch (e) {
       return { error: url + "：" + (e && e.message ? e.message : "读取失败") };
     }
@@ -479,30 +481,14 @@ async function enabledSites(params) {
   const allow = splitList(params.siteKeys);
   const seen = {};
   const sites = [];
-  let skipped = 0;
   docs.forEach(doc => {
-    extractSites(doc).forEach(site => {
-      if (!isJsonCms(site)) {
-        skipped += 1;
-        return;
-      }
-      const key = String(site.key || "").trim();
-      if (!key || seen[key]) return;
-      if (allow.length && allow.indexOf(key) < 0) return;
-      seen[key] = true;
-      sites.push({
-        key: key,
-        name: String(site.name || key),
-        api: String(site.api).trim(),
-        playUrl: String(site.playUrl || "").trim(),
-        searchable: !(site.searchable === 0 || site.searchable === "0")
-      });
-    });
+    extractSites(doc).forEach(site => addSite(site, allow, seen, sites));
+    extractJsSites(doc).forEach(site => addSite(site, allow, seen, sites));
   });
   if (!sites.length) {
-    throw new Error("配置里没有可用的 JSON 采集站（type 为 1，且接口路径包含 provide/vod）。jar、js、py 爬虫不会运行。");
+    throw new Error("配置里没有可用的 JSON 采集站或可提取的采集接口。jar、js、py 爬虫代码不会运行。");
   }
-  console.log("TVBox JSON 采集站", sites.length, "已跳过", skipped);
+  console.log("TVBox 可用采集接口", sites.length, "个");
   try { Widget.storage.set(cacheKey, { savedAt: Date.now(), sites: sites }); } catch (e) { /* 忽略缓存失败 */ }
   return sites;
 }
@@ -552,6 +538,55 @@ function extractSites(doc) {
   if (Array.isArray(doc)) return doc;
   if (doc && Array.isArray(doc.sites)) return doc.sites;
   return [];
+}
+
+function addSite(site, allow, seen, sites) {
+  if (!isJsonCms(site)) return;
+  const key = String(site.key || "").trim();
+  if (!key || seen[key]) return;
+  if (allow.length && allow.indexOf(key) < 0) return;
+  seen[key] = true;
+  sites.push({
+    key: key,
+    name: String(site.name || key),
+    api: String(site.api).trim(),
+    playUrl: String(site.playUrl || "").trim(),
+    searchable: !(site.searchable === 0 || site.searchable === "0")
+  });
+}
+
+function extractJsSites(doc) {
+  if (!doc || typeof doc !== "object") return [];
+  if (typeof doc.jsText !== "string" || !doc.jsText) return [];
+  const found = [];
+  const seen = {};
+  const re = /(?:https?:)?\/\/[^\s"'`]+?api\.php\/provide\/vod\/?/gi;
+  let match;
+  while ((match = re.exec(doc.jsText)) !== null) {
+    let api = String(match[0] || "").replace(/\\+$/, "");
+    if (api.indexOf("//") === 0) api = "https:" + api;
+    if (seen[api] || /^https?:\/\/example\.com\//i.test(api)) continue;
+    seen[api] = true;
+    found.push({
+      key: "js:" + hostOf(api) + ":" + found.length,
+      name: hostOf(api) + " JS 采集",
+      type: 1,
+      api: api,
+      searchable: 1
+    });
+  }
+  return found;
+}
+
+async function loadConfigDoc(url) {
+  const target = /\.js\.md5(?:\?|#|$)/i.test(url) ? url.replace(/\.js\.md5(?=\?|#|$)/i, ".js") : url;
+  const data = await httpGet(target);
+  if (data && typeof data === "object") return data;
+  if (typeof data === "string") {
+    const text = data.replace(/^﻿/, "").trim();
+    if (/\.js(?:\?|#|$)/i.test(target) && !/^[a-f0-9]{32}$/i.test(text)) return { jsText: text };
+  }
+  return asObject(data);
 }
 
 function asObject(data) {
