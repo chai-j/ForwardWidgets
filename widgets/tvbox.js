@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox",
   title: "TVBox 源",
-  version: "1.5.1",
+  version: "1.6.0",
   requiredVersion: "0.0.6",
   description: "从内置 TVBox 配置里浏览 JSON 采集站（type 为 1，接口路径包含 provide/vod）。下拉是单选；要再用别的地址，填到「追加配置地址」。带账号密码的源不会写入公开模块。",
   author: "chai-j",
@@ -60,19 +60,26 @@ var WidgetMetadata = {
       cacheDuration: 120,
       params: [
         {
+          name: "configUrl",
+          title: "本行配置 URL",
+          type: "input",
+          description: "首页行专用：填了就只用这一个配置，不受全局「内置配置 / 追加配置地址」影响。",
+          placeholders: [{ title: "可选，仅首页配置需要", value: "" }]
+        },
+        {
           name: "site",
           title: "源",
           type: "enumeration",
           description: "选项来自上面的配置地址。",
           enumOptions: [{ title: "请先填写配置地址", value: "" }],
-          dynamicOptions: { functionName: "siteOptions", dependsOn: ["preset", "configUrls", "siteKeys"] }
+          dynamicOptions: { functionName: "siteOptions", dependsOn: ["configUrl", "preset", "configUrls", "siteKeys"] }
         },
         {
           name: "category",
           title: "分类",
           type: "enumeration",
           enumOptions: [{ title: "全部分类", value: "" }],
-          dynamicOptions: { functionName: "categoryOptions", dependsOn: ["site", "preset", "configUrls", "siteKeys"] }
+          dynamicOptions: { functionName: "categoryOptions", dependsOn: ["site", "configUrl", "preset", "configUrls", "siteKeys"] }
         },
         { name: "page", title: "页码", type: "page" }
       ]
@@ -93,6 +100,13 @@ var WidgetMetadata = {
     cacheDuration: 120,
     params: [
       {
+        name: "configUrl",
+        title: "本行配置 URL",
+        type: "input",
+        description: "首页行专用：填了就只用这一个配置，不受全局配置影响。",
+        placeholders: [{ title: "可选，仅首页配置需要", value: "" }]
+      },
+      {
         name: "keyword",
         title: "关键词",
         type: "input",
@@ -105,7 +119,7 @@ var WidgetMetadata = {
         type: "enumeration",
         description: "不选则搜索已启用的源，最多 8 个。",
         enumOptions: [{ title: "全部（最多 8 个）", value: "" }],
-        dynamicOptions: { functionName: "searchSiteOptions", dependsOn: ["preset", "configUrls", "siteKeys"] }
+        dynamicOptions: { functionName: "searchSiteOptions", dependsOn: ["configUrl", "preset", "configUrls", "siteKeys"] }
       }
     ]
   }
@@ -441,7 +455,7 @@ function vodList(data) {
 }
 
 async function enabledSites(params) {
-  const cacheKey = "sites:" + String(params.preset || "") + "|" + String(params.configUrls || "") + "|" + String(params.siteKeys || "");
+  const cacheKey = "sites:" + String(params.configUrl || "") + "|" + String(params.preset || "") + "|" + String(params.configUrls || "") + "|" + String(params.siteKeys || "");
   try {
     const hit = Widget.storage.get(cacheKey);
     if (hit && hit.savedAt && Date.now() - hit.savedAt < CACHE_MS && Array.isArray(hit.sites)) return hit.sites;
@@ -480,6 +494,8 @@ async function enabledSites(params) {
 }
 
 function selectedUrls(params) {
+  const standalone = splitList(params.configUrl);
+  if (standalone.length) return standalone;
   const preset = String(params.preset || "all");
   const extra = splitList(params.configUrls);
   const urls = [];
