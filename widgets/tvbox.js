@@ -616,7 +616,7 @@ async function cmsGet(api, query) {
     throw new Error("采集站请求失败：" + (e && e.message ? e.message : "网络错误"));
   }
   if (typeof data === "string") {
-    try { data = JSON.parse(data.replace(/^﻿/, ""));
+    try { data = JSON.parse(data.replace(/^﻿/, "")); }
     catch (e) { throw new Error("采集站没有返回 JSON"); }
   }
   if (!data || typeof data !== "object") throw new Error("采集站没有返回 JSON");
