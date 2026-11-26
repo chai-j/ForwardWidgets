@@ -1,7 +1,7 @@
 WidgetMetadata = {
   "id": "chai.hanime1",
   "title": "Hanime1",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "requiredVersion": "0.0.1",
   "description": "Hanime1 浏览、搜索、中文字幕与在线播放",
   "author": "chai-j",
@@ -186,7 +186,7 @@ WidgetMetadata = {
   }
 };
 
-var HANIME_HOSTS = ["https://hanime1.com", "https://hanime1.me"];
+var HANIME_HOSTS = ["https://hanime1.me", "https://hanime1.com"];
 var HANIME_BASE_URL = HANIME_HOSTS[0];
 var HANIME_USER_AGENT =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1";
@@ -326,14 +326,19 @@ async function requestHtml(url, params, referer) {
       });
       var status = Number(response && (response.statusCode || response.status) || 200);
       var html = String(response && response.data || "");
+      if (status === 403 || isBlockedPage(html)) throw new Error("站点 Cloudflare 防护拦截 (HTTP " + status + ")");
       if (status >= 400) throw new Error("HTTP " + status);
-      if (!html || isBlockedPage(html)) throw new Error("站点防护页面");
+      if (!html) throw new Error("空响应");
       return { url: candidates[j], html: html };
     } catch (error) {
       lastError = error;
     }
   }
-  throw new Error("Hanime1 请求失败：" + (lastError && lastError.message || "未知错误"));
+  var message = (lastError && lastError.message) || "未知错误";
+  if (/\b403\b|Cloudflare|站点防护/i.test(message)) {
+    throw new Error("Hanime1 被 Cloudflare 防护拦截（HTTP 403），当前网络/IP 无法直连，请切换节点后重试");
+  }
+  throw new Error("Hanime1 请求失败：" + message);
 }
 
 function appendPage(url, page) {
@@ -624,7 +629,7 @@ function parseDetail(link, html) {
 
 async function loadDetail(link) {
   var normalizedLink = normalizeWatchUrl(link);
-  if (!normalizedLink) return null;
+  if (!normalizedLink) return [];
   try {
     var response = await requestHtml(normalizedLink, {}, HANIME_BASE_URL + "/");
     return parseDetail(normalizedLink, response.html);
