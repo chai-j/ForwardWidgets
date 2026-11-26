@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox",
   title: "TVBox 源",
-  version: "1.2.0",
+  version: "1.3.0",
   requiredVersion: "0.0.6",
   description: "从内置 TVBox 配置里浏览 JSON 采集站（type 为 1，接口路径包含 provide/vod），并从 JS 插件包中提取采集接口。下拉是单选；要再用别的地址，填到「追加配置地址」。带账号密码的源不会写入公开模块。",
   author: "chai-j",
@@ -21,7 +21,6 @@ var WidgetMetadata = {
         { title: "fun", value: "fun" },
         { title: "福利", value: "fuli" },
         { title: "饭太硬导航（网页）", value: "fty-nav" },
-        { title: "Venera 索引", value: "venera" },
         { title: "catpaw（JS，需认证）", value: "catpaw" },
         { title: "kstore（JS）", value: "kstore" },
         { title: "xiaosage（JS）", value: "xiaosage" },
@@ -45,14 +44,6 @@ var WidgetMetadata = {
     }
   ],
   modules: [
-    {
-      id: "sites",
-      title: "源列表",
-      subtitle: "配置里可用的 JSON 采集站",
-      functionName: "loadSites",
-      cacheDuration: 600,
-      params: []
-    },
     {
       id: "browse",
       title: "浏览",
@@ -114,24 +105,20 @@ var WidgetMetadata = {
 
 var SEARCH_LIMIT = 8;
 var CACHE_MS = 5 * 60 * 1000;
+var JS_CHUNK_SIZE = 256 * 1024;
+var JS_MAX_BYTES = 16 * 1024 * 1024;
 var PRESETS = [
   { id: "moon", title: "Moon 合并", url: "https://raw.githubusercontent.com/heart1016/tvbox/refs/heads/main/moon_tvbox_sites_merged.json" },
   { id: "fty", title: "饭太硬", url: "https://raw.githubusercontent.com/qist/tvbox/master/fty.json" },
   { id: "fun", title: "fun", url: "https://raw.githubusercontent.com/cluntop/tvbox/refs/heads/main/fun.json" },
   { id: "fuli", title: "福利", url: "https://raw.githubusercontent.com/ddavidaurora/TVbox-interface/99cc2162519721d023843f230deaa453cf8d0570/tvbox-福利.json" },
   { id: "fty-nav", title: "饭太硬导航", url: "https://fty.888484.xyz/tv" },
-  { id: "venera", title: "Venera 索引", url: "https://cdn.jsdelivr.net/gh/venera-app/venera-configs@main/index.json" },
-  { id: "catpaw", title: "catpaw", url: "https://catpaw.douer.me/index.js.md5" },
-  { id: "kstore", title: "kstore", url: "https://9280.kstore.vip/cat/index.js.md5" },
-  { id: "xiaosage", title: "xiaosage", url: "https://xiaosage.361123.xyz/index.js.md5" },
-  { id: "yswag", title: "Yswag", url: "https://raw.githubusercontent.com/Yswag/xptv-extensions/refs/heads/jstv/index.js.md5" },
-  { id: "lmentor", title: "lmentor", url: "https://raw.githubusercontent.com/Darklessing/catvod/refs/heads/main/lmentor/index.js.md5" }
+  { id: "catpaw", title: "catpaw", url: "https://catpaw.douer.me/index.js" },
+  { id: "kstore", title: "kstore", url: "https://9280.kstore.vip/cat/index.js" },
+  { id: "xiaosage", title: "xiaosage", url: "https://xiaosage.361123.xyz/index.js" },
+  { id: "yswag", title: "Yswag", url: "https://raw.githubusercontent.com/Yswag/xptv-extensions/refs/heads/jstv/index.js" },
+  { id: "lmentor", title: "lmentor", url: "https://raw.githubusercontent.com/Darklessing/catvod/refs/heads/main/lmentor/index.js" }
 ];
-
-async function loadSites(params) {
-  const sites = await enabledSites(params);
-  return sites.map(siteCard);
-}
 
 async function loadBrowse(params) {
   const site = await requireSite(params, params.site);
@@ -226,22 +213,6 @@ async function categoryOptions(params) {
     options.push({ title: String(item.type_name), value: String(item.type_id) });
   });
   return options;
-}
-
-function siteCard(site) {
-  return {
-    id: "site:" + site.key,
-    type: "url",
-    title: site.name,
-    subtitle: site.key + " · " + hostOf(site.api) + (site.searchable ? "" : " · 不可搜"),
-    link: encodeLink({
-      kind: "site",
-      api: site.api,
-      playUrl: site.playUrl,
-      key: site.key,
-      name: site.name
-    })
-  };
 }
 
 async function siteDetail(payload) {
@@ -467,7 +438,9 @@ async function enabledSites(params) {
     try {
       return { doc: await loadConfigDoc(url) };
     } catch (e) {
-      return { error: url + "：" + (e && e.message ? e.message : "读取失败") };
+      const message = e && e.message ? e.message : "读取失败";
+      const hint = /响应体超过上限/i.test(message) ? "（服务器不支持分片且响应体超过 Rex 上限）" : "";
+      return { error: url + "：" + message + hint };
     }
   });
   const docs = [];
@@ -579,14 +552,67 @@ function extractJsSites(doc) {
 }
 
 async function loadConfigDoc(url) {
-  const target = /\.js\.md5(?:\?|#|$)/i.test(url) ? url.replace(/\.js\.md5(?=\?|#|$)/i, ".js") : url;
-  const data = await httpGet(target);
+  if (/\.js(?:\?|#|$)/i.test(url)) return { jsText: await loadJsText(url) };
+  const data = await httpGet(url);
   if (data && typeof data === "object") return data;
   if (typeof data === "string") {
     const text = data.replace(/^﻿/, "").trim();
-    if (/\.js(?:\?|#|$)/i.test(target) && !/^[a-f0-9]{32}$/i.test(text)) return { jsText: text };
+    if (!text) throw new Error("配置内容是空的");
+    if (/^[a-f0-9]{32}$/i.test(text)) throw new Error("这是 md5 校验文件，不是 TVBox 配置");
+    if (/^<!doctype html/i.test(text) || /^<html/i.test(text)) throw new Error("这是网页，不是 TVBox 配置");
   }
   return asObject(data);
+}
+
+async function loadJsText(url) {
+  const target = /\.js\.md5(?:\?|#|$)/i.test(url) ? url.replace(/\.js\.md5(?=\?|#|$)/i, ".js") : url;
+  const first = await requestRaw(target, {
+    "User-Agent": "Mozilla/5.0 (compatible; RexTVBox/1.0)",
+    "Accept": "*/*",
+    "Range": "bytes=0-" + (JS_CHUNK_SIZE - 1)
+  });
+  const status = Number(first.statusCode || 0);
+  const text = typeof first.data === "string" ? first.data : "";
+  if (status !== 206) {
+    if (!text) throw new Error("JS 插件没有返回文本");
+    return text;
+  }
+  const range = headerValue(first.headers, "content-range");
+  const total = range ? Number(String(range).split("/").pop()) : 0;
+  if (!Number.isFinite(total) || total <= 0 || total > JS_MAX_BYTES) {
+    return text;
+  }
+  const firstRange = /bytes=(\d+)-(\d+)/.exec(range);
+  const firstEnd = firstRange ? Number(firstRange[2]) : JS_CHUNK_SIZE - 1;
+  const pieces = [text];
+  const tasks = [];
+  for (let start = firstEnd + 1; start < total; start += JS_CHUNK_SIZE) {
+    const end = Math.min(start + JS_CHUNK_SIZE - 1, total - 1);
+    tasks.push({ start: start, end: end });
+  }
+  const chunks = await mapPool(tasks, 4, async function (piece) {
+    try {
+      const response = await requestRaw(target, {
+        "User-Agent": "Mozilla/5.0 (compatible; RexTVBox/1.0)",
+        "Accept": "*/*",
+        "Range": "bytes=" + piece.start + "-" + piece.end
+      });
+      return typeof response.data === "string" ? response.data : "";
+    } catch (e) {
+      console.log("JS 分块读取失败", target, piece.start, e && e.message ? e.message : "网络错误");
+      return "";
+    }
+  });
+  chunks.forEach(chunk => { if (chunk) pieces.push(chunk); });
+  if (!pieces.length) throw new Error("JS 插件没有返回文本");
+  return pieces.join("");
+}
+
+function headerValue(headers, key) {
+  if (!headers || typeof headers !== "object") return "";
+  if (headers[key]) return headers[key];
+  const found = Object.keys(headers).filter(name => name.toLowerCase() === key)[0];
+  return found ? headers[found] : "";
 }
 
 function asObject(data) {
@@ -664,6 +690,19 @@ async function cmsGet(api, query) {
   return data;
 }
 
+async function requestRaw(url, headers) {
+  try {
+    return await Widget.http.request({
+      url: url,
+      method: "GET",
+      timeout: 40,
+      headers: headers
+    });
+  } catch (e) {
+    throw new Error(e && e.message ? e.message : "网络错误");
+  }
+}
+
 async function httpGet(url) {
   let response;
   try {
@@ -673,7 +712,7 @@ async function httpGet(url) {
       timeout: 12,
       headers: {
         "User-Agent": "Mozilla/5.0 (compatible; RexTVBox/1.0)",
-        Accept: "application/json"
+        "Accept": "application/json"
       }
     });
   } catch (e) {

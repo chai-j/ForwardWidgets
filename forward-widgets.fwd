@@ -89,7 +89,7 @@
       "title": "TVBox 源",
       "description": "从内置 TVBox 配置里浏览 JSON 采集站（type 为 1，接口路径包含 provide/vod），并从 JS 插件包中提取采集接口。下拉是单选；要再用别的地址，填到「追加配置地址」。带账号密码的源不会写入公开模块。",
       "requiredVersion": "0.0.6",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/tvbox.js"
     }
