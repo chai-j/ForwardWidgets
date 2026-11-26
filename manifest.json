@@ -1,0 +1,97 @@
+{
+  "title": "chai-j 视频模块聚合",
+  "description": "由 chai-j 维护的 10 个 Forward 自定义模块",
+  "icon": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/icon.png",
+  "widgets": [
+    {
+      "id": "chai.missav",
+      "title": "MissAV",
+      "description": "MissAV 搜索、热门影片、分类与在线播放",
+      "requiredVersion": "0.0.1",
+      "version": "3.3.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/missav.js"
+    },
+    {
+      "id": "chai.hanime1",
+      "title": "Hanime1",
+      "description": "Hanime1 浏览、搜索、中文字幕与在线播放",
+      "requiredVersion": "0.0.1",
+      "version": "2.2.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/hanime1.js"
+    },
+    {
+      "id": "chai.jable",
+      "title": "Jable",
+      "description": "Jable 搜索、精选与分类浏览",
+      "requiredVersion": "0.0.1",
+      "version": "2.1.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/jable.js"
+    },
+    {
+      "id": "chai.javday",
+      "title": "JAVDay",
+      "description": "JAVDay 搜索、分类与在线播放",
+      "requiredVersion": "0.0.1",
+      "version": "2.1.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/javday.js"
+    },
+    {
+      "id": "chai.pornhub",
+      "title": "Pornhub",
+      "description": "Pornhub 搜索、艺人、榜单、筛选与在线播放",
+      "requiredVersion": "0.0.1",
+      "version": "2.1.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/pornhub.js"
+    },
+    {
+      "id": "chai.xvideos",
+      "title": "XVideos",
+      "description": "XVideos 最新视频、频道、演员、在线播放",
+      "requiredVersion": "0.0.1",
+      "version": "2.1.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/xvideos.js"
+    },
+    {
+      "id": "chai.kedou",
+      "title": "蝌蚪窝",
+      "description": "蝌蚪窝分类浏览与在线播放",
+      "requiredVersion": "0.0.1",
+      "version": "2.1.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/kedou.js"
+    },
+    {
+      "id": "chai.91porn",
+      "title": "91Porn",
+      "description": "91Porn 分类、搜索与在线播放",
+      "requiredVersion": "0.0.1",
+      "version": "2.1.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/91porn.js"
+    },
+    {
+      "id": "chai.heiliao-news",
+      "title": "黑料网·公开资讯",
+      "description": "公开资讯浏览框架；过滤敏感内容，不解析媒体资源",
+      "requiredVersion": "0.0.1",
+      "version": "0.1.1",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/heiliao.js"
+    },
+    {
+      "id": "chai.tvbox",
+      "title": "TVBox 源",
+      "description": "从内置 TVBox 配置里浏览 JSON 采集站（type 为 1，接口路径包含 provide/vod）。下拉是单选；要再用别的地址，填到「追加配置地址」。带账号密码的源不会写入公开模块。",
+      "requiredVersion": "0.0.6",
+      "version": "1.6.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/tvbox.js"
+    }
+  ]
+}
