@@ -1,6 +1,6 @@
 {
   "title": "chai-j 视频模块聚合",
-  "description": "由 chai-j 维护的 9 个 Forward 自定义模块",
+  "description": "由 chai-j 维护的 10 个 Forward 自定义模块",
   "icon": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/icon.png",
   "widgets": [
     {
@@ -51,7 +51,7 @@
     {
       "id": "chai.xvideos",
       "title": "XVideos",
-      "description": "XVideos 最新视频、频道、演员与在线播放",
+      "description": "XVideos 最新视频、频道、演员、在线播放",
       "requiredVersion": "0.0.1",
       "version": "2.1.0",
       "author": "chai-j",
@@ -83,6 +83,15 @@
       "version": "0.1.1",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/heiliao.js"
+    },
+    {
+      "id": "chai.tvbox",
+      "title": "TVBox 源",
+      "description": "从内置 TVBox 配置里浏览 JSON 采集站（type 为 1，接口路径包含 provide/vod）。下拉是单选；要再用别的地址，填到「追加配置地址」。jar、js、py 爬虫和 md5 校验文件不会运行。",
+      "requiredVersion": "0.0.6",
+      "version": "1.1.0",
+      "author": "chai-j",
+      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/tvbox.js"
     }
   ]
 }
