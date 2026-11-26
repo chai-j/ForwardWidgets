@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox",
   title: "TVBox 源",
-  version: "1.1.0",
+  version: "1.1.1",
   requiredVersion: "0.0.6",
   description: "从内置 TVBox 配置里浏览 JSON 采集站（type 为 1，接口路径包含 provide/vod）。下拉是单选；要再用别的地址，填到「追加配置地址」。jar、js、py 爬虫和 md5 校验文件不会运行。",
   author: "chai-j",
@@ -285,7 +285,10 @@ function vodCard(vod, site) {
   const subtitle = [vod.vod_remarks, vod.type_name, vod.vod_year, site.name].filter(Boolean).map(String);
   if (subtitle.length) item.subtitle = subtitle.join(" · ");
   const pic = cleanPic(vod.vod_pic);
-  if (pic) item.coverUrl = pic;
+  if (pic) {
+    item.posterPath = pic;
+    item.coverUrl = pic;
+  }
   const text = stripHtml(vod.vod_content || vod.vod_blurb || "");
   if (text) item.description = text.slice(0, 500);
   const date = releaseDateOf(vod);
