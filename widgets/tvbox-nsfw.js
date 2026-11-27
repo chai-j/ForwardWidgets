@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox-nsfw",
   title: "TVBox 福利源",
-  version: "1.2.0",
+  version: "1.3.0",
   requiredVersion: "0.0.6",
   description: "从内置福利 TVBox 配置里浏览和搜索 18+ JSON 采集站（type 为 1，接口路径包含 provide/vod）。不含 TMDB 自动播源入口。",
   author: "chai-j",
@@ -43,9 +43,56 @@ var WidgetMetadata = {
   ],
   modules: [
     {
+      id: "discover",
+      title: "聚合分类",
+      subtitle: "跨源自动匹配分类，不落空",
+      functionName: "loadDiscover",
+      cacheDuration: 120,
+      params: [
+        {
+          name: "configUrl",
+          title: "本行配置 URL",
+          type: "input",
+          description: "首页行专用：留空则使用全局配置。",
+          placeholders: [{ title: "可选，仅首页配置需要", value: "" }]
+        },
+        {
+          name: "genre",
+          title: "分类",
+          type: "enumeration",
+          value: "",
+          enumOptions: [
+            { title: "🌟 全部最新", value: "" },
+            { title: "🇨🇳 国产 / 自拍", value: "chinese" },
+            { title: "🔓 日本无码 / 无码", value: "uncensored" },
+            { title: "🇯🇵 日本有码 / 日韩", value: "censored" },
+            { title: "💬 中文字幕", value: "subtitle" },
+            { title: "🎬 国产传媒 / 麻豆", value: "media" },
+            { title: "🌍 欧美", value: "western" },
+            { title: "🎨 激情动漫 / 里番", value: "anime" },
+            { title: "🎀 制服 / Cosplay", value: "cosplay" },
+            { title: "🎞️ 伦理三级", value: "ethics" }
+          ]
+        },
+        {
+          name: "sort_by",
+          title: "更新时段",
+          type: "enumeration",
+          value: "",
+          enumOptions: [
+            { title: "全部时间", value: "" },
+            { title: "24 小时内", value: "24" },
+            { title: "近 7 天", value: "168" },
+            { title: "近 30 天", value: "720" }
+          ]
+        },
+        { name: "page", title: "页码", type: "page" }
+      ]
+    },
+    {
       id: "browse",
-      title: "浏览",
-      subtitle: "按源和分类翻页",
+      title: "单源浏览",
+      subtitle: "按指定源和站点分类翻页",
       functionName: "loadBrowse",
       cacheDuration: 120,
       params: [
@@ -70,25 +117,6 @@ var WidgetMetadata = {
           type: "enumeration",
           enumOptions: [{ title: "全部分类", value: "" }],
           dynamicOptions: { functionName: "categoryOptions", dependsOn: ["site", "configUrl", "preset", "configUrls", "siteKeys"] }
-        },
-        {
-          name: "genre",
-          title: "快捷分类",
-          type: "enumeration",
-          value: "",
-          description: "可在浏览页右上角直接切换（按站点分类名自动匹配）；精确指定上方「分类」时优先生效。",
-          enumOptions: [
-            { title: "全部（按上方分类）", value: "" },
-            { title: "🇨🇳 国产 / 自拍", value: "chinese" },
-            { title: "🔓 日本无码 / 无码", value: "uncensored" },
-            { title: "🇯🇵 日本有码 / 日韩", value: "censored" },
-            { title: "💬 中文字幕", value: "subtitle" },
-            { title: "🎬 国产传媒 / 麻豆", value: "media" },
-            { title: "🌍 欧美", value: "western" },
-            { title: "🎨 激情动漫 / 里番", value: "anime" },
-            { title: "🎀 制服 / Cosplay", value: "cosplay" },
-            { title: "🎞️ 伦理三级", value: "ethics" }
-          ]
         },
         {
           name: "sort_by",
@@ -151,6 +179,11 @@ var PRESETS = [
   { id: "ewctt", title: "ewctt 福利站", url: "https://raw.githubusercontent.com/ewctt/tvbox/main/fun.json" }
 ];
 
+var DISCOVER_PREFERRED_HOSTS = [
+  "heiliaozyapi.com", "91md.me", "naixxzy.com", "aosikazy.com", "fhapi9.com",
+  "api.souavzy.vip", "www.jingpinx.com", "shayuapi.com", "fqzy.me", "slapibf.com",
+  "lbapi9.com", "155api.com"
+];
 var GENRE_MATCHERS = {
   chinese: { title: "国产 / 自拍", patterns: [/精品国产/i, /国产视频/i, /国产自拍/i, /国产/i, /自拍/i, /探花/i, /网曝/i, /黑料/i, /主播/i, /糖心/i, /海角/i] },
   uncensored: { title: "日本无码 / 无码", patterns: [/日本无码/i, /日韩无码/i, /无码专区/i, /无码/i] },
@@ -163,6 +196,116 @@ var GENRE_MATCHERS = {
   ethics: { title: "伦理三级", patterns: [/伦理三级/i, /三级伦理/i, /伦理/i, /三级/i] }
 };
 
+function prioritizeSites(sites) {
+  return sites.slice().sort((a, b) => {
+    const ha = hostOf(a.api).toLowerCase().split(":")[0];
+    const hb = hostOf(b.api).toLowerCase().split(":")[0];
+    const ia = DISCOVER_PREFERRED_HOSTS.indexOf(ha);
+    const ib = DISCOVER_PREFERRED_HOSTS.indexOf(hb);
+    if (ia >= 0 && ib >= 0) return ia - ib;
+    if (ia >= 0) return -1;
+    if (ib >= 0) return 1;
+    return 0;
+  });
+}
+
+function matchGenreId(classes, genreKey) {
+  const rule = GENRE_MATCHERS[genreKey];
+  if (!rule) return "";
+  for (let i = 0; i < rule.patterns.length; i++) {
+    const pattern = rule.patterns[i];
+    for (let j = 0; j < classes.length; j++) {
+      if (pattern.test(classes[j].type_name)) return classes[j].type_id;
+    }
+  }
+  return "";
+}
+
+async function discoverRoutes(params, sites, genreKey) {
+  const pool = prioritizeSites(sites).slice(0, 14);
+  if (!genreKey) {
+    return pool.map(site => ({ site: site, typeId: "" }));
+  }
+  const cacheKey = "nsfw-discover:" + String(params.configUrl || "") + "|" + String(params.preset || "") + "|" + String(params.configUrls || "") + "|" + genreKey;
+  try {
+    const hit = Widget.storage.get(cacheKey);
+    if (hit && hit.savedAt && Date.now() - hit.savedAt < CACHE_MS && Array.isArray(hit.routes) && hit.routes.length) {
+      return hit.routes;
+    }
+  } catch (e) { /* 缓存不可用时直接探测 */ }
+  const settled = await mapPool(pool, 6, async function (site) {
+    try {
+      const classes = await siteClasses(site);
+      const typeId = matchGenreId(classes, genreKey);
+      return typeId ? { site: site, typeId: typeId } : null;
+    } catch (e) {
+      return null;
+    }
+  });
+  const routes = settled.filter(Boolean);
+  if (routes.length) {
+    try { Widget.storage.set(cacheKey, { savedAt: Date.now(), routes: routes }); } catch (e) { /* 忽略 */ }
+  }
+  return routes;
+}
+
+function mergeDiscoverCards(buckets) {
+  const cards = [];
+  const seen = {};
+  let cursor = 0;
+  for (;;) {
+    let added = false;
+    for (let i = 0; i < buckets.length; i++) {
+      if (cursor < buckets[i].length) {
+        const card = buckets[i][cursor];
+        const nameKey = normalizeKey(card.title) || card.id;
+        if (!seen[nameKey]) {
+          seen[nameKey] = true;
+          cards.push(card);
+        }
+        added = true;
+      }
+    }
+    if (!added || cards.length >= 40) break;
+    cursor += 1;
+  }
+  return cards.slice(0, 40);
+}
+
+function normalizeKey(value) {
+  return String(value || "").toLowerCase().replace(/[\s:：\-—_.·,，!！?？'"“”`~～]/g, "");
+}
+
+async function loadDiscover(params) {
+  const sites = await enabledSites(params);
+  const genreKey = String(params.genre || "").trim();
+  const routes = await discoverRoutes(params, sites, genreKey);
+  if (!routes.length) {
+    const label = GENRE_MATCHERS[genreKey] ? GENRE_MATCHERS[genreKey].title : genreKey;
+    throw new Error("当前启用的源里没有找到「" + label + "」分类");
+  }
+  const page = pageNumber(params.page);
+  const hours = Number(params.sort_by || params.hours);
+  const targets = routes.slice(0, 4);
+  const settled = await mapPool(targets, 4, async function (route) {
+    const query = { ac: "detail", pg: page };
+    if (route.typeId) query.t = route.typeId;
+    if (Number.isFinite(hours) && hours > 0) query.h = Math.floor(hours);
+    try {
+      const data = await cmsGet(route.site.api, query);
+      return vodList(data).map(vod => vodCard(vod, route.site));
+    } catch (e) {
+      return [];
+    }
+  });
+  const buckets = settled.filter(list => Array.isArray(list) && list.length);
+  if (!buckets.length) {
+    if (page > 1) return [];
+    throw new Error("聚合源暂时没有返回数据，请切换分类或稍后重试");
+  }
+  return mergeDiscoverCards(buckets);
+}
+
 async function loadBrowse(params) {
   let site = null;
   if (String(params.site || "").trim()) {
@@ -172,14 +315,9 @@ async function loadBrowse(params) {
   } else {
     site = await requireSite(params, params.site);
   }
-  let categoryId = String(params.category || "").trim();
-  const genreKey = String(params.genre || "").trim();
-  if (!categoryId && genreKey) {
-    categoryId = await resolveGenreCategory(site, genreKey);
-  }
   const query = {
     ac: "detail",
-    t: categoryId,
+    t: String(params.category || "").trim(),
     pg: pageNumber(params.page)
   };
   const hours = Number(params.sort_by || params.hours);
@@ -242,20 +380,6 @@ async function siteClasses(site) {
     .map(item => ({ type_id: String(item.type_id), type_name: String(item.type_name) }));
   try { Widget.storage.set(cacheKey, { savedAt: Date.now(), classes: classes }); } catch (e) { /* 忽略缓存失败 */ }
   return classes;
-}
-
-async function resolveGenreCategory(site, genreKey) {
-  const rule = GENRE_MATCHERS[genreKey];
-  if (!rule) return "";
-  const classes = await siteClasses(site);
-  for (let i = 0; i < rule.patterns.length; i++) {
-    const pattern = rule.patterns[i];
-    for (let j = 0; j < classes.length; j++) {
-      if (pattern.test(classes[j].type_name)) return classes[j].type_id;
-    }
-  }
-  const names = classes.slice(0, 12).map(item => item.type_name).join("、");
-  throw new Error(site.name + " 没有「" + rule.title + "」分类" + (names ? "（可用：" + names + "）" : ""));
 }
 
 async function categoryOptions(params) {
