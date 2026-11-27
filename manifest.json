@@ -78,9 +78,9 @@
     {
       "id": "chai.tvbox-nsfw",
       "title": "TVBox 福利源",
-      "description": "内置福利 TVBox 采集站，为每个内置源写入真实分类目录，并支持跨源聚合与更新时段筛选。不含 TMDB 自动播源入口。",
+      "description": "内置福利 TVBox 采集站，为每个内置源写入真实分类目录，并支持精简聚合发现与自定义聚合关键词。不含 TMDB 自动播源入口。",
       "requiredVersion": "0.0.6",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/tvbox-nsfw.js"
     }

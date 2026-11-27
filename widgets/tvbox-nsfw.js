@@ -1,9 +1,9 @@
 var WidgetMetadata = {
   id: "chai.tvbox-nsfw",
   title: "TVBox 福利源",
-  version: "2.1.0",
+  version: "2.2.0",
   requiredVersion: "0.0.6",
-  description: "内置福利 TVBox 采集站，为每个内置源写入真实分类目录，并支持跨源聚合与更新时段筛选。不含 TMDB 自动播源入口。",
+  description: "内置福利 TVBox 采集站，为每个内置源写入真实分类目录，并支持精简聚合发现与自定义聚合关键词。不含 TMDB 自动播源入口。",
   author: "chai-j",
   detailCacheDuration: 120,
   globalParams: [
@@ -176,40 +176,102 @@ var WidgetMetadata = {
               "value": ""
             },
             {
-              "title": "🇨🇳 国产 / 自拍",
-              "value": "chinese"
+              "title": "🕵️ 国产探花",
+              "value": "tanhua"
             },
             {
-              "title": "🔓 日本无码 / 无码",
-              "value": "uncensored"
-            },
-            {
-              "title": "🇯🇵 日本有码 / 日韩",
-              "value": "censored"
-            },
-            {
-              "title": "💬 中文字幕",
-              "value": "subtitle"
-            },
-            {
-              "title": "🎬 国产传媒 / 麻豆",
+              "title": "🎬 麻豆传媒",
               "value": "media"
             },
             {
-              "title": "🌍 欧美",
-              "value": "western"
+              "title": "🤖 AI短剧",
+              "value": "ai_short"
             },
             {
-              "title": "🎨 激情动漫 / 里番",
+              "title": "🔓 日本无码",
+              "value": "uncensored"
+            },
+            {
+              "title": "🇯🇵 日本有码",
+              "value": "censored"
+            },
+            {
+              "title": "🎨 动漫里番",
               "value": "anime"
             },
             {
-              "title": "🎀 制服 / Cosplay",
+              "title": "🎀 Cosplay",
               "value": "cosplay"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
             },
             {
-              "title": "🎞️ 伦理三级",
-              "value": "ethics"
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "customDiscover",
+      "title": "✨ 自定义聚合",
+      "subtitle": "在模板或设置中填写任意分类/关键词，生成专属跨源聚合行",
+      "functionName": "loadCustomDiscover",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "keywords",
+          "title": "分类 / 关键词",
+          "type": "input",
+          "description": "多个词用逗号或空格分隔（如：人妻,熟女 或 黑丝），会优先匹配源分类，也可用于搜索。",
+          "placeholders": [
+            {
+              "title": "例：人妻,熟女",
+              "value": ""
+            }
+          ]
+        },
+        {
+          "name": "matchMode",
+          "title": "匹配方式",
+          "type": "enumeration",
+          "value": "auto",
+          "enumOptions": [
+            {
+              "title": "自动（先匹配分类，无则搜片名）",
+              "value": "auto"
+            },
+            {
+              "title": "仅匹配源分类名称",
+              "value": "classOnly"
+            },
+            {
+              "title": "仅按片名跨源搜索",
+              "value": "searchOnly"
             }
           ]
         },
@@ -4704,20 +4766,18 @@ var BUILTIN_SITES = {
 };
 
 var DISCOVER_PREFERRED_HOSTS = [
-  "heiliaozyapi.com", "91md.me", "naixxzy.com", "aosikazy.com", "fhapi9.com",
-  "api.souavzy.vip", "www.jingpinx.com", "shayuapi.com", "fqzy.me", "slapibf.com",
-  "lbapi9.com", "155api.com"
+  "heiliaozyapi.com", "api.souavzy.vip", "hsckzy888.com", "api.heiapi.cc", "91md.me",
+  "www.jingpinx.com", "slapibf.com", "apiyutu.com", "jkunzyapi.com", "fqzy.me",
+  "naixxzy.com", "api.xiaojizy.live", "lbapi9.com", "155api.com"
 ];
 var GENRE_MATCHERS = {
-  chinese: { title: "国产 / 自拍", patterns: [/精品国产/i, /国产视频/i, /国产自拍/i, /国产/i, /自拍/i, /探花/i, /网曝/i, /黑料/i, /主播/i, /糖心/i, /海角/i] },
-  uncensored: { title: "日本无码 / 无码", patterns: [/日本无码/i, /日韩无码/i, /无码专区/i, /无码/i] },
-  censored: { title: "日本有码 / 日韩", patterns: [/日本有码/i, /精品日韩/i, /日韩/i, /日本/i, /女优/i] },
-  subtitle: { title: "中文字幕", patterns: [/中文字幕/i, /中文/i] },
-  media: { title: "国产传媒 / 麻豆", patterns: [/国产传媒/i, /麻豆/i, /制片厂/i, /精东/i, /蜜桃/i, /杏吧/i, /星空/i, /天美/i, /传媒/i, /糖心/i] },
-  western: { title: "欧美", patterns: [/欧美/i] },
-  anime: { title: "激情动漫 / 里番", patterns: [/激情动漫/i, /里番/i, /动漫/i, /卡通/i, /H漫/i] },
-  cosplay: { title: "制服 / Cosplay", patterns: [/制服/i, /丝袜/i, /cosplay/i, /黑丝/i, /诱惑/i] },
-  ethics: { title: "伦理三级", patterns: [/伦理三级/i, /三级伦理/i, /伦理/i, /三级/i] }
+  tanhua: { title: "国产探花", patterns: [/国产.?探花/i, /探花系列/i, /91探花/i, /酒店探花/i, /探花/i] },
+  media: { title: "麻豆传媒", patterns: [/麻豆视频/i, /麻豆传媒/i, /麻豆/i, /国产传媒/i, /中文传媒/i, /传媒/i, /糖心/i, /精东/i] },
+  ai_short: { title: "AI短剧", patterns: [/AI短剧/i, /AI漫剧/i, /AI魔改/i, /AI制作/i, /短视频/i, /抖阴/i, /短剧/i] },
+  uncensored: { title: "日本无码", patterns: [/日本.?无码/i, /日韩无码/i, /亚洲无码/i, /无码专区/i, /无码流出/i, /高清无码/i, /无码/i] },
+  censored: { title: "日本有码", patterns: [/日本.?有码/i, /高清有码/i, /经典有码/i, /亚洲有码/i, /有码/i, /日本AV/i, /日韩AV/i, /精品日韩/i] },
+  anime: { title: "动漫里番", patterns: [/里番/i, /激情动漫/i, /成人动漫/i, /日本动漫/i, /动漫/i, /卡通/i, /H漫/i] },
+  cosplay: { title: "Cosplay", patterns: [/cosplay/i, /角色扮演/i, /制服/i, /丝袜/i] }
 };
 
 function prioritizeSites(sites) {
@@ -4745,12 +4805,25 @@ function matchGenreId(classes, genreKey) {
   return "";
 }
 
-async function discoverRoutes(params, sites, genreKey) {
+function matchTokensInClasses(classes, tokens) {
+  for (let i = 0; i < tokens.length; i++) {
+    const token = String(tokens[i] || "").trim().toLowerCase();
+    if (!token) continue;
+    for (let j = 0; j < classes.length; j++) {
+      if (String(classes[j].type_name || "").toLowerCase().indexOf(token) >= 0) {
+        return classes[j].type_id;
+      }
+    }
+  }
+  return "";
+}
+
+async function discoverRoutesBy(params, sites, cacheTag, matcher) {
   const pool = prioritizeSites(sites).slice(0, 14);
-  if (!genreKey) {
+  if (!matcher) {
     return pool.map(site => ({ site: site, typeId: "" }));
   }
-  const cacheKey = "nsfw-discover:" + String(params.preset || "") + "|" + String(params.configUrls || "") + "|" + genreKey;
+  const cacheKey = "nsfw-discover:" + String(params.preset || "") + "|" + String(params.configUrls || "") + "|" + cacheTag;
   try {
     const hit = Widget.storage.get(cacheKey);
     if (hit && hit.savedAt && Date.now() - hit.savedAt < CACHE_MS && Array.isArray(hit.routes) && hit.routes.length) {
@@ -4760,7 +4833,7 @@ async function discoverRoutes(params, sites, genreKey) {
   const settled = await mapPool(pool, 6, async function (site) {
     try {
       const classes = await siteClasses(site);
-      const typeId = matchGenreId(classes, genreKey);
+      const typeId = matcher(classes);
       return typeId ? { site: site, typeId: typeId } : null;
     } catch (e) {
       return null;
@@ -4771,6 +4844,30 @@ async function discoverRoutes(params, sites, genreKey) {
     try { Widget.storage.set(cacheKey, { savedAt: Date.now(), routes: routes }); } catch (e) { /* 忽略 */ }
   }
   return routes;
+}
+
+async function fetchDiscoverRoutes(routes, params, page) {
+  const targets = routes.slice(0, 4);
+  const settled = await mapPool(targets, 4, async function (route) {
+    const query = applyCmsFilters({ ac: "detail", pg: page }, params);
+    if (route.typeId) query.t = route.typeId;
+    try {
+      const data = await cmsGet(route.site.api, query);
+      return vodList(data).map(vod => vodCard(vod, route.site));
+    } catch (e) {
+      return [];
+    }
+  });
+  return settled.filter(list => Array.isArray(list) && list.length);
+}
+
+async function discoverRoutes(params, sites, genreKey) {
+  return discoverRoutesBy(
+    params,
+    sites,
+    genreKey || "all",
+    genreKey ? classes => matchGenreId(classes, genreKey) : null
+  );
 }
 
 function mergeDiscoverCards(buckets) {
@@ -4883,23 +4980,44 @@ async function loadDiscover(params) {
     const label = GENRE_MATCHERS[genreKey] ? GENRE_MATCHERS[genreKey].title : genreKey;
     throw new Error("当前启用的源里没有找到「" + label + "」分类");
   }
-  const targets = routes.slice(0, 4);
-  const settled = await mapPool(targets, 4, async function (route) {
-    const query = applyCmsFilters({ ac: "detail", pg: page }, params);
-    if (route.typeId) query.t = route.typeId;
-    try {
-      const data = await cmsGet(route.site.api, query);
-      return vodList(data).map(vod => vodCard(vod, route.site));
-    } catch (e) {
-      return [];
-    }
-  });
-  const buckets = settled.filter(list => Array.isArray(list) && list.length);
+  const buckets = await fetchDiscoverRoutes(routes, params, page);
   if (!buckets.length) {
     if (page > 1) return [];
     throw new Error("聚合源暂时没有返回数据，请切换分类或稍后重试");
   }
   return mergeDiscoverCards(buckets);
+}
+
+async function loadCustomDiscover(params) {
+  params = params || {};
+  const tokens = splitList(params.keywords);
+  if (!tokens.length) throw new Error("请先在参数里填写至少一个分类或关键词");
+  const mode = String(params.matchMode || "auto");
+  const page = pageNumber(params.page);
+  if (mode !== "searchOnly") {
+    const sites = await enabledSites(params);
+    const routes = await discoverRoutesBy(
+      params,
+      sites,
+      "custom:" + tokens.join(","),
+      classes => matchTokensInClasses(classes, tokens)
+    );
+    if (routes.length) {
+      const buckets = await fetchDiscoverRoutes(routes, params, page);
+      if (buckets.length) return mergeDiscoverCards(buckets);
+      if (page > 1) return [];
+    }
+    if (mode === "classOnly") {
+      throw new Error("当前启用的源里没有匹配「" + tokens.join(" / ") + "」的分类");
+    }
+  }
+  return search({
+    preset: params.preset,
+    configUrls: params.configUrls,
+    siteKeys: params.siteKeys,
+    keyword: tokens[0],
+    page: String(page)
+  });
 }
 
 async function search(params) {
