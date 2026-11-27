@@ -1,9 +1,9 @@
 var WidgetMetadata = {
   id: "chai.tvbox",
   title: "TVBox 影视源",
-  version: "3.0.0",
+  version: "3.1.0",
   requiredVersion: "0.0.6",
-  description: "内置常规影视 TVBox 采集站，支持按源、分类、地区、年份、更新时段自由切换并跨源聚合防落空（自动过滤 18+ 站点）。",
+  description: "内置常规影视 TVBox 采集站，为每个内置源写入真实分类目录，并支持跨源聚合与更新时段筛选（自动过滤 18+ 站点）。",
   author: "chai-j",
   detailCacheDuration: 120,
   globalParams: [
@@ -45,103 +45,2670 @@ var WidgetMetadata = {
   ],
   modules: [
     {
-      id: "discover",
-      title: "影视浏览",
-      subtitle: "可直接在模板与右上角切换源、分类、地区、年份与更新时段",
-      functionName: "loadDiscover",
-      cacheDuration: 120,
-      params: [
+      "id": "discover",
+      "title": "🌟 聚合发现",
+      "subtitle": "跨源按大类浏览，可在右上角切换源、分类与更新时段",
+      "functionName": "loadDiscover",
+      "cacheDuration": 120,
+      "params": [
         {
-          name: "site",
-          title: "源",
-          type: "enumeration",
-          value: "",
-          enumOptions: [
-            { title: "🌟 全部聚合", value: "" },
-            { title: "🎬 电影天堂", value: "dyttzy" },
-            { title: "⚡ 非凡影视", value: "ffzy" },
-            { title: "🌪️ 暴风资源", value: "bfzy" },
-            { title: "🥑 量子资源", value: "lzi" },
-            { title: "🐉 索尼高清", value: "suoni" },
-            { title: "🦊 火狐采集", value: "hhzy" },
-            { title: "☁️ 百度云资源", value: "baiduyun" },
-            { title: "🚀 极速资源", value: "jisu" },
-            { title: "🍶 茅台资源", value: "maotai" },
-            { title: "👭 播剧影视", value: "ysxq" }
+          "name": "site",
+          "title": "源",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部聚合",
+              "value": ""
+            },
+            {
+              "title": "🎬 电影天堂",
+              "value": "dyttzy"
+            },
+            {
+              "title": "⚡ 非凡影视",
+              "value": "ffzy"
+            },
+            {
+              "title": "🌪️ 暴风资源",
+              "value": "bfzy"
+            },
+            {
+              "title": "🥑 量子资源",
+              "value": "lzi"
+            },
+            {
+              "title": "🐉 索尼高清",
+              "value": "suoni"
+            },
+            {
+              "title": "🦊 火狐采集",
+              "value": "hhzy"
+            },
+            {
+              "title": "☁️ 百度云资源",
+              "value": "baiduyun"
+            },
+            {
+              "title": "🚀 极速资源",
+              "value": "jisu"
+            },
+            {
+              "title": "🍶 茅台资源",
+              "value": "maotai"
+            },
+            {
+              "title": "👭 播剧影视",
+              "value": "ysxq"
+            }
           ]
         },
         {
-          name: "genre",
-          title: "分类",
-          type: "enumeration",
-          value: "",
-          enumOptions: [
-            { title: "🌟 全部最新", value: "" },
-            { title: "🎬 电影", value: "movie" },
-            { title: "📺 连续剧", value: "tv" },
-            { title: "🎨 动漫", value: "anime" },
-            { title: "🎤 综艺", value: "variety" },
-            { title: "📱 短剧", value: "short" },
-            { title: "🎥 纪录片", value: "doc" },
-            { title: "💥 动作片", value: "action" },
-            { title: "😂 喜剧片", value: "comedy" },
-            { title: "🛸 科幻片", value: "scifi" },
-            { title: "👻 恐怖片", value: "horror" }
+          "name": "genre",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "🎬 电影",
+              "value": "movie"
+            },
+            {
+              "title": "📺 连续剧",
+              "value": "tv"
+            },
+            {
+              "title": "🎨 动漫",
+              "value": "anime"
+            },
+            {
+              "title": "🎤 综艺",
+              "value": "variety"
+            },
+            {
+              "title": "📱 短剧",
+              "value": "short"
+            },
+            {
+              "title": "🎥 纪录片",
+              "value": "doc"
+            },
+            {
+              "title": "💥 动作片",
+              "value": "action"
+            },
+            {
+              "title": "😂 喜剧片",
+              "value": "comedy"
+            },
+            {
+              "title": "🛸 科幻片",
+              "value": "scifi"
+            },
+            {
+              "title": "👻 恐怖片",
+              "value": "horror"
+            }
           ]
         },
         {
-          name: "area",
-          title: "地区",
-          type: "enumeration",
-          value: "",
-          enumOptions: [
-            { title: "🌍 全部地区", value: "" },
-            { title: "🇨🇳 大陆", value: "大陆" },
-            { title: "🇭🇰 香港", value: "香港" },
-            { title: "🇹🇼 台湾", value: "台湾" },
-            { title: "🇺🇸 美国", value: "美国" },
-            { title: "🇰🇷 韩国", value: "韩国" },
-            { title: "🇯🇵 日本", value: "日本" },
-            { title: "🇬🇧 英国", value: "英国" },
-            { title: "🇹🇭 泰国", value: "泰国" }
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
           ]
         },
         {
-          name: "year",
-          title: "年份",
-          type: "enumeration",
-          value: "",
-          enumOptions: [
-            { title: "📅 全部年份", value: "" },
-            { title: "2026", value: "2026" },
-            { title: "2025", value: "2025" },
-            { title: "2024", value: "2024" },
-            { title: "2023", value: "2023" },
-            { title: "2022", value: "2022" }
-          ]
-        },
-        {
-          name: "sort_by",
-          title: "更新时段",
-          type: "enumeration",
-          value: "",
-          enumOptions: [
-            { title: "全部时间", value: "" },
-            { title: "24 小时内", value: "24" },
-            { title: "近 7 天", value: "168" },
-            { title: "近 30 天", value: "720" }
-          ]
-        },
-        { name: "page", title: "页码", type: "page" }
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
       ]
     },
     {
-      id: "loadResource",
-      title: "播放资源",
-      functionName: "loadResource",
-      type: "stream",
-      cacheDuration: 120,
-      params: []
+      "id": "dyttzy",
+      "title": "🎬 电影天堂",
+      "subtitle": "电影天堂 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_dyttzy",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "电影片",
+              "value": "1"
+            },
+            {
+              "title": "连续剧",
+              "value": "2"
+            },
+            {
+              "title": "综艺片",
+              "value": "3"
+            },
+            {
+              "title": "动漫片",
+              "value": "4"
+            },
+            {
+              "title": "动作片",
+              "value": "6"
+            },
+            {
+              "title": "喜剧片",
+              "value": "7"
+            },
+            {
+              "title": "爱情片",
+              "value": "8"
+            },
+            {
+              "title": "科幻片",
+              "value": "9"
+            },
+            {
+              "title": "恐怖片",
+              "value": "10"
+            },
+            {
+              "title": "剧情片",
+              "value": "11"
+            },
+            {
+              "title": "战争片",
+              "value": "12"
+            },
+            {
+              "title": "国产剧",
+              "value": "13"
+            },
+            {
+              "title": "香港剧",
+              "value": "14"
+            },
+            {
+              "title": "韩国剧",
+              "value": "15"
+            },
+            {
+              "title": "欧美剧",
+              "value": "16"
+            },
+            {
+              "title": "记录片",
+              "value": "20"
+            },
+            {
+              "title": "台湾剧",
+              "value": "21"
+            },
+            {
+              "title": "日本剧",
+              "value": "22"
+            },
+            {
+              "title": "海外剧",
+              "value": "23"
+            },
+            {
+              "title": "泰国剧",
+              "value": "24"
+            },
+            {
+              "title": "大陆综艺",
+              "value": "25"
+            },
+            {
+              "title": "港台综艺",
+              "value": "26"
+            },
+            {
+              "title": "日韩综艺",
+              "value": "27"
+            },
+            {
+              "title": "欧美综艺",
+              "value": "28"
+            },
+            {
+              "title": "国产动漫",
+              "value": "29"
+            },
+            {
+              "title": "日韩动漫",
+              "value": "30"
+            },
+            {
+              "title": "欧美动漫",
+              "value": "31"
+            },
+            {
+              "title": "港台动漫",
+              "value": "32"
+            },
+            {
+              "title": "海外动漫",
+              "value": "33"
+            },
+            {
+              "title": "伦理片",
+              "value": "34"
+            },
+            {
+              "title": "短剧",
+              "value": "36"
+            },
+            {
+              "title": "动画片",
+              "value": "37"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "ffzy",
+      "title": "⚡ 非凡影视",
+      "subtitle": "非凡影视 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_ffzy",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "电影片",
+              "value": "1"
+            },
+            {
+              "title": "连续剧",
+              "value": "2"
+            },
+            {
+              "title": "综艺片",
+              "value": "3"
+            },
+            {
+              "title": "动漫片",
+              "value": "4"
+            },
+            {
+              "title": "动作片",
+              "value": "6"
+            },
+            {
+              "title": "喜剧片",
+              "value": "7"
+            },
+            {
+              "title": "爱情片",
+              "value": "8"
+            },
+            {
+              "title": "科幻片",
+              "value": "9"
+            },
+            {
+              "title": "恐怖片",
+              "value": "10"
+            },
+            {
+              "title": "剧情片",
+              "value": "11"
+            },
+            {
+              "title": "战争片",
+              "value": "12"
+            },
+            {
+              "title": "国产剧",
+              "value": "13"
+            },
+            {
+              "title": "香港剧",
+              "value": "14"
+            },
+            {
+              "title": "韩国剧",
+              "value": "15"
+            },
+            {
+              "title": "欧美剧",
+              "value": "16"
+            },
+            {
+              "title": "记录片",
+              "value": "20"
+            },
+            {
+              "title": "台湾剧",
+              "value": "21"
+            },
+            {
+              "title": "日本剧",
+              "value": "22"
+            },
+            {
+              "title": "海外剧",
+              "value": "23"
+            },
+            {
+              "title": "泰国剧",
+              "value": "24"
+            },
+            {
+              "title": "大陆综艺",
+              "value": "25"
+            },
+            {
+              "title": "港台综艺",
+              "value": "26"
+            },
+            {
+              "title": "日韩综艺",
+              "value": "27"
+            },
+            {
+              "title": "欧美综艺",
+              "value": "28"
+            },
+            {
+              "title": "国产动漫",
+              "value": "29"
+            },
+            {
+              "title": "日韩动漫",
+              "value": "30"
+            },
+            {
+              "title": "欧美动漫",
+              "value": "31"
+            },
+            {
+              "title": "港台动漫",
+              "value": "32"
+            },
+            {
+              "title": "海外动漫",
+              "value": "33"
+            },
+            {
+              "title": "伦理片",
+              "value": "34"
+            },
+            {
+              "title": "短剧",
+              "value": "36"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "bfzy",
+      "title": "🌪️ 暴风资源",
+      "subtitle": "暴风资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_bfzy",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "电影片",
+              "value": "20"
+            },
+            {
+              "title": "动作片",
+              "value": "21"
+            },
+            {
+              "title": "喜剧片",
+              "value": "22"
+            },
+            {
+              "title": "恐怖片",
+              "value": "23"
+            },
+            {
+              "title": "科幻片",
+              "value": "24"
+            },
+            {
+              "title": "爱情片",
+              "value": "25"
+            },
+            {
+              "title": "剧情片",
+              "value": "26"
+            },
+            {
+              "title": "战争片",
+              "value": "27"
+            },
+            {
+              "title": "纪录片",
+              "value": "28"
+            },
+            {
+              "title": "理论片",
+              "value": "29"
+            },
+            {
+              "title": "连续剧",
+              "value": "30"
+            },
+            {
+              "title": "国产剧",
+              "value": "31"
+            },
+            {
+              "title": "欧美剧",
+              "value": "32"
+            },
+            {
+              "title": "香港剧",
+              "value": "33"
+            },
+            {
+              "title": "韩国剧",
+              "value": "34"
+            },
+            {
+              "title": "台湾剧",
+              "value": "35"
+            },
+            {
+              "title": "日本剧",
+              "value": "36"
+            },
+            {
+              "title": "海外剧",
+              "value": "37"
+            },
+            {
+              "title": "泰国剧",
+              "value": "38"
+            },
+            {
+              "title": "动漫片",
+              "value": "39"
+            },
+            {
+              "title": "国产动漫",
+              "value": "40"
+            },
+            {
+              "title": "日韩动漫",
+              "value": "41"
+            },
+            {
+              "title": "欧美动漫",
+              "value": "42"
+            },
+            {
+              "title": "港台动漫",
+              "value": "43"
+            },
+            {
+              "title": "海外动漫",
+              "value": "44"
+            },
+            {
+              "title": "综艺片",
+              "value": "45"
+            },
+            {
+              "title": "大陆综艺",
+              "value": "46"
+            },
+            {
+              "title": "港台综艺",
+              "value": "47"
+            },
+            {
+              "title": "日韩综艺",
+              "value": "48"
+            },
+            {
+              "title": "欧美综艺",
+              "value": "49"
+            },
+            {
+              "title": "动画片",
+              "value": "50"
+            },
+            {
+              "title": "电影解说",
+              "value": "51"
+            },
+            {
+              "title": "预告片",
+              "value": "52"
+            },
+            {
+              "title": "体育赛事",
+              "value": "53"
+            },
+            {
+              "title": "足球",
+              "value": "54"
+            },
+            {
+              "title": "篮球",
+              "value": "55"
+            },
+            {
+              "title": "网球",
+              "value": "56"
+            },
+            {
+              "title": "斯诺克",
+              "value": "57"
+            },
+            {
+              "title": "短剧大全",
+              "value": "58"
+            },
+            {
+              "title": "重生民国",
+              "value": "59"
+            },
+            {
+              "title": "穿越年代",
+              "value": "60"
+            },
+            {
+              "title": "现代言情",
+              "value": "61"
+            },
+            {
+              "title": "反转爽文",
+              "value": "62"
+            },
+            {
+              "title": "女恋总裁",
+              "value": "63"
+            },
+            {
+              "title": "闪婚离婚",
+              "value": "64"
+            },
+            {
+              "title": "都市脑洞",
+              "value": "65"
+            },
+            {
+              "title": "古装仙侠",
+              "value": "66"
+            },
+            {
+              "title": "福利",
+              "value": "67"
+            },
+            {
+              "title": "AI漫剧",
+              "value": "68"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "lzi",
+      "title": "🥑 量子资源",
+      "subtitle": "量子资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_lzi",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "电影片",
+              "value": "1"
+            },
+            {
+              "title": "连续剧",
+              "value": "2"
+            },
+            {
+              "title": "综艺片",
+              "value": "3"
+            },
+            {
+              "title": "动漫片",
+              "value": "4"
+            },
+            {
+              "title": "动作片",
+              "value": "6"
+            },
+            {
+              "title": "喜剧片",
+              "value": "7"
+            },
+            {
+              "title": "爱情片",
+              "value": "8"
+            },
+            {
+              "title": "科幻片",
+              "value": "9"
+            },
+            {
+              "title": "恐怖片",
+              "value": "10"
+            },
+            {
+              "title": "剧情片",
+              "value": "11"
+            },
+            {
+              "title": "战争片",
+              "value": "12"
+            },
+            {
+              "title": "国产剧",
+              "value": "13"
+            },
+            {
+              "title": "香港剧",
+              "value": "14"
+            },
+            {
+              "title": "韩国剧",
+              "value": "15"
+            },
+            {
+              "title": "欧美剧",
+              "value": "16"
+            },
+            {
+              "title": "记录片",
+              "value": "20"
+            },
+            {
+              "title": "台湾剧",
+              "value": "21"
+            },
+            {
+              "title": "日本剧",
+              "value": "22"
+            },
+            {
+              "title": "海外剧",
+              "value": "23"
+            },
+            {
+              "title": "泰国剧",
+              "value": "24"
+            },
+            {
+              "title": "大陆综艺",
+              "value": "25"
+            },
+            {
+              "title": "港台综艺",
+              "value": "26"
+            },
+            {
+              "title": "日韩综艺",
+              "value": "27"
+            },
+            {
+              "title": "欧美综艺",
+              "value": "28"
+            },
+            {
+              "title": "国产动漫",
+              "value": "29"
+            },
+            {
+              "title": "日韩动漫",
+              "value": "30"
+            },
+            {
+              "title": "欧美动漫",
+              "value": "31"
+            },
+            {
+              "title": "港台动漫",
+              "value": "32"
+            },
+            {
+              "title": "海外动漫",
+              "value": "33"
+            },
+            {
+              "title": "伦理片",
+              "value": "34"
+            },
+            {
+              "title": "电影解说",
+              "value": "35"
+            },
+            {
+              "title": "体育",
+              "value": "36"
+            },
+            {
+              "title": "足球",
+              "value": "37"
+            },
+            {
+              "title": "篮球",
+              "value": "38"
+            },
+            {
+              "title": "网球",
+              "value": "39"
+            },
+            {
+              "title": "斯诺克",
+              "value": "40"
+            },
+            {
+              "title": "预告片",
+              "value": "45"
+            },
+            {
+              "title": "短剧",
+              "value": "46"
+            },
+            {
+              "title": "动画片",
+              "value": "49"
+            },
+            {
+              "title": "AI漫剧",
+              "value": "52"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "suoni",
+      "title": "🐉 索尼高清",
+      "subtitle": "索尼高清 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_suoni",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "电影",
+              "value": "1"
+            },
+            {
+              "title": "电视剧",
+              "value": "2"
+            },
+            {
+              "title": "综艺",
+              "value": "3"
+            },
+            {
+              "title": "动漫",
+              "value": "4"
+            },
+            {
+              "title": "动作片",
+              "value": "6"
+            },
+            {
+              "title": "喜剧片",
+              "value": "7"
+            },
+            {
+              "title": "爱情片",
+              "value": "8"
+            },
+            {
+              "title": "科幻片",
+              "value": "9"
+            },
+            {
+              "title": "恐怖片",
+              "value": "10"
+            },
+            {
+              "title": "剧情片",
+              "value": "11"
+            },
+            {
+              "title": "战争片",
+              "value": "12"
+            },
+            {
+              "title": "国产剧",
+              "value": "13"
+            },
+            {
+              "title": "欧美剧",
+              "value": "14"
+            },
+            {
+              "title": "韩剧",
+              "value": "15"
+            },
+            {
+              "title": "日剧",
+              "value": "16"
+            },
+            {
+              "title": "港剧",
+              "value": "17"
+            },
+            {
+              "title": "台剧",
+              "value": "18"
+            },
+            {
+              "title": "泰剧",
+              "value": "19"
+            },
+            {
+              "title": "纪录片",
+              "value": "20"
+            },
+            {
+              "title": "海外剧",
+              "value": "23"
+            },
+            {
+              "title": "大陆综艺",
+              "value": "25"
+            },
+            {
+              "title": "日韩综艺",
+              "value": "26"
+            },
+            {
+              "title": "港台综艺",
+              "value": "27"
+            },
+            {
+              "title": "欧美综艺",
+              "value": "28"
+            },
+            {
+              "title": "国产动漫",
+              "value": "29"
+            },
+            {
+              "title": "日韩动漫",
+              "value": "30"
+            },
+            {
+              "title": "欧美动漫",
+              "value": "31"
+            },
+            {
+              "title": "动画片",
+              "value": "39"
+            },
+            {
+              "title": "港台动漫",
+              "value": "44"
+            },
+            {
+              "title": "海外动漫",
+              "value": "45"
+            },
+            {
+              "title": "演唱会",
+              "value": "47"
+            },
+            {
+              "title": "体育赛事",
+              "value": "48"
+            },
+            {
+              "title": "篮球",
+              "value": "49"
+            },
+            {
+              "title": "足球",
+              "value": "50"
+            },
+            {
+              "title": "预告片",
+              "value": "51"
+            },
+            {
+              "title": "斯诺克",
+              "value": "52"
+            },
+            {
+              "title": "影视解说",
+              "value": "53"
+            },
+            {
+              "title": "爽文短剧",
+              "value": "54"
+            },
+            {
+              "title": "伦理",
+              "value": "55"
+            },
+            {
+              "title": "港台三级",
+              "value": "56"
+            },
+            {
+              "title": "韩国伦理",
+              "value": "57"
+            },
+            {
+              "title": "西方伦理",
+              "value": "58"
+            },
+            {
+              "title": "日本伦理",
+              "value": "59"
+            },
+            {
+              "title": "两性课堂",
+              "value": "60"
+            },
+            {
+              "title": "写真热舞",
+              "value": "61"
+            },
+            {
+              "title": "4K电影",
+              "value": "62"
+            },
+            {
+              "title": "有声动漫",
+              "value": "63"
+            },
+            {
+              "title": "女频恋爱",
+              "value": "64"
+            },
+            {
+              "title": "反转爽剧",
+              "value": "65"
+            },
+            {
+              "title": "古装仙侠",
+              "value": "66"
+            },
+            {
+              "title": "年代穿越",
+              "value": "67"
+            },
+            {
+              "title": "脑洞悬疑",
+              "value": "68"
+            },
+            {
+              "title": "现代都市",
+              "value": "69"
+            },
+            {
+              "title": "邵氏电影",
+              "value": "70"
+            },
+            {
+              "title": "Netflix电影",
+              "value": "71"
+            },
+            {
+              "title": "Netflix自制剧",
+              "value": "72"
+            },
+            {
+              "title": "擦边短剧",
+              "value": "73"
+            },
+            {
+              "title": "预告解说",
+              "value": "74"
+            },
+            {
+              "title": "科普学习",
+              "value": "75"
+            },
+            {
+              "title": "漫剧",
+              "value": "76"
+            },
+            {
+              "title": "儿童儿歌",
+              "value": "77"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "hhzy",
+      "title": "🦊 火狐采集",
+      "subtitle": "火狐采集 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_hhzy",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "电视剧",
+              "value": "1"
+            },
+            {
+              "title": "电影",
+              "value": "2"
+            },
+            {
+              "title": "欧美剧",
+              "value": "3"
+            },
+            {
+              "title": "香港剧",
+              "value": "4"
+            },
+            {
+              "title": "韩剧",
+              "value": "5"
+            },
+            {
+              "title": "日剧",
+              "value": "6"
+            },
+            {
+              "title": "马泰剧",
+              "value": "7"
+            },
+            {
+              "title": "伦理片",
+              "value": "8"
+            },
+            {
+              "title": "动作片",
+              "value": "9"
+            },
+            {
+              "title": "爱情片",
+              "value": "10"
+            },
+            {
+              "title": "喜剧片",
+              "value": "11"
+            },
+            {
+              "title": "科幻片",
+              "value": "12"
+            },
+            {
+              "title": "恐怖片",
+              "value": "13"
+            },
+            {
+              "title": "剧情片",
+              "value": "14"
+            },
+            {
+              "title": "战争片",
+              "value": "15"
+            },
+            {
+              "title": "记录片",
+              "value": "16"
+            },
+            {
+              "title": "动漫",
+              "value": "17"
+            },
+            {
+              "title": "内地剧",
+              "value": "20"
+            },
+            {
+              "title": "动画片",
+              "value": "23"
+            },
+            {
+              "title": "中国动漫",
+              "value": "24"
+            },
+            {
+              "title": "日本动漫",
+              "value": "25"
+            },
+            {
+              "title": "欧美动漫",
+              "value": "26"
+            },
+            {
+              "title": "综艺",
+              "value": "27"
+            },
+            {
+              "title": "台湾剧",
+              "value": "28"
+            },
+            {
+              "title": "大陆综艺",
+              "value": "30"
+            },
+            {
+              "title": "日韩综艺",
+              "value": "31"
+            },
+            {
+              "title": "港台综艺",
+              "value": "32"
+            },
+            {
+              "title": "欧美综艺",
+              "value": "33"
+            },
+            {
+              "title": "灾难片",
+              "value": "34"
+            },
+            {
+              "title": "悬疑片",
+              "value": "35"
+            },
+            {
+              "title": "犯罪片",
+              "value": "36"
+            },
+            {
+              "title": "奇幻片",
+              "value": "37"
+            },
+            {
+              "title": "短剧",
+              "value": "38"
+            },
+            {
+              "title": "预告片",
+              "value": "39"
+            },
+            {
+              "title": "体育赛事",
+              "value": "40"
+            },
+            {
+              "title": "足球",
+              "value": "41"
+            },
+            {
+              "title": "篮球",
+              "value": "42"
+            },
+            {
+              "title": "台球",
+              "value": "43"
+            },
+            {
+              "title": "其他赛事",
+              "value": "44"
+            },
+            {
+              "title": "古装仙侠",
+              "value": "45"
+            },
+            {
+              "title": "现代都市",
+              "value": "46"
+            },
+            {
+              "title": "穿越年代",
+              "value": "47"
+            },
+            {
+              "title": "言情总裁",
+              "value": "48"
+            },
+            {
+              "title": "重生民国",
+              "value": "49"
+            },
+            {
+              "title": "反转爽剧",
+              "value": "50"
+            },
+            {
+              "title": "脑洞悬疑",
+              "value": "51"
+            },
+            {
+              "title": "擦边短剧",
+              "value": "52"
+            },
+            {
+              "title": "AI漫剧",
+              "value": "53"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "baiduyun",
+      "title": "☁️ 百度云资源",
+      "subtitle": "百度云资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_baiduyun",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "电影",
+              "value": "1"
+            },
+            {
+              "title": "电视剧",
+              "value": "2"
+            },
+            {
+              "title": "综艺",
+              "value": "3"
+            },
+            {
+              "title": "动漫",
+              "value": "4"
+            },
+            {
+              "title": "动作片",
+              "value": "6"
+            },
+            {
+              "title": "喜剧片",
+              "value": "7"
+            },
+            {
+              "title": "爱情片",
+              "value": "8"
+            },
+            {
+              "title": "科幻片",
+              "value": "9"
+            },
+            {
+              "title": "恐怖片",
+              "value": "10"
+            },
+            {
+              "title": "剧情片",
+              "value": "11"
+            },
+            {
+              "title": "战争片",
+              "value": "12"
+            },
+            {
+              "title": "大陆剧",
+              "value": "13"
+            },
+            {
+              "title": "欧美剧",
+              "value": "14"
+            },
+            {
+              "title": "韩剧",
+              "value": "15"
+            },
+            {
+              "title": "日剧",
+              "value": "16"
+            },
+            {
+              "title": "港澳剧",
+              "value": "17"
+            },
+            {
+              "title": "台湾剧",
+              "value": "18"
+            },
+            {
+              "title": "泰剧",
+              "value": "19"
+            },
+            {
+              "title": "纪录片",
+              "value": "20"
+            },
+            {
+              "title": "其他剧",
+              "value": "23"
+            },
+            {
+              "title": "大陆综艺",
+              "value": "25"
+            },
+            {
+              "title": "日韩综艺",
+              "value": "26"
+            },
+            {
+              "title": "港台综艺",
+              "value": "27"
+            },
+            {
+              "title": "欧美综艺",
+              "value": "28"
+            },
+            {
+              "title": "国产动漫",
+              "value": "29"
+            },
+            {
+              "title": "日韩动漫",
+              "value": "30"
+            },
+            {
+              "title": "欧美动漫",
+              "value": "31"
+            },
+            {
+              "title": "动画电影",
+              "value": "39"
+            },
+            {
+              "title": "港台动漫",
+              "value": "44"
+            },
+            {
+              "title": "海外动漫",
+              "value": "45"
+            },
+            {
+              "title": "演唱会",
+              "value": "47"
+            },
+            {
+              "title": "体育赛事",
+              "value": "48"
+            },
+            {
+              "title": "篮球",
+              "value": "49"
+            },
+            {
+              "title": "足球",
+              "value": "50"
+            },
+            {
+              "title": "预告片",
+              "value": "51"
+            },
+            {
+              "title": "斯诺克",
+              "value": "52"
+            },
+            {
+              "title": "影视解说",
+              "value": "53"
+            },
+            {
+              "title": "ai短剧",
+              "value": "54"
+            },
+            {
+              "title": "伦理",
+              "value": "55"
+            },
+            {
+              "title": "港台三级",
+              "value": "56"
+            },
+            {
+              "title": "韩国伦理",
+              "value": "57"
+            },
+            {
+              "title": "西方伦理",
+              "value": "58"
+            },
+            {
+              "title": "日本伦理",
+              "value": "59"
+            },
+            {
+              "title": "两性课堂",
+              "value": "60"
+            },
+            {
+              "title": "写真热舞",
+              "value": "61"
+            },
+            {
+              "title": "4K电影",
+              "value": "62"
+            },
+            {
+              "title": "有声动漫",
+              "value": "63"
+            },
+            {
+              "title": "女频恋爱",
+              "value": "64"
+            },
+            {
+              "title": "反转爽剧",
+              "value": "65"
+            },
+            {
+              "title": "古装仙侠",
+              "value": "66"
+            },
+            {
+              "title": "年代穿越",
+              "value": "67"
+            },
+            {
+              "title": "脑洞悬疑",
+              "value": "68"
+            },
+            {
+              "title": "现代都市",
+              "value": "69"
+            },
+            {
+              "title": "邵氏电影",
+              "value": "70"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "jisu",
+      "title": "🚀 极速资源",
+      "subtitle": "极速资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_jisu",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "电视剧",
+              "value": "1"
+            },
+            {
+              "title": "电影",
+              "value": "2"
+            },
+            {
+              "title": "欧美剧",
+              "value": "3"
+            },
+            {
+              "title": "香港剧",
+              "value": "4"
+            },
+            {
+              "title": "韩剧",
+              "value": "5"
+            },
+            {
+              "title": "日剧",
+              "value": "6"
+            },
+            {
+              "title": "马泰剧",
+              "value": "7"
+            },
+            {
+              "title": "伦理片",
+              "value": "8"
+            },
+            {
+              "title": "动作片",
+              "value": "9"
+            },
+            {
+              "title": "爱情片",
+              "value": "10"
+            },
+            {
+              "title": "喜剧片",
+              "value": "11"
+            },
+            {
+              "title": "科幻片",
+              "value": "12"
+            },
+            {
+              "title": "恐怖片",
+              "value": "13"
+            },
+            {
+              "title": "剧情片",
+              "value": "14"
+            },
+            {
+              "title": "战争片",
+              "value": "15"
+            },
+            {
+              "title": "记录片",
+              "value": "16"
+            },
+            {
+              "title": "动漫",
+              "value": "17"
+            },
+            {
+              "title": "内地剧",
+              "value": "20"
+            },
+            {
+              "title": "动画片",
+              "value": "23"
+            },
+            {
+              "title": "中国动漫",
+              "value": "24"
+            },
+            {
+              "title": "日本动漫",
+              "value": "25"
+            },
+            {
+              "title": "欧美动漫",
+              "value": "26"
+            },
+            {
+              "title": "综艺",
+              "value": "27"
+            },
+            {
+              "title": "台湾剧",
+              "value": "28"
+            },
+            {
+              "title": "体育赛事",
+              "value": "29"
+            },
+            {
+              "title": "大陆综艺",
+              "value": "30"
+            },
+            {
+              "title": "日韩综艺",
+              "value": "31"
+            },
+            {
+              "title": "港台综艺",
+              "value": "32"
+            },
+            {
+              "title": "欧美综艺",
+              "value": "33"
+            },
+            {
+              "title": "灾难片",
+              "value": "34"
+            },
+            {
+              "title": "悬疑片",
+              "value": "35"
+            },
+            {
+              "title": "犯罪片",
+              "value": "36"
+            },
+            {
+              "title": "奇幻片",
+              "value": "37"
+            },
+            {
+              "title": "短剧",
+              "value": "38"
+            },
+            {
+              "title": "预告片",
+              "value": "39"
+            },
+            {
+              "title": "足球",
+              "value": "40"
+            },
+            {
+              "title": "篮球",
+              "value": "41"
+            },
+            {
+              "title": "台球",
+              "value": "42"
+            },
+            {
+              "title": "其他赛事",
+              "value": "43"
+            },
+            {
+              "title": "古装仙侠",
+              "value": "45"
+            },
+            {
+              "title": "现代都市",
+              "value": "46"
+            },
+            {
+              "title": "穿越年代",
+              "value": "47"
+            },
+            {
+              "title": "言情总裁",
+              "value": "48"
+            },
+            {
+              "title": "重生民国",
+              "value": "49"
+            },
+            {
+              "title": "反转爽剧",
+              "value": "50"
+            },
+            {
+              "title": "脑洞悬疑",
+              "value": "52"
+            },
+            {
+              "title": "擦边短剧",
+              "value": "53"
+            },
+            {
+              "title": "AI漫剧",
+              "value": "54"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "maotai",
+      "title": "🍶 茅台资源",
+      "subtitle": "茅台资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_maotai",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "电影",
+              "value": "1"
+            },
+            {
+              "title": "连续剧",
+              "value": "2"
+            },
+            {
+              "title": "综艺片",
+              "value": "3"
+            },
+            {
+              "title": "动漫",
+              "value": "4"
+            },
+            {
+              "title": "纪录片",
+              "value": "5"
+            },
+            {
+              "title": "动作片",
+              "value": "6"
+            },
+            {
+              "title": "爱情片",
+              "value": "7"
+            },
+            {
+              "title": "喜剧片",
+              "value": "8"
+            },
+            {
+              "title": "科幻片",
+              "value": "9"
+            },
+            {
+              "title": "恐怖片",
+              "value": "10"
+            },
+            {
+              "title": "剧情片",
+              "value": "11"
+            },
+            {
+              "title": "战争片",
+              "value": "12"
+            },
+            {
+              "title": "国产剧",
+              "value": "13"
+            },
+            {
+              "title": "香港剧",
+              "value": "14"
+            },
+            {
+              "title": "欧美剧",
+              "value": "15"
+            },
+            {
+              "title": "韩剧",
+              "value": "16"
+            },
+            {
+              "title": "动漫电影",
+              "value": "20"
+            },
+            {
+              "title": "泰国剧",
+              "value": "21"
+            },
+            {
+              "title": "日本剧",
+              "value": "22"
+            },
+            {
+              "title": "台湾剧",
+              "value": "23"
+            },
+            {
+              "title": "海外剧",
+              "value": "24"
+            },
+            {
+              "title": "大陆综艺",
+              "value": "25"
+            },
+            {
+              "title": "日韩综艺",
+              "value": "26"
+            },
+            {
+              "title": "港台综艺",
+              "value": "27"
+            },
+            {
+              "title": "欧美综艺",
+              "value": "28"
+            },
+            {
+              "title": "演唱会",
+              "value": "29"
+            },
+            {
+              "title": "国产动漫",
+              "value": "30"
+            },
+            {
+              "title": "日本动漫",
+              "value": "31"
+            },
+            {
+              "title": "欧美动漫",
+              "value": "32"
+            },
+            {
+              "title": "海外动漫",
+              "value": "33"
+            },
+            {
+              "title": "伦理片",
+              "value": "34"
+            },
+            {
+              "title": "新闻资讯",
+              "value": "35"
+            },
+            {
+              "title": "体育赛事",
+              "value": "36"
+            },
+            {
+              "title": "短剧大全",
+              "value": "37"
+            },
+            {
+              "title": "篮球",
+              "value": "38"
+            },
+            {
+              "title": "足球",
+              "value": "39"
+            },
+            {
+              "title": "网球",
+              "value": "40"
+            },
+            {
+              "title": "斯诺克",
+              "value": "41"
+            },
+            {
+              "title": "LPL",
+              "value": "42"
+            },
+            {
+              "title": "重生民国",
+              "value": "43"
+            },
+            {
+              "title": "穿越现代",
+              "value": "44"
+            },
+            {
+              "title": "反转爽剧",
+              "value": "45"
+            },
+            {
+              "title": "言情总裁",
+              "value": "46"
+            },
+            {
+              "title": "现代都市",
+              "value": "47"
+            },
+            {
+              "title": "古装仙侠",
+              "value": "48"
+            },
+            {
+              "title": "悬疑烧脑",
+              "value": "49"
+            },
+            {
+              "title": "惊悚片",
+              "value": "50"
+            },
+            {
+              "title": "电影资讯",
+              "value": "51"
+            },
+            {
+              "title": "娱乐新闻",
+              "value": "52"
+            },
+            {
+              "title": "预告片",
+              "value": "53"
+            },
+            {
+              "title": "AI短剧",
+              "value": "54"
+            },
+            {
+              "title": "擦边短剧",
+              "value": "55"
+            },
+            {
+              "title": "AI动漫",
+              "value": "56"
+            },
+            {
+              "title": "记录片",
+              "value": "57"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "ysxq",
+      "title": "👭 播剧影视",
+      "subtitle": "播剧影视 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_ysxq",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "电影",
+              "value": "1"
+            },
+            {
+              "title": "连续剧",
+              "value": "2"
+            },
+            {
+              "title": "综艺",
+              "value": "3"
+            },
+            {
+              "title": "动漫",
+              "value": "4"
+            },
+            {
+              "title": "B站",
+              "value": "5"
+            },
+            {
+              "title": "动作片",
+              "value": "6"
+            },
+            {
+              "title": "喜剧片",
+              "value": "7"
+            },
+            {
+              "title": "爱情片",
+              "value": "8"
+            },
+            {
+              "title": "科幻片",
+              "value": "9"
+            },
+            {
+              "title": "恐怖片",
+              "value": "10"
+            },
+            {
+              "title": "剧情片",
+              "value": "11"
+            },
+            {
+              "title": "战争片",
+              "value": "12"
+            },
+            {
+              "title": "国产剧",
+              "value": "13"
+            },
+            {
+              "title": "港台剧",
+              "value": "14"
+            },
+            {
+              "title": "日韩剧",
+              "value": "15"
+            },
+            {
+              "title": "欧美剧",
+              "value": "16"
+            },
+            {
+              "title": "惊悚片",
+              "value": "20"
+            },
+            {
+              "title": "奇幻片",
+              "value": "21"
+            },
+            {
+              "title": "文艺片",
+              "value": "22"
+            },
+            {
+              "title": "悬疑片",
+              "value": "23"
+            },
+            {
+              "title": "纪录片",
+              "value": "24"
+            },
+            {
+              "title": "犯罪片",
+              "value": "25"
+            },
+            {
+              "title": "动画片",
+              "value": "26"
+            },
+            {
+              "title": "伦理片",
+              "value": "27"
+            },
+            {
+              "title": "其他片",
+              "value": "28"
+            },
+            {
+              "title": "泰国剧",
+              "value": "29"
+            },
+            {
+              "title": "国内综艺",
+              "value": "30"
+            },
+            {
+              "title": "日韩综艺",
+              "value": "31"
+            },
+            {
+              "title": "欧美综艺",
+              "value": "32"
+            },
+            {
+              "title": "大陆动漫",
+              "value": "33"
+            },
+            {
+              "title": "日韩动漫",
+              "value": "34"
+            },
+            {
+              "title": "欧美动漫",
+              "value": "35"
+            },
+            {
+              "title": "BiLiBiLi",
+              "value": "37"
+            },
+            {
+              "title": "新加坡",
+              "value": "38"
+            },
+            {
+              "title": "港台综艺",
+              "value": "39"
+            },
+            {
+              "title": "歌舞片",
+              "value": "40"
+            },
+            {
+              "title": "演唱会",
+              "value": "41"
+            },
+            {
+              "title": "古装片",
+              "value": "42"
+            },
+            {
+              "title": "历史片",
+              "value": "43"
+            },
+            {
+              "title": "冒险片",
+              "value": "44"
+            },
+            {
+              "title": "体育赛事",
+              "value": "45"
+            },
+            {
+              "title": "青春片",
+              "value": "46"
+            },
+            {
+              "title": "灾难片",
+              "value": "47"
+            },
+            {
+              "title": "经典片",
+              "value": "48"
+            },
+            {
+              "title": "其他动漫",
+              "value": "49"
+            },
+            {
+              "title": "其他剧",
+              "value": "50"
+            },
+            {
+              "title": "西部片",
+              "value": "51"
+            },
+            {
+              "title": "番剧",
+              "value": "52"
+            },
+            {
+              "title": "直播",
+              "value": "53"
+            },
+            {
+              "title": "港台动漫",
+              "value": "54"
+            },
+            {
+              "title": "海外综艺",
+              "value": "55"
+            },
+            {
+              "title": "足球",
+              "value": "56"
+            },
+            {
+              "title": "篮球",
+              "value": "57"
+            },
+            {
+              "title": "网球",
+              "value": "58"
+            },
+            {
+              "title": "海外剧",
+              "value": "59"
+            },
+            {
+              "title": "短剧",
+              "value": "60"
+            },
+            {
+              "title": "番剧",
+              "value": "61"
+            },
+            {
+              "title": "少儿片",
+              "value": "62"
+            },
+            {
+              "title": "斯诺克",
+              "value": "63"
+            },
+            {
+              "title": "预告片",
+              "value": "65"
+            },
+            {
+              "title": "电影解说",
+              "value": "66"
+            },
+            {
+              "title": "网络电影",
+              "value": "67"
+            },
+            {
+              "title": "新马泰动漫",
+              "value": "68"
+            },
+            {
+              "title": "重生民国",
+              "value": "69"
+            },
+            {
+              "title": "穿越年代",
+              "value": "70"
+            },
+            {
+              "title": "现代都市",
+              "value": "71"
+            },
+            {
+              "title": "反转爽文",
+              "value": "72"
+            },
+            {
+              "title": "女恋总裁",
+              "value": "73"
+            },
+            {
+              "title": "闪婚离婚",
+              "value": "74"
+            },
+            {
+              "title": "脑洞悬疑",
+              "value": "75"
+            },
+            {
+              "title": "古装仙侠",
+              "value": "76"
+            },
+            {
+              "title": "电视直播",
+              "value": "77"
+            },
+            {
+              "title": "电影轮播",
+              "value": "78"
+            },
+            {
+              "title": "电视剧轮播",
+              "value": "79"
+            },
+            {
+              "title": "海外频道",
+              "value": "80"
+            },
+            {
+              "title": "动漫频道",
+              "value": "81"
+            },
+            {
+              "title": "熊猫频道",
+              "value": "82"
+            },
+            {
+              "title": "体育频道",
+              "value": "83"
+            },
+            {
+              "title": "国内频道",
+              "value": "84"
+            },
+            {
+              "title": "武侠片",
+              "value": "85"
+            },
+            {
+              "title": "4K电影",
+              "value": "86"
+            },
+            {
+              "title": "邵氏电影",
+              "value": "87"
+            },
+            {
+              "title": "Netflix电影",
+              "value": "88"
+            },
+            {
+              "title": "Netflix自制剧",
+              "value": "89"
+            },
+            {
+              "title": "有声动漫",
+              "value": "90"
+            },
+            {
+              "title": "擦边短剧",
+              "value": "91"
+            },
+            {
+              "title": "漫剧",
+              "value": "92"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "loadResource",
+      "title": "播放资源",
+      "functionName": "loadResource",
+      "type": "stream",
+      "cacheDuration": 120,
+      "params": []
     }
   ],
   search: {
@@ -312,11 +2879,7 @@ function mergeDiscoverCards(buckets) {
 }
 
 function applyCmsFilters(query, params) {
-  const area = String(params.area || "").trim();
-  const year = String(params.year || "").trim();
   const hours = Number(params.sort_by || params.hours);
-  if (area) query.area = area;
-  if (year) query.year = year;
   if (Number.isFinite(hours) && hours > 0) query.h = Math.floor(hours);
   return query;
 }
@@ -327,6 +2890,32 @@ async function resolveSelectedSite(params) {
   if (BUILTIN_SITES[siteKey]) return BUILTIN_SITES[siteKey];
   return requireSite(params, siteKey);
 }
+
+async function loadBuiltinSite(siteKey, params) {
+  params = params || {};
+  const site = BUILTIN_SITES[siteKey] || await requireSite(params, siteKey);
+  const page = pageNumber(params.page);
+  const category = String(params.category || "").trim();
+  const query = applyCmsFilters({ ac: "detail", pg: page }, params);
+  if (category) query.t = category;
+  const data = await cmsGet(site.api, query);
+  const list = vodList(data).map(vod => vodCard(vod, site));
+  if (!list.length && page === 1) {
+    throw new Error(site.name + " 当前分类下暂无内容，请切换分类或更新时段");
+  }
+  return list;
+}
+
+function loadSite_dyttzy(params) { return loadBuiltinSite("dyttzy", params); }
+function loadSite_ffzy(params) { return loadBuiltinSite("ffzy", params); }
+function loadSite_bfzy(params) { return loadBuiltinSite("bfzy", params); }
+function loadSite_lzi(params) { return loadBuiltinSite("lzi", params); }
+function loadSite_suoni(params) { return loadBuiltinSite("suoni", params); }
+function loadSite_hhzy(params) { return loadBuiltinSite("hhzy", params); }
+function loadSite_baiduyun(params) { return loadBuiltinSite("baiduyun", params); }
+function loadSite_jisu(params) { return loadBuiltinSite("jisu", params); }
+function loadSite_maotai(params) { return loadBuiltinSite("maotai", params); }
+function loadSite_ysxq(params) { return loadBuiltinSite("ysxq", params); }
 
 async function loadDiscover(params) {
   params = params || {};

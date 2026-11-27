@@ -1,9 +1,9 @@
 var WidgetMetadata = {
   id: "chai.tvbox-nsfw",
   title: "TVBox 福利源",
-  version: "2.0.0",
+  version: "2.1.0",
   requiredVersion: "0.0.6",
-  description: "内置福利 TVBox 采集站，支持按源、分类、年份、更新时段自由切换并跨源聚合防落空。不含 TMDB 自动播源入口。",
+  description: "内置福利 TVBox 采集站，为每个内置源写入真实分类目录，并支持跨源聚合与更新时段筛选。不含 TMDB 自动播源入口。",
   author: "chai-j",
   detailCacheDuration: 120,
   globalParams: [
@@ -43,91 +43,4597 @@ var WidgetMetadata = {
   ],
   modules: [
     {
-      id: "discover",
-      title: "福利浏览",
-      subtitle: "可直接在模板与右上角切换源、分类、年份与更新时段",
-      functionName: "loadDiscover",
-      cacheDuration: 120,
-      params: [
+      "id": "discover",
+      "title": "🌟 聚合发现",
+      "subtitle": "跨源按大类浏览，可在右上角切换源、分类与更新时段",
+      "functionName": "loadDiscover",
+      "cacheDuration": 120,
+      "params": [
         {
-          name: "site",
-          title: "源",
-          type: "enumeration",
-          value: "",
-          enumOptions: [
-            { title: "🌟 全部聚合", value: "" },
-            { title: "🕵️ 黑料资源", value: "heiliao" },
-            { title: "🎞️ 麻豆视频", value: "91md" },
-            { title: "🚀 精东影业", value: "chujia" },
-            { title: "🥛 奶香香", value: "naixxzy" },
-            { title: "🏆 奥斯卡资源", value: "aosikazy" },
-            { title: "🍑 杏吧资源", value: "xgbbk8" },
-            { title: "🔞 搜AV资源", value: "souav" },
-            { title: "💎 精品资源", value: "jingpin" },
-            { title: "🍒 大奶子资源", value: "danaizi" },
-            { title: "🦈 鲨鱼资源", value: "shayu" },
-            { title: "🌶️ 辣椒资源", value: "lajiao" },
-            { title: "🐔 鸡坤资源", value: "jkun" },
-            { title: "🐆 乐播资源", value: "lebo" },
-            { title: "💧 滴滴资源", value: "didi" },
-            { title: "⚡ 155资源", value: "155" },
-            { title: "🐇 玉兔资源", value: "yutu" },
-            { title: "🌲 森林资源", value: "senlin" },
-            { title: "🔥 火速资源", value: "huosu" },
-            { title: "😈 嘿嘿资源", value: "heihei" },
-            { title: "🎬 CK资源", value: "ck" },
-            { title: "🫘 豆豆资源", value: "doudou" },
-            { title: "🐥 小鸡资源", value: "xiaoji" },
-            { title: "🍅 番茄资源", value: "fanqie" },
-            { title: "📦 黄色仓库", value: "hsck" },
-            { title: "💋 老色逼资源", value: "lsb" },
-            { title: "📀 番号资源", value: "fanhao" }
+          "name": "site",
+          "title": "源",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部聚合",
+              "value": ""
+            },
+            {
+              "title": "🕵️ 黑料资源",
+              "value": "heiliao"
+            },
+            {
+              "title": "🎞️ 麻豆视频",
+              "value": "91md"
+            },
+            {
+              "title": "🚀 精东影业",
+              "value": "chujia"
+            },
+            {
+              "title": "🥛 奶香香",
+              "value": "naixxzy"
+            },
+            {
+              "title": "🏆 奥斯卡资源",
+              "value": "aosikazy"
+            },
+            {
+              "title": "🍑 杏吧资源",
+              "value": "xgbbk8"
+            },
+            {
+              "title": "🔞 搜AV资源",
+              "value": "souav"
+            },
+            {
+              "title": "💎 精品资源",
+              "value": "jingpin"
+            },
+            {
+              "title": "🍒 大奶子资源",
+              "value": "danaizi"
+            },
+            {
+              "title": "🦈 鲨鱼资源",
+              "value": "shayu"
+            },
+            {
+              "title": "🌶️ 辣椒资源",
+              "value": "lajiao"
+            },
+            {
+              "title": "🐔 鸡坤资源",
+              "value": "jkun"
+            },
+            {
+              "title": "🐆 乐播资源",
+              "value": "lebo"
+            },
+            {
+              "title": "💧 滴滴资源",
+              "value": "didi"
+            },
+            {
+              "title": "⚡ 155资源",
+              "value": "155"
+            },
+            {
+              "title": "🐇 玉兔资源",
+              "value": "yutu"
+            },
+            {
+              "title": "🌲 森林资源",
+              "value": "senlin"
+            },
+            {
+              "title": "🔥 火速资源",
+              "value": "huosu"
+            },
+            {
+              "title": "😈 嘿嘿资源",
+              "value": "heihei"
+            },
+            {
+              "title": "🎬 CK资源",
+              "value": "ck"
+            },
+            {
+              "title": "🫘 豆豆资源",
+              "value": "doudou"
+            },
+            {
+              "title": "🐥 小鸡资源",
+              "value": "xiaoji"
+            },
+            {
+              "title": "🍅 番茄资源",
+              "value": "fanqie"
+            },
+            {
+              "title": "📦 黄色仓库",
+              "value": "hsck"
+            },
+            {
+              "title": "💋 老色逼资源",
+              "value": "lsb"
+            },
+            {
+              "title": "📀 番号资源",
+              "value": "fanhao"
+            }
           ]
         },
         {
-          name: "genre",
-          title: "分类",
-          type: "enumeration",
-          value: "",
-          enumOptions: [
-            { title: "🌟 全部最新", value: "" },
-            { title: "🇨🇳 国产 / 自拍", value: "chinese" },
-            { title: "🔓 日本无码 / 无码", value: "uncensored" },
-            { title: "🇯🇵 日本有码 / 日韩", value: "censored" },
-            { title: "💬 中文字幕", value: "subtitle" },
-            { title: "🎬 国产传媒 / 麻豆", value: "media" },
-            { title: "🌍 欧美", value: "western" },
-            { title: "🎨 激情动漫 / 里番", value: "anime" },
-            { title: "🎀 制服 / Cosplay", value: "cosplay" },
-            { title: "🎞️ 伦理三级", value: "ethics" }
+          "name": "genre",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "🇨🇳 国产 / 自拍",
+              "value": "chinese"
+            },
+            {
+              "title": "🔓 日本无码 / 无码",
+              "value": "uncensored"
+            },
+            {
+              "title": "🇯🇵 日本有码 / 日韩",
+              "value": "censored"
+            },
+            {
+              "title": "💬 中文字幕",
+              "value": "subtitle"
+            },
+            {
+              "title": "🎬 国产传媒 / 麻豆",
+              "value": "media"
+            },
+            {
+              "title": "🌍 欧美",
+              "value": "western"
+            },
+            {
+              "title": "🎨 激情动漫 / 里番",
+              "value": "anime"
+            },
+            {
+              "title": "🎀 制服 / Cosplay",
+              "value": "cosplay"
+            },
+            {
+              "title": "🎞️ 伦理三级",
+              "value": "ethics"
+            }
           ]
         },
         {
-          name: "year",
-          title: "年份",
-          type: "enumeration",
-          value: "",
-          enumOptions: [
-            { title: "📅 全部年份", value: "" },
-            { title: "2026", value: "2026" },
-            { title: "2025", value: "2025" },
-            { title: "2024", value: "2024" },
-            { title: "2023", value: "2023" }
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
           ]
         },
         {
-          name: "sort_by",
-          title: "更新时段",
-          type: "enumeration",
-          value: "",
-          enumOptions: [
-            { title: "全部时间", value: "" },
-            { title: "24 小时内", value: "24" },
-            { title: "近 7 天", value: "168" },
-            { title: "近 30 天", value: "720" }
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "heiliao",
+      "title": "🕵️ 黑料资源",
+      "subtitle": "黑料资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_heiliao",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "中文字幕",
+              "value": "1"
+            },
+            {
+              "title": "日本有码",
+              "value": "2"
+            },
+            {
+              "title": "日本无码",
+              "value": "3"
+            },
+            {
+              "title": "AV解说",
+              "value": "4"
+            },
+            {
+              "title": "cosplay",
+              "value": "5"
+            },
+            {
+              "title": "都市激情",
+              "value": "20"
+            },
+            {
+              "title": "校园情事",
+              "value": "21"
+            },
+            {
+              "title": "人妻纵情",
+              "value": "22"
+            },
+            {
+              "title": "风俗伦理",
+              "value": "23"
+            },
+            {
+              "title": "另类小说",
+              "value": "24"
+            },
+            {
+              "title": "武侠古典",
+              "value": "25"
+            },
+            {
+              "title": "长篇连载",
+              "value": "26"
+            },
+            {
+              "title": "黑丝诱惑",
+              "value": "27"
+            },
+            {
+              "title": "SWAG",
+              "value": "28"
+            },
+            {
+              "title": "自拍偷拍",
+              "value": "29"
+            },
+            {
+              "title": "激情动漫",
+              "value": "30"
+            },
+            {
+              "title": "网红主播",
+              "value": "31"
+            },
+            {
+              "title": "探花系列",
+              "value": "32"
+            },
+            {
+              "title": "三级伦理",
+              "value": "33"
+            },
+            {
+              "title": "VR视角",
+              "value": "34"
+            },
+            {
+              "title": "国产传媒",
+              "value": "35"
+            },
+            {
+              "title": "素人搭讪",
+              "value": "36"
+            },
+            {
+              "title": "门事件",
+              "value": "37"
+            },
+            {
+              "title": "抖阴视频",
+              "value": "38"
+            }
           ]
         },
-        { name: "page", title: "页码", type: "page" }
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "91md",
+      "title": "🎞️ 麻豆视频",
+      "subtitle": "麻豆视频 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_91md",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "麻豆视频",
+              "value": "1"
+            },
+            {
+              "title": "91制片厂",
+              "value": "2"
+            },
+            {
+              "title": "天美传媒",
+              "value": "3"
+            },
+            {
+              "title": "蜜桃传媒",
+              "value": "4"
+            },
+            {
+              "title": "皇家华人",
+              "value": "5"
+            },
+            {
+              "title": "星空传媒",
+              "value": "6"
+            },
+            {
+              "title": "精东影业",
+              "value": "7"
+            },
+            {
+              "title": "海角社区",
+              "value": "8"
+            },
+            {
+              "title": "成人头条",
+              "value": "9"
+            },
+            {
+              "title": "乌鸦传媒",
+              "value": "10"
+            },
+            {
+              "title": "兔子先生",
+              "value": "20"
+            },
+            {
+              "title": "杏吧原创",
+              "value": "21"
+            },
+            {
+              "title": "玩偶姐姐",
+              "value": "22"
+            },
+            {
+              "title": "mini传媒",
+              "value": "23"
+            },
+            {
+              "title": "大象传媒",
+              "value": "24"
+            },
+            {
+              "title": "91视频",
+              "value": "25"
+            },
+            {
+              "title": "PsychoPorn",
+              "value": "26"
+            },
+            {
+              "title": "糖心Vlog",
+              "value": "27"
+            },
+            {
+              "title": "萝莉社",
+              "value": "29"
+            },
+            {
+              "title": "性视界",
+              "value": "30"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "chujia",
+      "title": "🚀 精东影业",
+      "subtitle": "精东影业 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_chujia",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "麻豆视频",
+              "value": "1"
+            },
+            {
+              "title": "中文字幕",
+              "value": "2"
+            },
+            {
+              "title": "日本无码",
+              "value": "3"
+            },
+            {
+              "title": "日本有码",
+              "value": "4"
+            },
+            {
+              "title": "童颜巨乳",
+              "value": "5"
+            },
+            {
+              "title": "校园萝莉",
+              "value": "6"
+            },
+            {
+              "title": "女优明星",
+              "value": "7"
+            },
+            {
+              "title": "制服诱惑",
+              "value": "9"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "naixxzy",
+      "title": "🥛 奶香香",
+      "subtitle": "奶香香 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_naixxzy",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "精品国产",
+              "value": "1"
+            },
+            {
+              "title": "精品日韩",
+              "value": "2"
+            },
+            {
+              "title": "精品综合",
+              "value": "3"
+            },
+            {
+              "title": "精品小说",
+              "value": "4"
+            },
+            {
+              "title": "精品美图",
+              "value": "5"
+            },
+            {
+              "title": "国产自拍",
+              "value": "20"
+            },
+            {
+              "title": "主播诱惑",
+              "value": "21"
+            },
+            {
+              "title": "探花约炮",
+              "value": "22"
+            },
+            {
+              "title": "偷拍偷窥",
+              "value": "23"
+            },
+            {
+              "title": "网曝吃瓜",
+              "value": "24"
+            },
+            {
+              "title": "抖阴短片",
+              "value": "25"
+            },
+            {
+              "title": "传媒剧情",
+              "value": "26"
+            },
+            {
+              "title": "日韩主播",
+              "value": "27"
+            },
+            {
+              "title": "日韩无码",
+              "value": "28"
+            },
+            {
+              "title": "中文字幕",
+              "value": "29"
+            },
+            {
+              "title": "AV解说",
+              "value": "30"
+            },
+            {
+              "title": "换脸明星",
+              "value": "31"
+            },
+            {
+              "title": "强奸乱伦",
+              "value": "32"
+            },
+            {
+              "title": "女优明星",
+              "value": "33"
+            },
+            {
+              "title": "欧美激情",
+              "value": "34"
+            },
+            {
+              "title": "重口激情",
+              "value": "35"
+            },
+            {
+              "title": "三级伦理",
+              "value": "36"
+            },
+            {
+              "title": "剧情动漫",
+              "value": "37"
+            },
+            {
+              "title": "SM调教",
+              "value": "38"
+            },
+            {
+              "title": "女同性恋",
+              "value": "39"
+            },
+            {
+              "title": "VR视角",
+              "value": "40"
+            },
+            {
+              "title": "都市言情",
+              "value": "41"
+            },
+            {
+              "title": "暴力侵犯",
+              "value": "42"
+            },
+            {
+              "title": "家庭伦伦",
+              "value": "43"
+            },
+            {
+              "title": "性感身体",
+              "value": "44"
+            },
+            {
+              "title": "角色扮演",
+              "value": "45"
+            },
+            {
+              "title": "福利姬",
+              "value": "46"
+            },
+            {
+              "title": "漫画连载",
+              "value": "47"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "aosikazy",
+      "title": "🏆 奥斯卡资源",
+      "subtitle": "奥斯卡资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_aosikazy",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "xgbbk8",
+      "title": "🍑 杏吧资源",
+      "subtitle": "杏吧资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_xgbbk8",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "视频一区",
+              "value": "1"
+            },
+            {
+              "title": "日韩无码",
+              "value": "54"
+            },
+            {
+              "title": "国产主播",
+              "value": "55"
+            },
+            {
+              "title": "视频三区",
+              "value": "56"
+            },
+            {
+              "title": "日韩精品",
+              "value": "57"
+            },
+            {
+              "title": "欧美劲爆",
+              "value": "58"
+            },
+            {
+              "title": "成人动漫",
+              "value": "59"
+            },
+            {
+              "title": "自拍偷拍",
+              "value": "60"
+            },
+            {
+              "title": "伦理影片",
+              "value": "61"
+            },
+            {
+              "title": "中文字幕",
+              "value": "62"
+            },
+            {
+              "title": "人妻系列",
+              "value": "63"
+            },
+            {
+              "title": "制服诱惑",
+              "value": "64"
+            },
+            {
+              "title": "强奸乱伦",
+              "value": "65"
+            },
+            {
+              "title": "AV明星",
+              "value": "66"
+            },
+            {
+              "title": "SM重味",
+              "value": "68"
+            },
+            {
+              "title": "视频二区",
+              "value": "69"
+            },
+            {
+              "title": "巨乳尤物",
+              "value": "70"
+            },
+            {
+              "title": "颜射系列",
+              "value": "71"
+            },
+            {
+              "title": "口交视频",
+              "value": "72"
+            },
+            {
+              "title": "自慰系列",
+              "value": "73"
+            },
+            {
+              "title": "教师学生",
+              "value": "74"
+            },
+            {
+              "title": "群P换妻",
+              "value": "75"
+            },
+            {
+              "title": "AI换脸",
+              "value": "76"
+            },
+            {
+              "title": "AV解说",
+              "value": "78"
+            },
+            {
+              "title": "视频四区",
+              "value": "79"
+            },
+            {
+              "title": "吃瓜黑料",
+              "value": "80"
+            },
+            {
+              "title": "酒店探花",
+              "value": "81"
+            },
+            {
+              "title": "直播裸聊",
+              "value": "82"
+            },
+            {
+              "title": "反差母狗",
+              "value": "83"
+            },
+            {
+              "title": "颜值正义",
+              "value": "84"
+            },
+            {
+              "title": "熟女少妇",
+              "value": "85"
+            },
+            {
+              "title": "人兽乱交",
+              "value": "86"
+            },
+            {
+              "title": "国产传媒",
+              "value": "89"
+            },
+            {
+              "title": "视频五区",
+              "value": "90"
+            },
+            {
+              "title": "野战车震",
+              "value": "91"
+            },
+            {
+              "title": "SM调教",
+              "value": "92"
+            },
+            {
+              "title": "家庭乱伦",
+              "value": "93"
+            },
+            {
+              "title": "百合女同",
+              "value": "94"
+            },
+            {
+              "title": "学生空姐",
+              "value": "95"
+            },
+            {
+              "title": "撸管必看",
+              "value": "96"
+            },
+            {
+              "title": "偷情少妇",
+              "value": "97"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "souav",
+      "title": "🔞 搜AV资源",
+      "subtitle": "搜AV资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_souav",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "中文传媒",
+              "value": "20"
+            },
+            {
+              "title": "国产",
+              "value": "21"
+            },
+            {
+              "title": "欧美AV",
+              "value": "22"
+            },
+            {
+              "title": "日本AV",
+              "value": "23"
+            },
+            {
+              "title": "传媒-麻豆传媒",
+              "value": "24"
+            },
+            {
+              "title": "传媒-精东影业",
+              "value": "25"
+            },
+            {
+              "title": "传媒-蜜桃传媒",
+              "value": "26"
+            },
+            {
+              "title": "传媒-果冻传媒",
+              "value": "27"
+            },
+            {
+              "title": "传媒-星空无限传媒",
+              "value": "28"
+            },
+            {
+              "title": "传媒-SA国际传媒",
+              "value": "29"
+            },
+            {
+              "title": "传媒-性视界传媒",
+              "value": "30"
+            },
+            {
+              "title": "国产-自拍",
+              "value": "31"
+            },
+            {
+              "title": "国产-偷拍",
+              "value": "32"
+            },
+            {
+              "title": "国产-探花",
+              "value": "33"
+            },
+            {
+              "title": "国产-主播",
+              "value": "34"
+            },
+            {
+              "title": "传媒-天美传媒",
+              "value": "35"
+            },
+            {
+              "title": "欧美-高清无码",
+              "value": "36"
+            },
+            {
+              "title": "欧美-高清有码",
+              "value": "37"
+            },
+            {
+              "title": "日本-中文字幕",
+              "value": "38"
+            },
+            {
+              "title": "日本-无码流出",
+              "value": "39"
+            },
+            {
+              "title": "日本-高清有码",
+              "value": "40"
+            },
+            {
+              "title": "传媒-皇家华人",
+              "value": "41"
+            },
+            {
+              "title": "欧美-中文字幕",
+              "value": "42"
+            },
+            {
+              "title": "明星网黄",
+              "value": "43"
+            },
+            {
+              "title": "刘玥",
+              "value": "44"
+            },
+            {
+              "title": "玩偶姐姐",
+              "value": "45"
+            },
+            {
+              "title": "动漫",
+              "value": "46"
+            },
+            {
+              "title": "台湾粉红兔",
+              "value": "47"
+            },
+            {
+              "title": "吃瓜黑料",
+              "value": "48"
+            },
+            {
+              "title": "变态暗网",
+              "value": "49"
+            },
+            {
+              "title": "小众口味",
+              "value": "50"
+            },
+            {
+              "title": "男同",
+              "value": "51"
+            },
+            {
+              "title": "小众女同",
+              "value": "52"
+            },
+            {
+              "title": "TS人妖",
+              "value": "53"
+            },
+            {
+              "title": "传媒-扣扣传媒",
+              "value": "54"
+            },
+            {
+              "title": "恐怖色情",
+              "value": "55"
+            },
+            {
+              "title": "人兽杂交",
+              "value": "56"
+            },
+            {
+              "title": "迷奸强奸",
+              "value": "57"
+            },
+            {
+              "title": "重口味",
+              "value": "58"
+            },
+            {
+              "title": "传媒-91传媒",
+              "value": "59"
+            },
+            {
+              "title": "传媒-杏吧传媒",
+              "value": "60"
+            },
+            {
+              "title": "传媒-起点传媒",
+              "value": "61"
+            },
+            {
+              "title": "传媒-CCAV成人头条",
+              "value": "62"
+            },
+            {
+              "title": "传媒-渡边传媒",
+              "value": "63"
+            },
+            {
+              "title": "传媒-辣椒原创",
+              "value": "64"
+            },
+            {
+              "title": "传媒-红斯灯影像",
+              "value": "65"
+            },
+            {
+              "title": "传媒-情欲国潮",
+              "value": "66"
+            },
+            {
+              "title": "传媒-糖心传媒",
+              "value": "67"
+            },
+            {
+              "title": "传媒-乐播传媒",
+              "value": "68"
+            },
+            {
+              "title": "传媒-葫芦影业",
+              "value": "69"
+            },
+            {
+              "title": "传媒-其他传媒",
+              "value": "70"
+            },
+            {
+              "title": "伦理道德",
+              "value": "71"
+            },
+            {
+              "title": "热门大瓜",
+              "value": "72"
+            },
+            {
+              "title": "学生校园",
+              "value": "73"
+            },
+            {
+              "title": "领导官员",
+              "value": "74"
+            },
+            {
+              "title": "裸贷黑料",
+              "value": "75"
+            },
+            {
+              "title": "白虎萌妹",
+              "value": "76"
+            },
+            {
+              "title": "国产-节目企划",
+              "value": "77"
+            },
+            {
+              "title": "动漫-黄漫",
+              "value": "78"
+            },
+            {
+              "title": "动漫-里番中字",
+              "value": "79"
+            },
+            {
+              "title": "AV解说",
+              "value": "80"
+            },
+            {
+              "title": "水果派",
+              "value": "81"
+            },
+            {
+              "title": "短视频",
+              "value": "82"
+            },
+            {
+              "title": "SM虐待",
+              "value": "83"
+            },
+            {
+              "title": "NTR 绿帽",
+              "value": "84"
+            },
+            {
+              "title": "国产-网红",
+              "value": "85"
+            },
+            {
+              "title": "国产-户外",
+              "value": "86"
+            },
+            {
+              "title": "国产-吃瓜",
+              "value": "87"
+            },
+            {
+              "title": "AI换脸",
+              "value": "88"
+            },
+            {
+              "title": "日本-东京热",
+              "value": "89"
+            },
+            {
+              "title": "日本-一本道",
+              "value": "90"
+            },
+            {
+              "title": "国产-台湾JVID",
+              "value": "91"
+            },
+            {
+              "title": "韩国AV",
+              "value": "92"
+            },
+            {
+              "title": "韩国-主播",
+              "value": "93"
+            },
+            {
+              "title": "吃瓜资讯",
+              "value": "94"
+            },
+            {
+              "title": "必看大瓜",
+              "value": "95"
+            },
+            {
+              "title": "网红黑料",
+              "value": "96"
+            },
+            {
+              "title": "海外吃瓜",
+              "value": "97"
+            },
+            {
+              "title": "偷拍自拍",
+              "value": "98"
+            },
+            {
+              "title": "道德伦理",
+              "value": "99"
+            },
+            {
+              "title": "吃瓜新闻",
+              "value": "100"
+            },
+            {
+              "title": "直播大秀",
+              "value": "101"
+            },
+            {
+              "title": "日本-素人",
+              "value": "102"
+            },
+            {
+              "title": "饼干姐姐",
+              "value": "103"
+            },
+            {
+              "title": "台北娜娜",
+              "value": "104"
+            },
+            {
+              "title": "柚子猫",
+              "value": "105"
+            },
+            {
+              "title": "桥本香菜",
+              "value": "106"
+            },
+            {
+              "title": "小欣奈",
+              "value": "107"
+            },
+            {
+              "title": "御梦子",
+              "value": "108"
+            },
+            {
+              "title": "捅主任",
+              "value": "109"
+            },
+            {
+              "title": "水冰月",
+              "value": "110"
+            },
+            {
+              "title": "黑椒盖饭",
+              "value": "111"
+            },
+            {
+              "title": "冉冉学姐",
+              "value": "112"
+            },
+            {
+              "title": "粉色情人",
+              "value": "113"
+            },
+            {
+              "title": "鸡教练",
+              "value": "114"
+            },
+            {
+              "title": "唐伯虎",
+              "value": "115"
+            },
+            {
+              "title": "地雷系",
+              "value": "116"
+            },
+            {
+              "title": "白菜妹妹",
+              "value": "117"
+            },
+            {
+              "title": "小二先生",
+              "value": "118"
+            },
+            {
+              "title": "AI制作",
+              "value": "119"
+            },
+            {
+              "title": "AI漫剧",
+              "value": "120"
+            },
+            {
+              "title": "AI短剧",
+              "value": "122"
+            },
+            {
+              "title": "AI魔改",
+              "value": "123"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "jingpin",
+      "title": "💎 精品资源",
+      "subtitle": "精品资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_jingpin",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "国产",
+              "value": "1"
+            },
+            {
+              "title": "日本",
+              "value": "2"
+            },
+            {
+              "title": "欧美",
+              "value": "3"
+            },
+            {
+              "title": "动漫",
+              "value": "4"
+            },
+            {
+              "title": "偷拍自拍",
+              "value": "8"
+            },
+            {
+              "title": "国产大制作",
+              "value": "9"
+            },
+            {
+              "title": "乱伦毁三观",
+              "value": "10"
+            },
+            {
+              "title": "嫖妓全过程",
+              "value": "11"
+            },
+            {
+              "title": "淫乱学生妹",
+              "value": "12"
+            },
+            {
+              "title": "黑料不打烊",
+              "value": "13"
+            },
+            {
+              "title": "监控摄像头",
+              "value": "14"
+            },
+            {
+              "title": "主播网红",
+              "value": "15"
+            },
+            {
+              "title": "高清无码",
+              "value": "20"
+            },
+            {
+              "title": "中文字幕",
+              "value": "21"
+            },
+            {
+              "title": "成人综艺",
+              "value": "22"
+            },
+            {
+              "title": "媚黑母狗",
+              "value": "23"
+            },
+            {
+              "title": "为国争光",
+              "value": "24"
+            },
+            {
+              "title": "少女破处",
+              "value": "25"
+            },
+            {
+              "title": "人兽典藏",
+              "value": "26"
+            },
+            {
+              "title": "中文剧情",
+              "value": "27"
+            },
+            {
+              "title": "燃烧荷尔蒙",
+              "value": "28"
+            },
+            {
+              "title": "女同口交",
+              "value": "29"
+            },
+            {
+              "title": "重口味",
+              "value": "30"
+            },
+            {
+              "title": "3D动漫",
+              "value": "31"
+            },
+            {
+              "title": "剧情故事",
+              "value": "32"
+            },
+            {
+              "title": "同人动漫",
+              "value": "33"
+            },
+            {
+              "title": "激情中字",
+              "value": "35"
+            },
+            {
+              "title": "东南亚",
+              "value": "41"
+            },
+            {
+              "title": "AI短剧",
+              "value": "42"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "danaizi",
+      "title": "🍒 大奶子资源",
+      "subtitle": "大奶子资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_danaizi",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "视频一区",
+              "value": "1"
+            },
+            {
+              "title": "视频二区",
+              "value": "2"
+            },
+            {
+              "title": "视频三区",
+              "value": "3"
+            },
+            {
+              "title": "视频四区",
+              "value": "4"
+            },
+            {
+              "title": "精品推荐",
+              "value": "20"
+            },
+            {
+              "title": "国产主播",
+              "value": "21"
+            },
+            {
+              "title": "国产乱伦",
+              "value": "22"
+            },
+            {
+              "title": "自拍偷拍",
+              "value": "23"
+            },
+            {
+              "title": "制服丝袜",
+              "value": "24"
+            },
+            {
+              "title": "网曝事件",
+              "value": "25"
+            },
+            {
+              "title": "传媒探花",
+              "value": "26"
+            },
+            {
+              "title": "清纯学生",
+              "value": "27"
+            },
+            {
+              "title": "A V 解说",
+              "value": "28"
+            },
+            {
+              "title": "淫妻作乐",
+              "value": "29"
+            },
+            {
+              "title": "港台辣妹",
+              "value": "30"
+            },
+            {
+              "title": "足浴撩妹",
+              "value": "31"
+            },
+            {
+              "title": "反差母狗",
+              "value": "32"
+            },
+            {
+              "title": "A I 换脸",
+              "value": "33"
+            },
+            {
+              "title": "V R 视角",
+              "value": "34"
+            },
+            {
+              "title": "重口性癖",
+              "value": "35"
+            },
+            {
+              "title": "制服诱惑",
+              "value": "36"
+            },
+            {
+              "title": "丝袜美腿",
+              "value": "37"
+            },
+            {
+              "title": "中文字幕",
+              "value": "38"
+            },
+            {
+              "title": "无码流出",
+              "value": "39"
+            },
+            {
+              "title": "多人群交",
+              "value": "40"
+            },
+            {
+              "title": "凌辱快感",
+              "value": "41"
+            },
+            {
+              "title": "角色剧情",
+              "value": "42"
+            },
+            {
+              "title": "强奸乱伦",
+              "value": "43"
+            },
+            {
+              "title": "韩国三级",
+              "value": "44"
+            },
+            {
+              "title": "欧美激情",
+              "value": "45"
+            },
+            {
+              "title": "人妻熟女",
+              "value": "46"
+            },
+            {
+              "title": "主奴调教",
+              "value": "47"
+            },
+            {
+              "title": "动漫卡通",
+              "value": "48"
+            },
+            {
+              "title": "变性伪娘",
+              "value": "49"
+            },
+            {
+              "title": "女同性恋",
+              "value": "50"
+            },
+            {
+              "title": "野外露出",
+              "value": "51"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "shayu",
+      "title": "🦈 鲨鱼资源",
+      "subtitle": "鲨鱼资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_shayu",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "国产情色",
+              "value": "1"
+            },
+            {
+              "title": "日本无码",
+              "value": "2"
+            },
+            {
+              "title": "AV明星",
+              "value": "3"
+            },
+            {
+              "title": "中文字幕",
+              "value": "20"
+            },
+            {
+              "title": "网红主播",
+              "value": "21"
+            },
+            {
+              "title": "成人动漫",
+              "value": "22"
+            },
+            {
+              "title": "欧美情色",
+              "value": "23"
+            },
+            {
+              "title": "国模私拍",
+              "value": "24"
+            },
+            {
+              "title": "长腿丝袜",
+              "value": "25"
+            },
+            {
+              "title": "邻家人妻",
+              "value": "26"
+            },
+            {
+              "title": "韩国伦理",
+              "value": "27"
+            },
+            {
+              "title": "香港伦理",
+              "value": "28"
+            },
+            {
+              "title": "精品推荐",
+              "value": "31"
+            },
+            {
+              "title": "原纱央莉",
+              "value": "32"
+            },
+            {
+              "title": "柚木TINA",
+              "value": "33"
+            },
+            {
+              "title": "大桥未久",
+              "value": "34"
+            },
+            {
+              "title": "AV明星1",
+              "value": "35"
+            },
+            {
+              "title": "仁科百华",
+              "value": "36"
+            },
+            {
+              "title": "天海翼",
+              "value": "37"
+            },
+            {
+              "title": "小川阿佐美",
+              "value": "38"
+            },
+            {
+              "title": "三上悠亚",
+              "value": "39"
+            },
+            {
+              "title": "长泽梓",
+              "value": "40"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "lajiao",
+      "title": "🌶️ 辣椒资源",
+      "subtitle": "辣椒资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_lajiao",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "国产自拍",
+              "value": "1"
+            },
+            {
+              "title": "欧美极品",
+              "value": "2"
+            },
+            {
+              "title": "日韩无码",
+              "value": "3"
+            },
+            {
+              "title": "AV明星",
+              "value": "4"
+            },
+            {
+              "title": "中文字幕",
+              "value": "20"
+            },
+            {
+              "title": "动漫精品",
+              "value": "21"
+            },
+            {
+              "title": "极骚萝莉",
+              "value": "22"
+            },
+            {
+              "title": "人妖视频",
+              "value": "23"
+            },
+            {
+              "title": "重咸口味",
+              "value": "24"
+            },
+            {
+              "title": "三级自慰",
+              "value": "25"
+            },
+            {
+              "title": "强奸乱伦",
+              "value": "26"
+            },
+            {
+              "title": "独家擂台格斗",
+              "value": "27"
+            },
+            {
+              "title": "辣椒GIGA",
+              "value": "28"
+            },
+            {
+              "title": "HEYZO",
+              "value": "31"
+            },
+            {
+              "title": "独家DMM",
+              "value": "32"
+            },
+            {
+              "title": "HEY诱惑",
+              "value": "33"
+            },
+            {
+              "title": "童颜巨乳",
+              "value": "34"
+            },
+            {
+              "title": "高潮喷吹",
+              "value": "35"
+            },
+            {
+              "title": "激情口交",
+              "value": "36"
+            },
+            {
+              "title": "绝美少女",
+              "value": "37"
+            },
+            {
+              "title": "首次亮相",
+              "value": "38"
+            },
+            {
+              "title": "柚木TINA",
+              "value": "39"
+            },
+            {
+              "title": "原纱央莉",
+              "value": "40"
+            },
+            {
+              "title": "大桥未久",
+              "value": "41"
+            },
+            {
+              "title": "AV明星1",
+              "value": "42"
+            },
+            {
+              "title": "仁科百华",
+              "value": "43"
+            },
+            {
+              "title": "天海翼",
+              "value": "44"
+            },
+            {
+              "title": "小川阿佐美",
+              "value": "45"
+            },
+            {
+              "title": "三上悠亚",
+              "value": "46"
+            },
+            {
+              "title": "长泽梓",
+              "value": "47"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "jkun",
+      "title": "🐔 鸡坤资源",
+      "subtitle": "鸡坤资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_jkun",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "中文字幕",
+              "value": "1"
+            },
+            {
+              "title": "日本有码",
+              "value": "2"
+            },
+            {
+              "title": "日本无码",
+              "value": "3"
+            },
+            {
+              "title": "AV解说",
+              "value": "4"
+            },
+            {
+              "title": "cosplay",
+              "value": "5"
+            },
+            {
+              "title": "都市激情",
+              "value": "20"
+            },
+            {
+              "title": "校园情事",
+              "value": "21"
+            },
+            {
+              "title": "人妻纵情",
+              "value": "22"
+            },
+            {
+              "title": "风俗伦理",
+              "value": "23"
+            },
+            {
+              "title": "另类小说",
+              "value": "24"
+            },
+            {
+              "title": "武侠古典",
+              "value": "25"
+            },
+            {
+              "title": "长篇连载",
+              "value": "26"
+            },
+            {
+              "title": "黑丝诱惑",
+              "value": "27"
+            },
+            {
+              "title": "SWAG",
+              "value": "28"
+            },
+            {
+              "title": "自拍偷拍",
+              "value": "29"
+            },
+            {
+              "title": "激情动漫",
+              "value": "30"
+            },
+            {
+              "title": "网红主播",
+              "value": "31"
+            },
+            {
+              "title": "探花系列",
+              "value": "32"
+            },
+            {
+              "title": "三级伦理",
+              "value": "33"
+            },
+            {
+              "title": "VR视角",
+              "value": "34"
+            },
+            {
+              "title": "国产传媒",
+              "value": "35"
+            },
+            {
+              "title": "素人搭讪",
+              "value": "36"
+            },
+            {
+              "title": "门事件",
+              "value": "37"
+            },
+            {
+              "title": "抖阴视频",
+              "value": "38"
+            },
+            {
+              "title": "成人笑话",
+              "value": "39"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "lebo",
+      "title": "🐆 乐播资源",
+      "subtitle": "乐播资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_lebo",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "亚洲情色",
+              "value": "1"
+            },
+            {
+              "title": "国产主播",
+              "value": "2"
+            },
+            {
+              "title": "国产自拍",
+              "value": "3"
+            },
+            {
+              "title": "无码专区",
+              "value": "4"
+            },
+            {
+              "title": "欧美性爱",
+              "value": "5"
+            },
+            {
+              "title": "熟女人妻",
+              "value": "6"
+            },
+            {
+              "title": "强奸乱伦",
+              "value": "7"
+            },
+            {
+              "title": "巨乳美乳",
+              "value": "8"
+            },
+            {
+              "title": "中文字幕",
+              "value": "9"
+            },
+            {
+              "title": "制服诱惑",
+              "value": "10"
+            },
+            {
+              "title": "女同性恋",
+              "value": "11"
+            },
+            {
+              "title": "卡通动画",
+              "value": "12"
+            },
+            {
+              "title": "视频伦理",
+              "value": "13"
+            },
+            {
+              "title": "少女萝莉",
+              "value": "14"
+            },
+            {
+              "title": "重口色情",
+              "value": "15"
+            },
+            {
+              "title": "人兽性交",
+              "value": "16"
+            },
+            {
+              "title": "福利姬",
+              "value": "33"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "didi",
+      "title": "💧 滴滴资源",
+      "subtitle": "滴滴资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_didi",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "国产专区",
+              "value": "20"
+            },
+            {
+              "title": "国产厂商",
+              "value": "21"
+            },
+            {
+              "title": "主播视讯",
+              "value": "22"
+            },
+            {
+              "title": "日本无码",
+              "value": "23"
+            },
+            {
+              "title": "日本有码",
+              "value": "24"
+            },
+            {
+              "title": "中文字幕",
+              "value": "25"
+            },
+            {
+              "title": "中字无码",
+              "value": "26"
+            },
+            {
+              "title": "中字有码",
+              "value": "27"
+            },
+            {
+              "title": "水果派解说",
+              "value": "28"
+            },
+            {
+              "title": "麻豆传媒",
+              "value": "29"
+            },
+            {
+              "title": "91制片厂",
+              "value": "30"
+            },
+            {
+              "title": "蜜桃影像传媒",
+              "value": "31"
+            },
+            {
+              "title": "天美传媒",
+              "value": "32"
+            },
+            {
+              "title": "精东影业",
+              "value": "33"
+            },
+            {
+              "title": "星空无限传媒",
+              "value": "34"
+            },
+            {
+              "title": "台湾swag",
+              "value": "35"
+            },
+            {
+              "title": "其他传媒",
+              "value": "36"
+            },
+            {
+              "title": "三级伦理",
+              "value": "37"
+            },
+            {
+              "title": "美女写真",
+              "value": "38"
+            },
+            {
+              "title": "卡通动漫",
+              "value": "39"
+            },
+            {
+              "title": "采集教程",
+              "value": "40"
+            },
+            {
+              "title": "葫芦影业",
+              "value": "41"
+            },
+            {
+              "title": "糖心Vlog",
+              "value": "42"
+            },
+            {
+              "title": "欧美性爱",
+              "value": "43"
+            },
+            {
+              "title": "黑料事件",
+              "value": "44"
+            },
+            {
+              "title": "SM调教",
+              "value": "45"
+            },
+            {
+              "title": "女同系列",
+              "value": "46"
+            },
+            {
+              "title": "男同系列",
+              "value": "47"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "155",
+      "title": "⚡ 155资源",
+      "subtitle": "155资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_155",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "无码专区",
+              "value": "1"
+            },
+            {
+              "title": "麻豆传媒",
+              "value": "2"
+            },
+            {
+              "title": "制服诱惑",
+              "value": "3"
+            },
+            {
+              "title": "三级伦理",
+              "value": "4"
+            },
+            {
+              "title": "AI换脸",
+              "value": "5"
+            },
+            {
+              "title": "中文字幕",
+              "value": "6"
+            },
+            {
+              "title": "卡通动漫",
+              "value": "7"
+            },
+            {
+              "title": "欧美系列",
+              "value": "8"
+            },
+            {
+              "title": "美女主播",
+              "value": "9"
+            },
+            {
+              "title": "国产自拍",
+              "value": "10"
+            },
+            {
+              "title": "熟女人妻",
+              "value": "11"
+            },
+            {
+              "title": "萝莉少女",
+              "value": "12"
+            },
+            {
+              "title": "女同性爱",
+              "value": "13"
+            },
+            {
+              "title": "多人群交",
+              "value": "14"
+            },
+            {
+              "title": "美乳巨乳",
+              "value": "15"
+            },
+            {
+              "title": "强奸乱伦",
+              "value": "16"
+            },
+            {
+              "title": "抖音视频",
+              "value": "33"
+            },
+            {
+              "title": "韩国主播",
+              "value": "34"
+            },
+            {
+              "title": "网红头条",
+              "value": "35"
+            },
+            {
+              "title": "网爆黑料",
+              "value": "36"
+            },
+            {
+              "title": "欧美无码",
+              "value": "37"
+            },
+            {
+              "title": "女优明星",
+              "value": "38"
+            },
+            {
+              "title": "SM调教",
+              "value": "39"
+            },
+            {
+              "title": "AV解说",
+              "value": "40"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "yutu",
+      "title": "🐇 玉兔资源",
+      "subtitle": "玉兔资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_yutu",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "精品推荐",
+              "value": "20"
+            },
+            {
+              "title": "国产精品",
+              "value": "21"
+            },
+            {
+              "title": "主播秀色",
+              "value": "22"
+            },
+            {
+              "title": "日本有码",
+              "value": "23"
+            },
+            {
+              "title": "日本无码",
+              "value": "24"
+            },
+            {
+              "title": "中文字幕",
+              "value": "25"
+            },
+            {
+              "title": "童颜巨乳",
+              "value": "26"
+            },
+            {
+              "title": "性感人妻",
+              "value": "27"
+            },
+            {
+              "title": "强奸乱伦",
+              "value": "28"
+            },
+            {
+              "title": "欧美情色",
+              "value": "29"
+            },
+            {
+              "title": "三级伦理",
+              "value": "31"
+            },
+            {
+              "title": "卡通动漫",
+              "value": "32"
+            },
+            {
+              "title": "丝袜OL",
+              "value": "33"
+            },
+            {
+              "title": "自拍偷拍",
+              "value": "35"
+            },
+            {
+              "title": "日本片商",
+              "value": "36"
+            },
+            {
+              "title": "剧情介绍",
+              "value": "44"
+            },
+            {
+              "title": "网曝系列",
+              "value": "56"
+            },
+            {
+              "title": "麻豆传媒",
+              "value": "57"
+            },
+            {
+              "title": "明星换脸",
+              "value": "60"
+            },
+            {
+              "title": "国产乱伦",
+              "value": "61"
+            },
+            {
+              "title": "国产丝袜",
+              "value": "62"
+            },
+            {
+              "title": "国产SM",
+              "value": "63"
+            },
+            {
+              "title": "国产人妻",
+              "value": "64"
+            },
+            {
+              "title": "探花嫖娼",
+              "value": "65"
+            },
+            {
+              "title": "同性恋",
+              "value": "66"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "senlin",
+      "title": "🌲 森林资源",
+      "subtitle": "森林资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_senlin",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "精品推荐",
+              "value": "20"
+            },
+            {
+              "title": "国产色情",
+              "value": "22"
+            },
+            {
+              "title": "主播直播",
+              "value": "23"
+            },
+            {
+              "title": "亚洲无码",
+              "value": "24"
+            },
+            {
+              "title": "亚洲有码",
+              "value": "25"
+            },
+            {
+              "title": "中文字幕",
+              "value": "26"
+            },
+            {
+              "title": "巨乳美乳",
+              "value": "27"
+            },
+            {
+              "title": "人妻熟女",
+              "value": "28"
+            },
+            {
+              "title": "强奸乱伦",
+              "value": "29"
+            },
+            {
+              "title": "欧美精品",
+              "value": "30"
+            },
+            {
+              "title": "萝莉少女",
+              "value": "31"
+            },
+            {
+              "title": "伦理三级",
+              "value": "32"
+            },
+            {
+              "title": "成人动漫",
+              "value": "33"
+            },
+            {
+              "title": "自拍偷拍",
+              "value": "34"
+            },
+            {
+              "title": "制服丝袜",
+              "value": "35"
+            },
+            {
+              "title": "口交颜射",
+              "value": "36"
+            },
+            {
+              "title": "日本精品",
+              "value": "37"
+            },
+            {
+              "title": "Cosplay",
+              "value": "38"
+            },
+            {
+              "title": "素人自拍",
+              "value": "39"
+            },
+            {
+              "title": "台湾辣妹",
+              "value": "40"
+            },
+            {
+              "title": "韩国御姐",
+              "value": "41"
+            },
+            {
+              "title": "唯美港姐",
+              "value": "42"
+            },
+            {
+              "title": "东南亚AV",
+              "value": "43"
+            },
+            {
+              "title": "欺辱凌辱",
+              "value": "44"
+            },
+            {
+              "title": "剧情介绍",
+              "value": "45"
+            },
+            {
+              "title": "多人多P",
+              "value": "46"
+            },
+            {
+              "title": "91探花",
+              "value": "47"
+            },
+            {
+              "title": "网红流出",
+              "value": "48"
+            },
+            {
+              "title": "野外露出",
+              "value": "49"
+            },
+            {
+              "title": "古装扮演",
+              "value": "50"
+            },
+            {
+              "title": "女优系列",
+              "value": "51"
+            },
+            {
+              "title": "可爱学生",
+              "value": "52"
+            },
+            {
+              "title": "风情旗袍",
+              "value": "53"
+            },
+            {
+              "title": "兽耳系列",
+              "value": "54"
+            },
+            {
+              "title": "瑜伽裤",
+              "value": "55"
+            },
+            {
+              "title": "闷骚护士",
+              "value": "56"
+            },
+            {
+              "title": "过膝袜",
+              "value": "57"
+            },
+            {
+              "title": "网曝门",
+              "value": "58"
+            },
+            {
+              "title": "传媒出品",
+              "value": "59"
+            },
+            {
+              "title": "女同性恋",
+              "value": "60"
+            },
+            {
+              "title": "男同性恋",
+              "value": "61"
+            },
+            {
+              "title": "恋腿狂魔",
+              "value": "63"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "huosu",
+      "title": "🔥 火速资源",
+      "subtitle": "火速资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_huosu",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "国产伦理",
+              "value": "47"
+            },
+            {
+              "title": "香港伦理",
+              "value": "48"
+            },
+            {
+              "title": "台湾伦理",
+              "value": "49"
+            },
+            {
+              "title": "韩国伦理",
+              "value": "50"
+            },
+            {
+              "title": "日本伦理",
+              "value": "51"
+            },
+            {
+              "title": "西方伦理",
+              "value": "52"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "heihei",
+      "title": "😈 嘿嘿资源",
+      "subtitle": "嘿嘿资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_heihei",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "国产视频",
+              "value": "48"
+            },
+            {
+              "title": "国产自拍",
+              "value": "49"
+            },
+            {
+              "title": "国产偷拍",
+              "value": "50"
+            },
+            {
+              "title": "国产探花",
+              "value": "51"
+            },
+            {
+              "title": "国产主播",
+              "value": "52"
+            },
+            {
+              "title": "国产户外",
+              "value": "53"
+            },
+            {
+              "title": "黑料吃瓜",
+              "value": "54"
+            },
+            {
+              "title": "传媒厂商",
+              "value": "55"
+            },
+            {
+              "title": "麻豆传媒",
+              "value": "56"
+            },
+            {
+              "title": "精东影业",
+              "value": "57"
+            },
+            {
+              "title": "蜜桃传媒",
+              "value": "58"
+            },
+            {
+              "title": "果冻传媒",
+              "value": "59"
+            },
+            {
+              "title": "天美传媒",
+              "value": "60"
+            },
+            {
+              "title": "星空传媒",
+              "value": "61"
+            },
+            {
+              "title": "皇家华人",
+              "value": "62"
+            },
+            {
+              "title": "起点传媒",
+              "value": "63"
+            },
+            {
+              "title": "渡边传媒",
+              "value": "64"
+            },
+            {
+              "title": "葫芦影业",
+              "value": "65"
+            },
+            {
+              "title": "红斯灯影像",
+              "value": "66"
+            },
+            {
+              "title": "水果派解说",
+              "value": "67"
+            },
+            {
+              "title": "SA传媒",
+              "value": "68"
+            },
+            {
+              "title": "糖心Vlog",
+              "value": "69"
+            },
+            {
+              "title": "性视界",
+              "value": "70"
+            },
+            {
+              "title": "水果派解说",
+              "value": "71"
+            },
+            {
+              "title": "日本AV",
+              "value": "72"
+            },
+            {
+              "title": "日本无码",
+              "value": "73"
+            },
+            {
+              "title": "日本有码",
+              "value": "74"
+            },
+            {
+              "title": "中字无码",
+              "value": "75"
+            },
+            {
+              "title": "中字有码",
+              "value": "76"
+            },
+            {
+              "title": "特殊嗜好",
+              "value": "77"
+            },
+            {
+              "title": "绿帽换妻",
+              "value": "78"
+            },
+            {
+              "title": "SM调教",
+              "value": "79"
+            },
+            {
+              "title": "男同系列",
+              "value": "80"
+            },
+            {
+              "title": "女同系列",
+              "value": "81"
+            },
+            {
+              "title": "乱伦系列",
+              "value": "82"
+            },
+            {
+              "title": "网黄自制",
+              "value": "83"
+            },
+            {
+              "title": "台北娜娜",
+              "value": "84"
+            },
+            {
+              "title": "玩偶姐姐",
+              "value": "85"
+            },
+            {
+              "title": "饼干姐姐",
+              "value": "86"
+            },
+            {
+              "title": "黑椒盖饭",
+              "value": "87"
+            },
+            {
+              "title": "冉冉学姐",
+              "value": "88"
+            },
+            {
+              "title": "小水水",
+              "value": "89"
+            },
+            {
+              "title": "柚子猫",
+              "value": "90"
+            },
+            {
+              "title": "捅主任",
+              "value": "91"
+            },
+            {
+              "title": "鸡教练",
+              "value": "92"
+            },
+            {
+              "title": "刘玥",
+              "value": "93"
+            },
+            {
+              "title": "三级伦理",
+              "value": "94"
+            },
+            {
+              "title": "国产伦理",
+              "value": "95"
+            },
+            {
+              "title": "香港伦理",
+              "value": "96"
+            },
+            {
+              "title": "台湾伦理",
+              "value": "97"
+            },
+            {
+              "title": "韩国伦理",
+              "value": "98"
+            },
+            {
+              "title": "日本伦理",
+              "value": "99"
+            },
+            {
+              "title": "西方伦理",
+              "value": "100"
+            },
+            {
+              "title": "欧美AV",
+              "value": "101"
+            },
+            {
+              "title": "美女写真",
+              "value": "102"
+            },
+            {
+              "title": "成人动漫",
+              "value": "103"
+            },
+            {
+              "title": "扣扣传媒",
+              "value": "104"
+            },
+            {
+              "title": "爱豆传媒",
+              "value": "105"
+            },
+            {
+              "title": "乌托邦传媒",
+              "value": "106"
+            },
+            {
+              "title": "爱神传媒",
+              "value": "107"
+            },
+            {
+              "title": "香蕉传媒",
+              "value": "108"
+            },
+            {
+              "title": "大象传媒",
+              "value": "109"
+            },
+            {
+              "title": "其他传媒",
+              "value": "110"
+            },
+            {
+              "title": "米菲兔",
+              "value": "111"
+            },
+            {
+              "title": "短视频",
+              "value": "112"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "ck",
+      "title": "🎬 CK资源",
+      "subtitle": "CK资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_ck",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "伦理片",
+              "value": "20"
+            },
+            {
+              "title": "教程",
+              "value": "21"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "doudou",
+      "title": "🫘 豆豆资源",
+      "subtitle": "豆豆资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_doudou",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "采集教程",
+              "value": "40"
+            },
+            {
+              "title": "国产视频",
+              "value": "47"
+            },
+            {
+              "title": "国产传媒",
+              "value": "48"
+            },
+            {
+              "title": "国产探花",
+              "value": "49"
+            },
+            {
+              "title": "极品学生",
+              "value": "50"
+            },
+            {
+              "title": "野战户外",
+              "value": "51"
+            },
+            {
+              "title": "网曝黑料",
+              "value": "52"
+            },
+            {
+              "title": "日本有码",
+              "value": "53"
+            },
+            {
+              "title": "主播大秀",
+              "value": "54"
+            },
+            {
+              "title": "校园春色",
+              "value": "56"
+            },
+            {
+              "title": "SM虐待",
+              "value": "57"
+            },
+            {
+              "title": "巨乳系列",
+              "value": "59"
+            },
+            {
+              "title": "偷拍自拍",
+              "value": "61"
+            },
+            {
+              "title": "强奸乱伦",
+              "value": "62"
+            },
+            {
+              "title": "制服诱惑",
+              "value": "63"
+            },
+            {
+              "title": "欧美精品",
+              "value": "64"
+            },
+            {
+              "title": "三级伦理",
+              "value": "68"
+            },
+            {
+              "title": "AV解说",
+              "value": "69"
+            },
+            {
+              "title": "成人动漫",
+              "value": "70"
+            },
+            {
+              "title": "日本无码",
+              "value": "71"
+            },
+            {
+              "title": "重口猎奇",
+              "value": "72"
+            },
+            {
+              "title": "少妇人妻",
+              "value": "74"
+            },
+            {
+              "title": "角色扮演",
+              "value": "75"
+            },
+            {
+              "title": "女同性恋",
+              "value": "76"
+            },
+            {
+              "title": "黑人专区",
+              "value": "77"
+            },
+            {
+              "title": "中文字幕",
+              "value": "78"
+            },
+            {
+              "title": "男同性恋",
+              "value": "80"
+            },
+            {
+              "title": "反差系列",
+              "value": "81"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "xiaoji",
+      "title": "🐥 小鸡资源",
+      "subtitle": "小鸡资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_xiaoji",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "国产自拍",
+              "value": "1"
+            },
+            {
+              "title": "日韩AV",
+              "value": "2"
+            },
+            {
+              "title": "欧美精品",
+              "value": "3"
+            },
+            {
+              "title": "异族风情",
+              "value": "4"
+            },
+            {
+              "title": "动漫专栏",
+              "value": "5"
+            },
+            {
+              "title": "强奸迷奸",
+              "value": "9"
+            },
+            {
+              "title": "丝袜制服",
+              "value": "10"
+            },
+            {
+              "title": "国产厂牌",
+              "value": "11"
+            },
+            {
+              "title": "SM调教",
+              "value": "12"
+            },
+            {
+              "title": "乱伦",
+              "value": "13"
+            },
+            {
+              "title": "网曝黑料",
+              "value": "14"
+            },
+            {
+              "title": "主播网红",
+              "value": "15"
+            },
+            {
+              "title": "自拍偷拍",
+              "value": "16"
+            },
+            {
+              "title": "口交自慰",
+              "value": "17"
+            },
+            {
+              "title": "群交多P",
+              "value": "18"
+            },
+            {
+              "title": "AI换脸",
+              "value": "19"
+            },
+            {
+              "title": "素人特摄",
+              "value": "20"
+            },
+            {
+              "title": "无码高清",
+              "value": "21"
+            },
+            {
+              "title": "经典有码",
+              "value": "22"
+            },
+            {
+              "title": "中文字幕",
+              "value": "23"
+            },
+            {
+              "title": "性感网红",
+              "value": "24"
+            },
+            {
+              "title": "重口调教",
+              "value": "25"
+            },
+            {
+              "title": "厂牌经典",
+              "value": "26"
+            },
+            {
+              "title": "人兽",
+              "value": "27"
+            },
+            {
+              "title": "其他",
+              "value": "28"
+            },
+            {
+              "title": "东南亚",
+              "value": "29"
+            },
+            {
+              "title": "阿拉伯",
+              "value": "30"
+            },
+            {
+              "title": "印巴拉丁",
+              "value": "31"
+            },
+            {
+              "title": "激情H漫",
+              "value": "32"
+            },
+            {
+              "title": "3D",
+              "value": "33"
+            },
+            {
+              "title": "国产三级",
+              "value": "41"
+            },
+            {
+              "title": "学生萝莉",
+              "value": "43"
+            },
+            {
+              "title": "日韩三级",
+              "value": "44"
+            },
+            {
+              "title": "蓝光超清",
+              "value": "45"
+            },
+            {
+              "title": "日韩精选",
+              "value": "48"
+            },
+            {
+              "title": "国产精选",
+              "value": "49"
+            },
+            {
+              "title": "欧美精选",
+              "value": "50"
+            },
+            {
+              "title": "VR专区",
+              "value": "52"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "fanqie",
+      "title": "🍅 番茄资源",
+      "subtitle": "番茄资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_fanqie",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "视频一区",
+              "value": "1"
+            },
+            {
+              "title": "视频二区",
+              "value": "2"
+            },
+            {
+              "title": "欧美精品",
+              "value": "3"
+            },
+            {
+              "title": "偷拍自拍",
+              "value": "6"
+            },
+            {
+              "title": "国产大制作",
+              "value": "7"
+            },
+            {
+              "title": "乱伦毁三观",
+              "value": "8"
+            },
+            {
+              "title": "主播女网红",
+              "value": "9"
+            },
+            {
+              "title": "黑料网曝",
+              "value": "10"
+            },
+            {
+              "title": "高清无码",
+              "value": "13"
+            },
+            {
+              "title": "中文字幕",
+              "value": "14"
+            },
+            {
+              "title": "欧美精品",
+              "value": "20"
+            },
+            {
+              "title": "淫乱学生妹",
+              "value": "21"
+            },
+            {
+              "title": "动漫精选",
+              "value": "22"
+            },
+            {
+              "title": "动漫精选",
+              "value": "23"
+            },
+            {
+              "title": "高清有码",
+              "value": "24"
+            },
+            {
+              "title": "日本素人",
+              "value": "25"
+            },
+            {
+              "title": "视频三区",
+              "value": "26"
+            },
+            {
+              "title": "无码流出",
+              "value": "27"
+            },
+            {
+              "title": "FC2",
+              "value": "28"
+            },
+            {
+              "title": "会所技师",
+              "value": "29"
+            },
+            {
+              "title": "国产推荐",
+              "value": "30"
+            },
+            {
+              "title": "探花约炮",
+              "value": "31"
+            },
+            {
+              "title": "韩国直播",
+              "value": "32"
+            },
+            {
+              "title": "国产直播",
+              "value": "33"
+            },
+            {
+              "title": "淫妻绿帽",
+              "value": "34"
+            },
+            {
+              "title": "制服诱惑",
+              "value": "35"
+            },
+            {
+              "title": "重口猎奇",
+              "value": "36"
+            },
+            {
+              "title": "东京热",
+              "value": "37"
+            },
+            {
+              "title": "一本道",
+              "value": "38"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "hsck",
+      "title": "📦 黄色仓库",
+      "subtitle": "黄色仓库 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_hsck",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "国产区",
+              "value": "1"
+            },
+            {
+              "title": "AV区",
+              "value": "2"
+            },
+            {
+              "title": "欧美区",
+              "value": "3"
+            },
+            {
+              "title": "动漫区",
+              "value": "5"
+            },
+            {
+              "title": "网红主播",
+              "value": "6"
+            },
+            {
+              "title": "国产传媒",
+              "value": "7"
+            },
+            {
+              "title": "探花系列",
+              "value": "8"
+            },
+            {
+              "title": "人妻熟女",
+              "value": "9"
+            },
+            {
+              "title": "日本无码",
+              "value": "10"
+            },
+            {
+              "title": "美乳巨乳",
+              "value": "11"
+            },
+            {
+              "title": "强制侵犯",
+              "value": "12"
+            },
+            {
+              "title": "制服诱惑",
+              "value": "13"
+            },
+            {
+              "title": "绝色佳人",
+              "value": "14"
+            },
+            {
+              "title": "风俗泡泡浴",
+              "value": "15"
+            },
+            {
+              "title": "家庭乱伦",
+              "value": "16"
+            },
+            {
+              "title": "AV解说",
+              "value": "17"
+            },
+            {
+              "title": "三级电影",
+              "value": "18"
+            },
+            {
+              "title": "少女萝莉",
+              "value": "20"
+            },
+            {
+              "title": "SM调教",
+              "value": "21"
+            },
+            {
+              "title": "绝顶潮吹",
+              "value": "22"
+            },
+            {
+              "title": "魔镜系列",
+              "value": "23"
+            },
+            {
+              "title": "时间停止",
+              "value": "24"
+            },
+            {
+              "title": "催眠洗脑",
+              "value": "25"
+            },
+            {
+              "title": "漫改系列",
+              "value": "26"
+            },
+            {
+              "title": "电车痴汉",
+              "value": "27"
+            },
+            {
+              "title": "淫欲痴女",
+              "value": "28"
+            },
+            {
+              "title": "AI换脸",
+              "value": "29"
+            },
+            {
+              "title": "其他区",
+              "value": "30"
+            },
+            {
+              "title": "网曝门",
+              "value": "31"
+            },
+            {
+              "title": "TS专区",
+              "value": "32"
+            },
+            {
+              "title": "女性向系列",
+              "value": "33"
+            },
+            {
+              "title": "女同性恋",
+              "value": "34"
+            },
+            {
+              "title": "男同性恋",
+              "value": "35"
+            },
+            {
+              "title": "欧美精品",
+              "value": "36"
+            },
+            {
+              "title": "国产自拍",
+              "value": "37"
+            },
+            {
+              "title": "日本动漫",
+              "value": "38"
+            },
+            {
+              "title": "3D动漫",
+              "value": "39"
+            },
+            {
+              "title": "韩国主播",
+              "value": "40"
+            },
+            {
+              "title": "泰国风情",
+              "value": "41"
+            },
+            {
+              "title": "OnlyFans",
+              "value": "42"
+            },
+            {
+              "title": "AI短剧",
+              "value": "43"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "lsb",
+      "title": "💋 老色逼资源",
+      "subtitle": "老色逼资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_lsb",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "精品推荐",
+              "value": "20"
+            },
+            {
+              "title": "国产精品",
+              "value": "21"
+            },
+            {
+              "title": "主播秀色",
+              "value": "22"
+            },
+            {
+              "title": "日本有码",
+              "value": "23"
+            },
+            {
+              "title": "日本无码",
+              "value": "24"
+            },
+            {
+              "title": "中文字幕",
+              "value": "25"
+            },
+            {
+              "title": "童颜巨乳",
+              "value": "26"
+            },
+            {
+              "title": "性感人妻",
+              "value": "27"
+            },
+            {
+              "title": "强奸乱伦",
+              "value": "28"
+            },
+            {
+              "title": "欧美情色",
+              "value": "29"
+            },
+            {
+              "title": "三级伦理",
+              "value": "31"
+            },
+            {
+              "title": "卡通动漫",
+              "value": "32"
+            },
+            {
+              "title": "丝袜OL",
+              "value": "33"
+            },
+            {
+              "title": "自拍偷拍",
+              "value": "35"
+            },
+            {
+              "title": "日本片商",
+              "value": "36"
+            },
+            {
+              "title": "剧情介绍",
+              "value": "44"
+            },
+            {
+              "title": "网曝系列",
+              "value": "56"
+            },
+            {
+              "title": "麻豆传媒",
+              "value": "57"
+            },
+            {
+              "title": "明星换脸",
+              "value": "60"
+            },
+            {
+              "title": "国产乱伦",
+              "value": "61"
+            },
+            {
+              "title": "国产丝袜",
+              "value": "62"
+            },
+            {
+              "title": "国产SM",
+              "value": "63"
+            },
+            {
+              "title": "国产人妻",
+              "value": "64"
+            },
+            {
+              "title": "探花嫖娼",
+              "value": "65"
+            },
+            {
+              "title": "同性恋",
+              "value": "66"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
+      ]
+    },
+    {
+      "id": "fanhao",
+      "title": "📀 番号资源",
+      "subtitle": "番号资源 · 真实分类浏览与更新时段筛选",
+      "functionName": "loadSite_fanhao",
+      "cacheDuration": 120,
+      "params": [
+        {
+          "name": "category",
+          "title": "分类",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "🌟 全部最新",
+              "value": ""
+            },
+            {
+              "title": "制服丝袜",
+              "value": "1"
+            },
+            {
+              "title": "群交淫乱",
+              "value": "2"
+            },
+            {
+              "title": "无码专区",
+              "value": "3"
+            },
+            {
+              "title": "偷拍自拍",
+              "value": "4"
+            },
+            {
+              "title": "卡通动漫",
+              "value": "5"
+            },
+            {
+              "title": "中文字幕",
+              "value": "6"
+            },
+            {
+              "title": "欧美性爱",
+              "value": "7"
+            },
+            {
+              "title": "巨乳美乳",
+              "value": "8"
+            },
+            {
+              "title": "国产裸聊",
+              "value": "9"
+            },
+            {
+              "title": "国产自拍",
+              "value": "10"
+            },
+            {
+              "title": "国产盗摄",
+              "value": "11"
+            },
+            {
+              "title": "伦理三级",
+              "value": "12"
+            },
+            {
+              "title": "女同性恋",
+              "value": "13"
+            },
+            {
+              "title": "少女萝莉",
+              "value": "14"
+            },
+            {
+              "title": "人妖系列",
+              "value": "15"
+            },
+            {
+              "title": "虚拟VR",
+              "value": "16"
+            },
+            {
+              "title": "亚州图片",
+              "value": "17"
+            },
+            {
+              "title": "欧美图片",
+              "value": "18"
+            },
+            {
+              "title": "美腿丝袜",
+              "value": "19"
+            },
+            {
+              "title": "网友自拍",
+              "value": "20"
+            },
+            {
+              "title": "清纯唯美",
+              "value": "21"
+            },
+            {
+              "title": "另类图片",
+              "value": "22"
+            },
+            {
+              "title": "卡通贴图",
+              "value": "23"
+            },
+            {
+              "title": "熟女乱伦",
+              "value": "24"
+            },
+            {
+              "title": "现代激情",
+              "value": "25"
+            },
+            {
+              "title": "古典武侠",
+              "value": "26"
+            },
+            {
+              "title": "暴力强奸",
+              "value": "27"
+            },
+            {
+              "title": "校园春色",
+              "value": "28"
+            },
+            {
+              "title": "家庭乱伦",
+              "value": "29"
+            },
+            {
+              "title": "长篇连载",
+              "value": "30"
+            },
+            {
+              "title": "情色幽默",
+              "value": "31"
+            },
+            {
+              "title": "淫妻交换",
+              "value": "32"
+            }
+          ]
+        },
+        {
+          "name": "sort_by",
+          "title": "更新时段",
+          "type": "enumeration",
+          "value": "",
+          "enumOptions": [
+            {
+              "title": "全部时间",
+              "value": ""
+            },
+            {
+              "title": "24 小时内",
+              "value": "24"
+            },
+            {
+              "title": "近 7 天",
+              "value": "168"
+            },
+            {
+              "title": "近 30 天",
+              "value": "720"
+            }
+          ]
+        },
+        {
+          "name": "page",
+          "title": "页码",
+          "type": "page"
+        }
       ]
     }
   ],
@@ -295,9 +4801,7 @@ function normalizeKey(value) {
 }
 
 function applyCmsFilters(query, params) {
-  const year = String(params.year || "").trim();
   const hours = Number(params.sort_by || params.hours);
-  if (year) query.year = year;
   if (Number.isFinite(hours) && hours > 0) query.h = Math.floor(hours);
   return query;
 }
@@ -308,6 +4812,48 @@ async function resolveSelectedSite(params) {
   if (BUILTIN_SITES[siteKey]) return BUILTIN_SITES[siteKey];
   return requireSite(params, siteKey);
 }
+
+async function loadBuiltinSite(siteKey, params) {
+  params = params || {};
+  const site = BUILTIN_SITES[siteKey] || await requireSite(params, siteKey);
+  const page = pageNumber(params.page);
+  const category = String(params.category || "").trim();
+  const query = applyCmsFilters({ ac: "detail", pg: page }, params);
+  if (category) query.t = category;
+  const data = await cmsGet(site.api, query);
+  const list = vodList(data).map(vod => vodCard(vod, site));
+  if (!list.length && page === 1) {
+    throw new Error(site.name + " 当前分类下暂无内容，请切换分类或更新时段");
+  }
+  return list;
+}
+
+function loadSite_heiliao(params) { return loadBuiltinSite("heiliao", params); }
+function loadSite_91md(params) { return loadBuiltinSite("91md", params); }
+function loadSite_chujia(params) { return loadBuiltinSite("chujia", params); }
+function loadSite_naixxzy(params) { return loadBuiltinSite("naixxzy", params); }
+function loadSite_aosikazy(params) { return loadBuiltinSite("aosikazy", params); }
+function loadSite_xgbbk8(params) { return loadBuiltinSite("xgbbk8", params); }
+function loadSite_souav(params) { return loadBuiltinSite("souav", params); }
+function loadSite_jingpin(params) { return loadBuiltinSite("jingpin", params); }
+function loadSite_danaizi(params) { return loadBuiltinSite("danaizi", params); }
+function loadSite_shayu(params) { return loadBuiltinSite("shayu", params); }
+function loadSite_lajiao(params) { return loadBuiltinSite("lajiao", params); }
+function loadSite_jkun(params) { return loadBuiltinSite("jkun", params); }
+function loadSite_lebo(params) { return loadBuiltinSite("lebo", params); }
+function loadSite_didi(params) { return loadBuiltinSite("didi", params); }
+function loadSite_155(params) { return loadBuiltinSite("155", params); }
+function loadSite_yutu(params) { return loadBuiltinSite("yutu", params); }
+function loadSite_senlin(params) { return loadBuiltinSite("senlin", params); }
+function loadSite_huosu(params) { return loadBuiltinSite("huosu", params); }
+function loadSite_heihei(params) { return loadBuiltinSite("heihei", params); }
+function loadSite_ck(params) { return loadBuiltinSite("ck", params); }
+function loadSite_doudou(params) { return loadBuiltinSite("doudou", params); }
+function loadSite_xiaoji(params) { return loadBuiltinSite("xiaoji", params); }
+function loadSite_fanqie(params) { return loadBuiltinSite("fanqie", params); }
+function loadSite_hsck(params) { return loadBuiltinSite("hsck", params); }
+function loadSite_lsb(params) { return loadBuiltinSite("lsb", params); }
+function loadSite_fanhao(params) { return loadBuiltinSite("fanhao", params); }
 
 async function loadDiscover(params) {
   params = params || {};

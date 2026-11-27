@@ -69,18 +69,18 @@
     {
       "id": "chai.tvbox",
       "title": "TVBox 影视源",
-      "description": "内置常规影视 TVBox 采集站，支持按源、分类、地区、年份、更新时段自由切换并跨源聚合防落空（自动过滤 18+ 站点）。",
+      "description": "内置常规影视 TVBox 采集站，为每个内置源写入真实分类目录，并支持跨源聚合与更新时段筛选（自动过滤 18+ 站点）。",
       "requiredVersion": "0.0.6",
-      "version": "3.0.0",
+      "version": "3.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/tvbox.js"
     },
     {
       "id": "chai.tvbox-nsfw",
       "title": "TVBox 福利源",
-      "description": "内置福利 TVBox 采集站，支持按源、分类、年份、更新时段自由切换并跨源聚合防落空。不含 TMDB 自动播源入口。",
+      "description": "内置福利 TVBox 采集站，为每个内置源写入真实分类目录，并支持跨源聚合与更新时段筛选。不含 TMDB 自动播源入口。",
       "requiredVersion": "0.0.6",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/tvbox-nsfw.js"
     }
