@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox-nsfw",
   title: "TVBox 福利源",
-  version: "2.3.0",
+  version: "2.4.0",
   requiredVersion: "0.0.6",
   description: "内置福利 TVBox 采集站，为每个内置源写入真实分类目录，并支持精简聚合发现与自定义聚合关键词。不含 TMDB 自动播源入口。",
   author: "chai-j",
@@ -4775,14 +4775,14 @@ var DISCOVER_PREFERRED_HOSTS = [
   "naixxzy.com", "api.xiaojizy.live", "lbapi9.com", "155api.com"
 ];
 var GENRE_MATCHERS = {
-  tanhua: { title: "国产探花", patterns: [/国产.?探花/i, /探花系列/i, /91探花/i, /酒店探花/i, /探花/i] },
+  tanhua: { title: "国产探花", patterns: [/国产.?探花/i, /探花系列/i, /91探花/i, /酒店探花/i, /探花/i, /国产.?自拍/i, /自拍偷拍/i, /偷拍自拍/i, /国产.?偷拍/i, /偷拍/i, /自拍/i] },
   heiliao: { title: "黑料资源", patterns: [/黑料吃瓜/i, /吃瓜黑料/i, /黑料不打烊/i, /网[曝爆]黑料/i, /黑料/i, /吃瓜/i, /网[曝爆]/i, /门事件/i] },
-  media: { title: "麻豆传媒", patterns: [/麻豆视频/i, /麻豆传媒/i, /麻豆/i, /国产传媒/i, /中文传媒/i, /传媒/i, /糖心/i, /精东/i] },
-  ai_short: { title: "AI短剧", patterns: [/AI短剧/i, /AI漫剧/i, /AI魔改/i, /AI制作/i, /短视频/i, /抖阴/i, /短剧/i] },
+  media: { title: "麻豆传媒", patterns: [/麻豆视频/i, /麻豆传媒/i, /麻豆/i] },
+  ai_short: { title: "AI短剧", patterns: [/AI短剧/i, /AI漫剧/i, /AI魔改/i, /AI制作/i, /A\s*I.*换脸/i, /AI换脸/i, /\bAI\b/i] },
   uncensored: { title: "日本无码", patterns: [/日本.?无码/i, /日韩无码/i, /亚洲无码/i, /无码专区/i, /无码流出/i, /高清无码/i, /无码/i] },
   censored: { title: "日本有码", patterns: [/日本.?有码/i, /高清有码/i, /经典有码/i, /亚洲有码/i, /有码/i, /日本AV/i, /日韩AV/i, /精品日韩/i] },
   anime: { title: "动漫里番", patterns: [/里番/i, /激情动漫/i, /成人动漫/i, /日本动漫/i, /动漫/i, /卡通/i, /H漫/i] },
-  cosplay: { title: "Cosplay", patterns: [/cosplay/i, /角色扮演/i, /制服/i, /丝袜/i] }
+  cosplay: { title: "Cosplay", patterns: [/cosplay/i, /角色扮演/i, /古装扮演/i, /制服诱惑/i, /制服/i] }
 };
 
 function prioritizeSites(sites) {
