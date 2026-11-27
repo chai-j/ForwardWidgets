@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox-nsfw",
   title: "TVBox 福利源",
-  version: "1.1.0",
+  version: "1.2.0",
   requiredVersion: "0.0.6",
   description: "从内置福利 TVBox 配置里浏览和搜索 18+ JSON 采集站（type 为 1，接口路径包含 provide/vod）。不含 TMDB 自动播源入口。",
   author: "chai-j",
@@ -72,7 +72,26 @@ var WidgetMetadata = {
           dynamicOptions: { functionName: "categoryOptions", dependsOn: ["site", "configUrl", "preset", "configUrls", "siteKeys"] }
         },
         {
-          name: "hours",
+          name: "genre",
+          title: "快捷分类",
+          type: "enumeration",
+          value: "",
+          description: "可在浏览页右上角直接切换（按站点分类名自动匹配）；精确指定上方「分类」时优先生效。",
+          enumOptions: [
+            { title: "全部（按上方分类）", value: "" },
+            { title: "🇨🇳 国产 / 自拍", value: "chinese" },
+            { title: "🔓 日本无码 / 无码", value: "uncensored" },
+            { title: "🇯🇵 日本有码 / 日韩", value: "censored" },
+            { title: "💬 中文字幕", value: "subtitle" },
+            { title: "🎬 国产传媒 / 麻豆", value: "media" },
+            { title: "🌍 欧美", value: "western" },
+            { title: "🎨 激情动漫 / 里番", value: "anime" },
+            { title: "🎀 制服 / Cosplay", value: "cosplay" },
+            { title: "🎞️ 伦理三级", value: "ethics" }
+          ]
+        },
+        {
+          name: "sort_by",
           title: "更新时段",
           type: "enumeration",
           value: "",
@@ -132,6 +151,18 @@ var PRESETS = [
   { id: "ewctt", title: "ewctt 福利站", url: "https://raw.githubusercontent.com/ewctt/tvbox/main/fun.json" }
 ];
 
+var GENRE_MATCHERS = {
+  chinese: { title: "国产 / 自拍", patterns: [/精品国产/i, /国产视频/i, /国产自拍/i, /国产/i, /自拍/i, /探花/i, /网曝/i, /黑料/i, /主播/i, /糖心/i, /海角/i] },
+  uncensored: { title: "日本无码 / 无码", patterns: [/日本无码/i, /日韩无码/i, /无码专区/i, /无码/i] },
+  censored: { title: "日本有码 / 日韩", patterns: [/日本有码/i, /精品日韩/i, /日韩/i, /日本/i, /女优/i] },
+  subtitle: { title: "中文字幕", patterns: [/中文字幕/i, /中文/i] },
+  media: { title: "国产传媒 / 麻豆", patterns: [/国产传媒/i, /麻豆/i, /制片厂/i, /精东/i, /蜜桃/i, /杏吧/i, /星空/i, /天美/i, /传媒/i, /糖心/i] },
+  western: { title: "欧美", patterns: [/欧美/i] },
+  anime: { title: "激情动漫 / 里番", patterns: [/激情动漫/i, /里番/i, /动漫/i, /卡通/i, /H漫/i] },
+  cosplay: { title: "制服 / Cosplay", patterns: [/制服/i, /丝袜/i, /cosplay/i, /黑丝/i, /诱惑/i] },
+  ethics: { title: "伦理三级", patterns: [/伦理三级/i, /三级伦理/i, /伦理/i, /三级/i] }
+};
+
 async function loadBrowse(params) {
   let site = null;
   if (String(params.site || "").trim()) {
@@ -141,12 +172,17 @@ async function loadBrowse(params) {
   } else {
     site = await requireSite(params, params.site);
   }
+  let categoryId = String(params.category || "").trim();
+  const genreKey = String(params.genre || "").trim();
+  if (!categoryId && genreKey) {
+    categoryId = await resolveGenreCategory(site, genreKey);
+  }
   const query = {
     ac: "detail",
-    t: String(params.category || "").trim(),
+    t: categoryId,
     pg: pageNumber(params.page)
   };
-  const hours = Number(params.hours);
+  const hours = Number(params.sort_by || params.hours);
   if (Number.isFinite(hours) && hours > 0) query.h = Math.floor(hours);
   const data = await cmsGet(site.api, query);
   return vodList(data).map(vod => vodCard(vod, site));
@@ -194,17 +230,42 @@ async function searchSiteOptions(params) {
   })));
 }
 
+async function siteClasses(site) {
+  const cacheKey = "nsfw-classes:" + apiFingerprint(site.api);
+  try {
+    const hit = Widget.storage.get(cacheKey);
+    if (hit && hit.savedAt && Date.now() - hit.savedAt < CACHE_MS && Array.isArray(hit.classes)) return hit.classes;
+  } catch (e) { /* 缓存不可用时直接请求 */ }
+  const data = await cmsGet(site.api, { ac: "list" });
+  const classes = (data && Array.isArray(data.class) ? data.class : [])
+    .filter(item => item && item.type_id != null && item.type_name)
+    .map(item => ({ type_id: String(item.type_id), type_name: String(item.type_name) }));
+  try { Widget.storage.set(cacheKey, { savedAt: Date.now(), classes: classes }); } catch (e) { /* 忽略缓存失败 */ }
+  return classes;
+}
+
+async function resolveGenreCategory(site, genreKey) {
+  const rule = GENRE_MATCHERS[genreKey];
+  if (!rule) return "";
+  const classes = await siteClasses(site);
+  for (let i = 0; i < rule.patterns.length; i++) {
+    const pattern = rule.patterns[i];
+    for (let j = 0; j < classes.length; j++) {
+      if (pattern.test(classes[j].type_name)) return classes[j].type_id;
+    }
+  }
+  const names = classes.slice(0, 12).map(item => item.type_name).join("、");
+  throw new Error(site.name + " 没有「" + rule.title + "」分类" + (names ? "（可用：" + names + "）" : ""));
+}
+
 async function categoryOptions(params) {
   const site = await findSite(params, params.site);
   if (!site) return [{ title: "全部分类", value: "" }];
-  const data = await cmsGet(site.api, { ac: "list" });
-  const options = [{ title: "全部分类", value: "" }];
-  const classes = data && Array.isArray(data.class) ? data.class : [];
-  classes.forEach(item => {
-    if (!item || item.type_id == null || !item.type_name) return;
-    options.push({ title: String(item.type_name), value: String(item.type_id) });
-  });
-  return options;
+  const classes = await siteClasses(site);
+  return [{ title: "全部分类", value: "" }].concat(classes.map(item => ({
+    title: item.type_name,
+    value: item.type_id
+  })));
 }
 
 async function siteDetail(payload) {
