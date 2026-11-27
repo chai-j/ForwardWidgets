@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox",
   title: "TVBox 影视源",
-  version: "2.0.0",
+  version: "2.0.1",
   requiredVersion: "0.0.6",
   description: "从内置常规 TVBox 配置里浏览和搜索影视 JSON 采集站（type 为 1，接口路径包含 provide/vod），自动过滤混入的 18+ 站点；福利源请使用「TVBox 福利源」模块。",
   author: "chai-j",
@@ -156,7 +156,14 @@ var NSFW_HOSTS = {
 var NSFW_TEXT_RE = /🔞|18\+|成人|福利|三级片|伦理|无码|有码|色窝|淫窝|老色逼|色逼|老鸭|丝袜|麻豆|杏吧|桃花|大奶子|奶香|鸡坤|jkun|番号|草榴|香蕉|黄色仓库|湿乐园|越南|色猫|souav|sexnguon|avdb|xvid|9kg|asmr19/i;
 
 async function loadBrowse(params) {
-  const site = await requireSite(params, params.site);
+  let site = null;
+  if (String(params.site || "").trim()) {
+    site = await requireSite(params, params.site);
+  } else if (String(params.configUrl || "").trim()) {
+    site = (await enabledSites(params))[0];
+  } else {
+    site = await requireSite(params, params.site);
+  }
   const data = await cmsGet(site.api, {
     ac: "detail",
     t: String(params.category || "").trim(),

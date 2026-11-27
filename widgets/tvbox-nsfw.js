@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox-nsfw",
   title: "TVBox 福利源",
-  version: "1.0.0",
+  version: "1.0.1",
   requiredVersion: "0.0.6",
   description: "从内置福利 TVBox 配置里浏览和搜索 18+ JSON 采集站（type 为 1，接口路径包含 provide/vod）。不含 TMDB 自动播源入口。",
   author: "chai-j",
@@ -121,7 +121,14 @@ var PRESETS = [
 ];
 
 async function loadBrowse(params) {
-  const site = await requireSite(params, params.site);
+  let site = null;
+  if (String(params.site || "").trim()) {
+    site = await requireSite(params, params.site);
+  } else if (String(params.configUrl || "").trim()) {
+    site = (await enabledSites(params))[0];
+  } else {
+    site = await requireSite(params, params.site);
+  }
   const data = await cmsGet(site.api, {
     ac: "detail",
     t: String(params.category || "").trim(),
