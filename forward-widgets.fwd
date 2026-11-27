@@ -69,18 +69,18 @@
     {
       "id": "chai.tvbox",
       "title": "TVBox 影视源",
-      "description": "从内置常规 TVBox 配置里浏览和搜索影视 JSON 采集站（type 为 1，接口路径包含 provide/vod），自动过滤混入的 18+ 站点；福利源请使用「TVBox 福利源」模块。",
+      "description": "内置常规影视 TVBox 采集站，支持按源、分类、地区、年份、更新时段自由切换并跨源聚合防落空（自动过滤 18+ 站点）。",
       "requiredVersion": "0.0.6",
-      "version": "2.4.0",
+      "version": "3.0.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/tvbox.js"
     },
     {
       "id": "chai.tvbox-nsfw",
       "title": "TVBox 福利源",
-      "description": "从内置福利 TVBox 配置里浏览和搜索 18+ JSON 采集站（type 为 1，接口路径包含 provide/vod）。不含 TMDB 自动播源入口。",
+      "description": "内置福利 TVBox 采集站，支持按源、分类、年份、更新时段自由切换并跨源聚合防落空。不含 TMDB 自动播源入口。",
       "requiredVersion": "0.0.6",
-      "version": "1.4.0",
+      "version": "2.0.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/tvbox-nsfw.js"
     }

@@ -1,9 +1,9 @@
 var WidgetMetadata = {
   id: "chai.tvbox-nsfw",
   title: "TVBox 福利源",
-  version: "1.4.0",
+  version: "2.0.0",
   requiredVersion: "0.0.6",
-  description: "从内置福利 TVBox 配置里浏览和搜索 18+ JSON 采集站（type 为 1，接口路径包含 provide/vod）。不含 TMDB 自动播源入口。",
+  description: "内置福利 TVBox 采集站，支持按源、分类、年份、更新时段自由切换并跨源聚合防落空。不含 TMDB 自动播源入口。",
   author: "chai-j",
   detailCacheDuration: 120,
   globalParams: [
@@ -12,7 +12,7 @@ var WidgetMetadata = {
       title: "内置配置",
       type: "enumeration",
       value: "all",
-      description: "默认使用全部内置福利地址。Rex 参数不能多选，要只用其中一份就在这里改；要再加地址，填下一项。",
+      description: "默认使用全部内置福利地址。选「全部聚合」或搜索时生效。",
       enumOptions: [
         { title: "全部福利配置", value: "all" },
         { title: "只用追加地址", value: "none" },
@@ -44,11 +44,46 @@ var WidgetMetadata = {
   modules: [
     {
       id: "discover",
-      title: "聚合分类",
-      subtitle: "跨源自动匹配分类，不落空",
+      title: "福利浏览",
+      subtitle: "可直接在模板与右上角切换源、分类、年份与更新时段",
       functionName: "loadDiscover",
       cacheDuration: 120,
       params: [
+        {
+          name: "site",
+          title: "源",
+          type: "enumeration",
+          value: "",
+          enumOptions: [
+            { title: "🌟 全部聚合", value: "" },
+            { title: "🕵️ 黑料资源", value: "heiliao" },
+            { title: "🎞️ 麻豆视频", value: "91md" },
+            { title: "🚀 精东影业", value: "chujia" },
+            { title: "🥛 奶香香", value: "naixxzy" },
+            { title: "🏆 奥斯卡资源", value: "aosikazy" },
+            { title: "🍑 杏吧资源", value: "xgbbk8" },
+            { title: "🔞 搜AV资源", value: "souav" },
+            { title: "💎 精品资源", value: "jingpin" },
+            { title: "🍒 大奶子资源", value: "danaizi" },
+            { title: "🦈 鲨鱼资源", value: "shayu" },
+            { title: "🌶️ 辣椒资源", value: "lajiao" },
+            { title: "🐔 鸡坤资源", value: "jkun" },
+            { title: "🐆 乐播资源", value: "lebo" },
+            { title: "💧 滴滴资源", value: "didi" },
+            { title: "⚡ 155资源", value: "155" },
+            { title: "🐇 玉兔资源", value: "yutu" },
+            { title: "🌲 森林资源", value: "senlin" },
+            { title: "🔥 火速资源", value: "huosu" },
+            { title: "😈 嘿嘿资源", value: "heihei" },
+            { title: "🎬 CK资源", value: "ck" },
+            { title: "🫘 豆豆资源", value: "doudou" },
+            { title: "🐥 小鸡资源", value: "xiaoji" },
+            { title: "🍅 番茄资源", value: "fanqie" },
+            { title: "📦 黄色仓库", value: "hsck" },
+            { title: "💋 老色逼资源", value: "lsb" },
+            { title: "📀 番号资源", value: "fanhao" }
+          ]
+        },
         {
           name: "genre",
           title: "分类",
@@ -56,81 +91,6 @@ var WidgetMetadata = {
           value: "",
           enumOptions: [
             { title: "🌟 全部最新", value: "" },
-            { title: "🇨🇳 国产 / 自拍", value: "chinese" },
-            { title: "🔓 日本无码 / 无码", value: "uncensored" },
-            { title: "🇯🇵 日本有码 / 日韩", value: "censored" },
-            { title: "💬 中文字幕", value: "subtitle" },
-            { title: "🎬 国产传媒 / 麻豆", value: "media" },
-            { title: "🌍 欧美", value: "western" },
-            { title: "🎨 激情动漫 / 里番", value: "anime" },
-            { title: "🎀 制服 / Cosplay", value: "cosplay" },
-            { title: "🎞️ 伦理三级", value: "ethics" }
-          ]
-        },
-        {
-          name: "year",
-          title: "年份",
-          type: "enumeration",
-          value: "",
-          enumOptions: [
-            { title: "📅 全部年份", value: "" },
-            { title: "2026", value: "2026" },
-            { title: "2025", value: "2025" },
-            { title: "2024", value: "2024" },
-            { title: "2023", value: "2023" }
-          ]
-        },
-        {
-          name: "sort_by",
-          title: "更新时段",
-          type: "enumeration",
-          value: "",
-          enumOptions: [
-            { title: "全部时间", value: "" },
-            { title: "24 小时内", value: "24" },
-            { title: "近 7 天", value: "168" },
-            { title: "近 30 天", value: "720" }
-          ]
-        },
-        { name: "page", title: "页码", type: "page" }
-      ]
-    },
-    {
-      id: "browse",
-      title: "单源浏览",
-      subtitle: "按指定源和分类翻页",
-      functionName: "loadBrowse",
-      cacheDuration: 120,
-      params: [
-        {
-          name: "configUrl",
-          title: "本行配置 URL",
-          type: "input",
-          description: "首页行专用：填了就只用这一个配置，不受全局「内置配置 / 追加配置地址」影响。",
-          placeholders: [{ title: "可选，仅首页配置需要", value: "" }]
-        },
-        {
-          name: "site",
-          title: "源",
-          type: "enumeration",
-          description: "选项来自上面的配置地址。",
-          enumOptions: [{ title: "请先填写配置地址", value: "" }],
-          dynamicOptions: { functionName: "siteOptions", dependsOn: ["configUrl", "preset", "configUrls", "siteKeys"] }
-        },
-        {
-          name: "category",
-          title: "分类",
-          type: "enumeration",
-          enumOptions: [{ title: "全部分类", value: "" }],
-          dynamicOptions: { functionName: "categoryOptions", dependsOn: ["site", "configUrl", "preset", "configUrls", "siteKeys"] }
-        },
-        {
-          name: "genre",
-          title: "快捷分类",
-          type: "enumeration",
-          value: "",
-          enumOptions: [
-            { title: "🌟 全部（按上方分类）", value: "" },
             { title: "🇨🇳 国产 / 自拍", value: "chinese" },
             { title: "🔓 日本无码 / 无码", value: "uncensored" },
             { title: "🇯🇵 日本有码 / 日韩", value: "censored" },
@@ -178,13 +138,6 @@ var WidgetMetadata = {
     cacheDuration: 120,
     params: [
       {
-        name: "configUrl",
-        title: "本行配置 URL",
-        type: "input",
-        description: "首页行专用：填了就只用这一个配置，不受全局配置影响。",
-        placeholders: [{ title: "可选，仅首页配置需要", value: "" }]
-      },
-      {
         name: "keyword",
         title: "关键词",
         type: "input",
@@ -197,7 +150,7 @@ var WidgetMetadata = {
         type: "enumeration",
         description: "不选则搜索已启用的源，最多 8 个。",
         enumOptions: [{ title: "全部（最多 8 个）", value: "" }],
-        dynamicOptions: { functionName: "searchSiteOptions", dependsOn: ["configUrl", "preset", "configUrls", "siteKeys"] }
+        dynamicOptions: { functionName: "searchSiteOptions", dependsOn: ["preset", "configUrls", "siteKeys"] }
       }
     ]
   }
@@ -215,6 +168,34 @@ var PRESETS = [
   { id: "gxnas", title: "gxnas 9kg 福利站", url: "https://raw.githubusercontent.com/gxnas/TvBox/main/9kg.json" },
   { id: "ewctt", title: "ewctt 福利站", url: "https://raw.githubusercontent.com/ewctt/tvbox/main/fun.json" }
 ];
+var BUILTIN_SITES = {
+  heiliao: { key: "heiliao", name: "黑料资源", api: "https://heiliaozyapi.com/api.php/provide/vod", playUrl: "", searchable: true },
+  "91md": { key: "91md", name: "麻豆视频", api: "https://91md.me/api.php/provide/vod", playUrl: "", searchable: true },
+  chujia: { key: "chujia", name: "精东影业", api: "http://chujia.cc/api.php/provide/vod/from/m3u8/", playUrl: "", searchable: true },
+  naixxzy: { key: "naixxzy", name: "奶香香", api: "https://naixxzy.com/api.php/provide/vod", playUrl: "", searchable: true },
+  aosikazy: { key: "aosikazy", name: "奥斯卡资源", api: "https://aosikazy.com/api.php/provide/vod", playUrl: "", searchable: true },
+  xgbbk8: { key: "xgbbk8", name: "杏吧资源", api: "https://json.xgbbk8.com/api.php/provide/vod", playUrl: "", searchable: true },
+  souav: { key: "souav", name: "搜AV资源", api: "https://api.souavzy.vip/api.php/provide/vod", playUrl: "", searchable: true },
+  jingpin: { key: "jingpin", name: "精品资源", api: "https://www.jingpinx.com/api.php/provide/vod", playUrl: "", searchable: true },
+  danaizi: { key: "danaizi", name: "大奶子资源", api: "https://apidanaizi.com/api.php/provide/vod", playUrl: "", searchable: true },
+  shayu: { key: "shayu", name: "鲨鱼资源", api: "https://shayuapi.com/api.php/provide/vod", playUrl: "", searchable: true },
+  lajiao: { key: "lajiao", name: "辣椒资源", api: "https://apilj.com/api.php/provide/vod", playUrl: "", searchable: true },
+  jkun: { key: "jkun", name: "鸡坤资源", api: "https://jkunzyapi.com/api.php/provide/vod", playUrl: "", searchable: true },
+  lebo: { key: "lebo", name: "乐播资源", api: "https://lbapi9.com/api.php/provide/vod", playUrl: "", searchable: true },
+  didi: { key: "didi", name: "滴滴资源", api: "https://api.ddapi.cc/api.php/provide/vod", playUrl: "", searchable: true },
+  "155": { key: "155", name: "155资源", api: "https://155api.com/api.php/provide/vod", playUrl: "", searchable: true },
+  yutu: { key: "yutu", name: "玉兔资源", api: "https://apiyutu.com/api.php/provide/vod", playUrl: "", searchable: true },
+  senlin: { key: "senlin", name: "森林资源", api: "https://slapibf.com/api.php/provide/vod", playUrl: "", searchable: true },
+  huosu: { key: "huosu", name: "火速资源", api: "https://api.huosuapi.cc/api.php/provide/vod", playUrl: "", searchable: true },
+  heihei: { key: "heihei", name: "嘿嘿资源", api: "https://api.heiapi.cc/api.php/provide/vod", playUrl: "", searchable: true },
+  ck: { key: "ck", name: "CK资源", api: "https://www.ckzy1.com/api.php/provide/vod", playUrl: "", searchable: true },
+  doudou: { key: "doudou", name: "豆豆资源", api: "https://api.douapi.cc/api.php/provide/vod", playUrl: "", searchable: true },
+  xiaoji: { key: "xiaoji", name: "小鸡资源", api: "https://api.xiaojizy.live/provide/vod", playUrl: "", searchable: true },
+  fanqie: { key: "fanqie", name: "番茄资源", api: "https://fqzy.me/api.php/provide/vod", playUrl: "", searchable: true },
+  hsck: { key: "hsck", name: "黄色仓库", api: "https://hsckzy888.com/api.php/provide/vod/at/json", playUrl: "", searchable: true },
+  lsb: { key: "lsb", name: "老色逼资源", api: "https://apilsbzy1.com/api.php/provide/vod", playUrl: "", searchable: true },
+  fanhao: { key: "fanhao", name: "番号资源", api: "http://fhapi9.com/api.php/provide/vod", playUrl: "", searchable: true }
+};
 
 var DISCOVER_PREFERRED_HOSTS = [
   "heiliaozyapi.com", "91md.me", "naixxzy.com", "aosikazy.com", "fhapi9.com",
@@ -263,7 +244,7 @@ async function discoverRoutes(params, sites, genreKey) {
   if (!genreKey) {
     return pool.map(site => ({ site: site, typeId: "" }));
   }
-  const cacheKey = "nsfw-discover:" + String(params.configUrl || "") + "|" + String(params.preset || "") + "|" + String(params.configUrls || "") + "|" + genreKey;
+  const cacheKey = "nsfw-discover:" + String(params.preset || "") + "|" + String(params.configUrls || "") + "|" + genreKey;
   try {
     const hit = Widget.storage.get(cacheKey);
     if (hit && hit.savedAt && Date.now() - hit.savedAt < CACHE_MS && Array.isArray(hit.routes) && hit.routes.length) {
@@ -321,15 +302,41 @@ function applyCmsFilters(query, params) {
   return query;
 }
 
+async function resolveSelectedSite(params) {
+  const siteKey = String(params.site || "").trim();
+  if (!siteKey) return null;
+  if (BUILTIN_SITES[siteKey]) return BUILTIN_SITES[siteKey];
+  return requireSite(params, siteKey);
+}
+
 async function loadDiscover(params) {
-  const sites = await enabledSites(params);
+  params = params || {};
+  const page = pageNumber(params.page);
   const genreKey = String(params.genre || "").trim();
+  const pickedSite = await resolveSelectedSite(params);
+  if (pickedSite) {
+    let categoryId = "";
+    if (genreKey) {
+      try {
+        categoryId = matchGenreId(await siteClasses(pickedSite), genreKey);
+      } catch (e) {
+        categoryId = "";
+      }
+    }
+    if (!genreKey || categoryId) {
+      const query = applyCmsFilters({ ac: "detail", pg: page }, params);
+      if (categoryId) query.t = categoryId;
+      const data = await cmsGet(pickedSite.api, query);
+      const list = vodList(data).map(vod => vodCard(vod, pickedSite));
+      if (list.length || page > 1) return list;
+    }
+  }
+  const sites = await enabledSites(params);
   const routes = await discoverRoutes(params, sites, genreKey);
   if (!routes.length) {
     const label = GENRE_MATCHERS[genreKey] ? GENRE_MATCHERS[genreKey].title : genreKey;
     throw new Error("当前启用的源里没有找到「" + label + "」分类");
   }
-  const page = pageNumber(params.page);
   const targets = routes.slice(0, 4);
   const settled = await mapPool(targets, 4, async function (route) {
     const query = applyCmsFilters({ ac: "detail", pg: page }, params);
@@ -347,36 +354,6 @@ async function loadDiscover(params) {
     throw new Error("聚合源暂时没有返回数据，请切换分类或稍后重试");
   }
   return mergeDiscoverCards(buckets);
-}
-
-async function loadBrowse(params) {
-  let site = null;
-  if (String(params.site || "").trim()) {
-    site = await requireSite(params, params.site);
-  } else if (String(params.configUrl || "").trim()) {
-    site = (await enabledSites(params))[0];
-  } else {
-    site = await requireSite(params, params.site);
-  }
-  let categoryId = String(params.category || "").trim();
-  const genreKey = String(params.genre || "").trim();
-  if (!categoryId && genreKey) {
-    try {
-      categoryId = matchGenreId(await siteClasses(site), genreKey);
-    } catch (e) {
-      categoryId = "";
-    }
-    if (!categoryId) {
-      return loadDiscover(Object.assign({}, params, { configUrl: "" }));
-    }
-  }
-  const query = applyCmsFilters({
-    ac: "detail",
-    t: categoryId,
-    pg: pageNumber(params.page)
-  }, params);
-  const data = await cmsGet(site.api, query);
-  return vodList(data).map(vod => vodCard(vod, site));
 }
 
 async function search(params) {
@@ -408,11 +385,6 @@ async function loadDetail(link) {
   return vodDetail(vod, payload);
 }
 
-async function siteOptions(params) {
-  const sites = await enabledSites(params);
-  return sites.map(site => ({ title: site.name + " (" + site.key + ")", value: site.key }));
-}
-
 async function searchSiteOptions(params) {
   const sites = await enabledSites(params);
   return [{ title: "全部（最多 " + SEARCH_LIMIT + " 个）", value: "" }].concat(sites.map(site => ({
@@ -435,16 +407,6 @@ async function siteClasses(site) {
   return classes;
 }
 
-async function categoryOptions(params) {
-  const site = await findSite(params, params.site);
-  if (!site) return [{ title: "全部分类", value: "" }];
-  const classes = await siteClasses(site);
-  return [{ title: "全部分类", value: "" }].concat(classes.map(item => ({
-    title: item.type_name,
-    value: item.type_id
-  })));
-}
-
 async function siteDetail(payload) {
   const site = {
     key: payload.key,
@@ -462,8 +424,8 @@ async function siteDetail(payload) {
     subtitle: site.key,
     link: encodeLink(payload),
     description: classes.length
-      ? "分类：" + classes.map(item => String(item.type_name) + " " + String(item.type_id)).join("、") + "。翻页请用「浏览」。"
-      : "翻页请用「浏览」并选择这个源。"
+      ? "分类：" + classes.map(item => String(item.type_name) + " " + String(item.type_id)).join("、")
+      : site.name
   };
   const related = vodList(data).slice(0, 20).map(vod => vodCard(vod, site));
   if (related.length) item.relatedItems = related;
@@ -623,7 +585,7 @@ function vodList(data) {
 }
 
 async function enabledSites(params) {
-  const cacheKey = "nsfw-sites:" + String(params.configUrl || "") + "|" + String(params.preset || "") + "|" + String(params.configUrls || "") + "|" + String(params.siteKeys || "");
+  const cacheKey = "nsfw-sites:" + String(params.preset || "") + "|" + String(params.configUrls || "") + "|" + String(params.siteKeys || "");
   try {
     const hit = Widget.storage.get(cacheKey);
     if (hit && hit.savedAt && Date.now() - hit.savedAt < CACHE_MS && Array.isArray(hit.sites)) return hit.sites;
@@ -662,8 +624,6 @@ async function enabledSites(params) {
 }
 
 function selectedUrls(params) {
-  const standalone = splitList(params.configUrl);
-  if (standalone.length) return standalone;
   const preset = String(params.preset || "all");
   const extra = splitList(params.configUrls);
   const urls = [];
