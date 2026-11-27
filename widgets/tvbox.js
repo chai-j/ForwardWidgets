@@ -1,9 +1,9 @@
 var WidgetMetadata = {
   id: "chai.tvbox",
-  title: "TVBox 源",
-  version: "1.6.0",
+  title: "TVBox 影视源",
+  version: "2.0.0",
   requiredVersion: "0.0.6",
-  description: "从内置 TVBox 配置里浏览 JSON 采集站（type 为 1，接口路径包含 provide/vod）。下拉是单选；要再用别的地址，填到「追加配置地址」。带账号密码的源不会写入公开模块。",
+  description: "从内置常规 TVBox 配置里浏览和搜索影视 JSON 采集站（type 为 1，接口路径包含 provide/vod），自动过滤混入的 18+ 站点；福利源请使用「TVBox 福利源」模块。",
   author: "chai-j",
   detailCacheDuration: 120,
   globalParams: [
@@ -12,13 +12,11 @@ var WidgetMetadata = {
       title: "内置配置",
       type: "enumeration",
       value: "all",
-      description: "默认使用全部内置地址。Rex 参数不能多选，要只用其中一份就在这里改；要再加地址，填下一项。只读取直接返回 sites 的 JSON 配置，不解析 JS 插件包或 md5 校验文件。",
+      description: "默认使用全部常规影视配置（已排除 18+ 站点）。Rex 参数不能多选，要只用其中一份就在这里改；要再加地址，填下一项。",
       enumOptions: [
-        { title: "全部内置配置", value: "all" },
+        { title: "全部影视配置", value: "all" },
         { title: "只用追加地址", value: "none" },
         { title: "Moon TVBox 合并站", value: "moon" },
-        { title: "Cluntop 影视资源", value: "fun" },
-        { title: "福利影视资源", value: "fuli" },
         { title: "TVBox 官方推荐站", value: "tvboxorg" },
         { title: "XPTV 综合站", value: "xptv" },
         { title: "Tvbox1 资源站", value: "hd9211" },
@@ -26,13 +24,7 @@ var WidgetMetadata = {
         { title: "tvurl 量子资源站", value: "tvurl" },
         { title: "每日推荐聚合站", value: "hebijunge" },
         { title: "liu673cn 影视站", value: "liu673cn" },
-        { title: "maoystv 混合站", value: "maoystv" },
-        { title: "lubin776 福利站", value: "lubin18" },
-        { title: "大树 18+ 福利站", value: "dashu18" },
-        { title: "TvBox JAV 福利站", value: "jav" },
-        { title: "dlgt7 福利站", value: "dlgt7" },
-        { title: "gxnas 9kg 福利站", value: "gxnas" },
-        { title: "ewctt 福利站", value: "ewctt" },
+        { title: "maoystv 影视站", value: "maoystv" },
         { title: "HowKongFish 合并站", value: "howkongfish" }
       ]
     },
@@ -129,8 +121,6 @@ var SEARCH_LIMIT = 8;
 var CACHE_MS = 5 * 60 * 1000;
 var PRESETS = [
   { id: "moon", title: "Moon TVBox 合并站", url: "https://raw.githubusercontent.com/heart1016/tvbox/refs/heads/main/moon_tvbox_sites_merged.json" },
-  { id: "fun", title: "Cluntop 影视资源", url: "https://raw.githubusercontent.com/cluntop/tvbox/refs/heads/main/fun.json" },
-  { id: "fuli", title: "福利影视资源", url: "https://raw.githubusercontent.com/ddavidaurora/TVbox-interface/99cc2162519721d023843f230deaa453cf8d0570/tvbox-%E7%A6%8F%E5%88%A9.json" },
   { id: "tvboxorg", title: "TVBox 官方推荐站", url: "https://raw.githubusercontent.com/TVboxorg/TVbox/main/dist/official.json" },
   { id: "xptv", title: "XPTV 综合站", url: "https://raw.githubusercontent.com/fangkuia/XPTV/main/all.json" },
   { id: "hd9211", title: "Tvbox1 资源站", url: "https://raw.githubusercontent.com/hd9211/Tvbox1/main/zy.json" },
@@ -138,15 +128,32 @@ var PRESETS = [
   { id: "tvurl", title: "tvurl 量子资源站", url: "https://raw.githubusercontent.com/ne7359/tvurl/main/0825.json" },
   { id: "hebijunge", title: "每日推荐聚合站", url: "https://raw.githubusercontent.com/hebijunge/tvbox-config/main/tvbox_recommended.json" },
   { id: "liu673cn", title: "liu673cn 影视站", url: "https://raw.githubusercontent.com/liu673cn/box/main/m.json" },
-  { id: "maoystv", title: "maoystv 混合站", url: "https://raw.githubusercontent.com/maoystv/6/main/tv.json" },
-  { id: "lubin18", title: "lubin776 福利站", url: "https://raw.githubusercontent.com/lubin776/tvbox/main/18.json" },
-  { id: "dashu18", title: "大树 18+ 福利站", url: "https://raw.githubusercontent.com/963540817/dashu/main/18%2B.json" },
-  { id: "jav", title: "TvBox JAV 福利站", url: "https://raw.githubusercontent.com/shichuanenhui/TvBox/main/jav.json" },
-  { id: "dlgt7", title: "dlgt7 福利站", url: "https://raw.githubusercontent.com/dlgt7/TVbox-interface/main/jj.json" },
-  { id: "gxnas", title: "gxnas 9kg 福利站", url: "https://raw.githubusercontent.com/gxnas/TvBox/main/9kg.json" },
-  { id: "ewctt", title: "ewctt 福利站", url: "https://raw.githubusercontent.com/ewctt/tvbox/main/fun.json" },
+  { id: "maoystv", title: "maoystv 影视站", url: "https://raw.githubusercontent.com/maoystv/6/main/tv.json" },
   { id: "howkongfish", title: "HowKongFish 合并站", url: "https://raw.githubusercontent.com/HowKongFish/tvbox-json/main/merged.json" }
 ];
+var NSFW_HOSTS = {
+  "155api.com": true, "8day.icu": true, "91av.cyou": true, "91jpzyw.com": true, "91md.me": true,
+  "99zy.pw": true, "a.uezy.pw": true, "aosikazy.com": true, "aosikazy1.com": true, "aosikazy2.com": true,
+  "api.11bat.com": true, "19q.cc": true, "api.apilyzy.com": true, "api.bwzyz.com": true,
+  "api.bwzym3u8.com": true, "api.ddapi.cc": true, "api.douapi.cc": true, "api.heiapi.cc": true,
+  "api.huosuapi.cc": true, "api.kdapi.info": true, "api.kudian70.com": true, "api.sexnguon.com": true,
+  "api.sexpeach3.com": true, "api.souavzy.vip": true, "api.souavzyw.net": true, "api.suboapi.com": true,
+  "api.vnzyz.com": true, "api.xiaojizy.live": true, "api.xjzyapi.com": true, "api.yikanapi.com": true,
+  "api.yinwoapi.com": true, "api.ykapi.net": true, "apidanaizi.com": true, "apilj.com": true,
+  "apilsbzy1.com": true, "apittzy.com": true, "apiyutu.com": true, "caiji.semaozy.net": true,
+  "chujia.cc": true, "cj.apiabzy.com": true, "ckbh1.xyz": true, "ckzy.me": true, "ckzy1.com": true,
+  "dj.696618.xyz": true, "fhapi9.com": true, "fqzy.me": true, "fqzy4.me": true, "gayapi.com": true,
+  "heiliaozyapi.com": true, "hsckzy.vip": true, "hsckzy001.com": true, "hsckzy888.com": true,
+  "jipinvip.com": true, "jkunzyapi.com": true, "json.xgbbk8.com": true, "kkzy.me": true,
+  "lbapi9.com": true, "mgzyz1.com": true, "naixxzy.com": true, "naixxzy1.com": true,
+  "reba.aishunxs.com": true, "sewozyapi.com": true, "shayuapi.com": true, "siwazyw.cc": true,
+  "siwazyw.tv": true, "slapibf.com": true, "thzy1.me": true, "to.to-long.com": true, "vnzyz.com": true,
+  "888dav.com": true, "asmr19.in": true, "caoliuzyw.com": true, "feifei67.com": true,
+  "jializyzapi.com": true, "jingpinx.com": true, "saobi2.com": true, "sextaohua.com": true,
+  "xiangjiaozyw.com": true, "xxibaozyw.com": true, "yeszy1.com": true, "xingba111.com": true,
+  "xingba222.com": true, "xvidapi.com": true, "xxavs.com": true, "xzybb2.com": true, "yutuzy10.com": true
+};
+var NSFW_TEXT_RE = /🔞|18\+|成人|福利|三级片|伦理|无码|有码|色窝|淫窝|老色逼|色逼|老鸭|丝袜|麻豆|杏吧|桃花|大奶子|奶香|鸡坤|jkun|番号|草榴|香蕉|黄色仓库|湿乐园|越南|色猫|souav|sexnguon|avdb|xvid|9kg|asmr19/i;
 
 async function loadBrowse(params) {
   const site = await requireSite(params, params.site);
@@ -566,8 +573,17 @@ function shortHash(value) {
   return (hash >>> 0).toString(16);
 }
 
+function isNsfwSite(site) {
+  const api = String(site.api || "").trim();
+  const host = hostOf(api).toLowerCase().split(":")[0];
+  const bareHost = host.replace(/^www\./, "");
+  if (NSFW_HOSTS[host] || NSFW_HOSTS[bareHost]) return true;
+  const label = String(site.key || "") + " " + String(site.name || "") + " " + api;
+  return NSFW_TEXT_RE.test(label);
+}
+
 function addSite(site, allow, seen, sites) {
-  if (!isJsonCms(site)) return;
+  if (!isJsonCms(site) || isNsfwSite(site)) return;
   const api = String(site.api).trim();
   const fingerprint = "api:" + apiFingerprint(api);
   if (!apiFingerprint(api) || seen[fingerprint]) return;
