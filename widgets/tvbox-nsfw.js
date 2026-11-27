@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox-nsfw",
   title: "TVBox 福利源",
-  version: "2.2.0",
+  version: "2.3.0",
   requiredVersion: "0.0.6",
   description: "内置福利 TVBox 采集站，为每个内置源写入真实分类目录，并支持精简聚合发现与自定义聚合关键词。不含 TMDB 自动播源入口。",
   author: "chai-j",
@@ -178,6 +178,10 @@ var WidgetMetadata = {
             {
               "title": "🕵️ 国产探花",
               "value": "tanhua"
+            },
+            {
+              "title": "🍉 黑料资源",
+              "value": "heiliao"
             },
             {
               "title": "🎬 麻豆传媒",
@@ -4772,6 +4776,7 @@ var DISCOVER_PREFERRED_HOSTS = [
 ];
 var GENRE_MATCHERS = {
   tanhua: { title: "国产探花", patterns: [/国产.?探花/i, /探花系列/i, /91探花/i, /酒店探花/i, /探花/i] },
+  heiliao: { title: "黑料资源", patterns: [/黑料吃瓜/i, /吃瓜黑料/i, /黑料不打烊/i, /网[曝爆]黑料/i, /黑料/i, /吃瓜/i, /网[曝爆]/i, /门事件/i] },
   media: { title: "麻豆传媒", patterns: [/麻豆视频/i, /麻豆传媒/i, /麻豆/i, /国产传媒/i, /中文传媒/i, /传媒/i, /糖心/i, /精东/i] },
   ai_short: { title: "AI短剧", patterns: [/AI短剧/i, /AI漫剧/i, /AI魔改/i, /AI制作/i, /短视频/i, /抖阴/i, /短剧/i] },
   uncensored: { title: "日本无码", patterns: [/日本.?无码/i, /日韩无码/i, /亚洲无码/i, /无码专区/i, /无码流出/i, /高清无码/i, /无码/i] },
