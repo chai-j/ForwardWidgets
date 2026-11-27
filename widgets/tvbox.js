@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox",
   title: "TVBox 影视源",
-  version: "2.3.0",
+  version: "2.4.0",
   requiredVersion: "0.0.6",
   description: "从内置常规 TVBox 配置里浏览和搜索影视 JSON 采集站（type 为 1，接口路径包含 provide/vod），自动过滤混入的 18+ 站点；福利源请使用「TVBox 福利源」模块。",
   author: "chai-j",
@@ -52,13 +52,6 @@ var WidgetMetadata = {
       cacheDuration: 120,
       params: [
         {
-          name: "configUrl",
-          title: "本行配置 URL",
-          type: "input",
-          description: "首页行专用：留空则使用全局配置。",
-          placeholders: [{ title: "可选，仅首页配置需要", value: "" }]
-        },
-        {
           name: "genre",
           title: "分类",
           type: "enumeration",
@@ -75,6 +68,37 @@ var WidgetMetadata = {
             { title: "😂 喜剧片", value: "comedy" },
             { title: "🛸 科幻片", value: "scifi" },
             { title: "👻 恐怖片", value: "horror" }
+          ]
+        },
+        {
+          name: "area",
+          title: "地区",
+          type: "enumeration",
+          value: "",
+          enumOptions: [
+            { title: "🌍 全部地区", value: "" },
+            { title: "🇨🇳 大陆", value: "大陆" },
+            { title: "🇭🇰 香港", value: "香港" },
+            { title: "🇹🇼 台湾", value: "台湾" },
+            { title: "🇺🇸 美国", value: "美国" },
+            { title: "🇰🇷 韩国", value: "韩国" },
+            { title: "🇯🇵 日本", value: "日本" },
+            { title: "🇬🇧 英国", value: "英国" },
+            { title: "🇹🇭 泰国", value: "泰国" }
+          ]
+        },
+        {
+          name: "year",
+          title: "年份",
+          type: "enumeration",
+          value: "",
+          enumOptions: [
+            { title: "📅 全部年份", value: "" },
+            { title: "2026", value: "2026" },
+            { title: "2025", value: "2025" },
+            { title: "2024", value: "2024" },
+            { title: "2023", value: "2023" },
+            { title: "2022", value: "2022" }
           ]
         },
         {
@@ -95,7 +119,7 @@ var WidgetMetadata = {
     {
       id: "browse",
       title: "单源浏览",
-      subtitle: "按指定源和站点分类翻页",
+      subtitle: "按指定源和分类翻页",
       functionName: "loadBrowse",
       cacheDuration: 120,
       params: [
@@ -120,6 +144,56 @@ var WidgetMetadata = {
           type: "enumeration",
           enumOptions: [{ title: "全部分类", value: "" }],
           dynamicOptions: { functionName: "categoryOptions", dependsOn: ["site", "configUrl", "preset", "configUrls", "siteKeys"] }
+        },
+        {
+          name: "genre",
+          title: "快捷分类",
+          type: "enumeration",
+          value: "",
+          enumOptions: [
+            { title: "🌟 全部（按上方分类）", value: "" },
+            { title: "🎬 电影", value: "movie" },
+            { title: "📺 连续剧", value: "tv" },
+            { title: "🎨 动漫", value: "anime" },
+            { title: "🎤 综艺", value: "variety" },
+            { title: "📱 短剧", value: "short" },
+            { title: "🎥 纪录片", value: "doc" },
+            { title: "💥 动作片", value: "action" },
+            { title: "😂 喜剧片", value: "comedy" },
+            { title: "🛸 科幻片", value: "scifi" },
+            { title: "👻 恐怖片", value: "horror" }
+          ]
+        },
+        {
+          name: "area",
+          title: "地区",
+          type: "enumeration",
+          value: "",
+          enumOptions: [
+            { title: "🌍 全部地区", value: "" },
+            { title: "🇨🇳 大陆", value: "大陆" },
+            { title: "🇭🇰 香港", value: "香港" },
+            { title: "🇹🇼 台湾", value: "台湾" },
+            { title: "🇺🇸 美国", value: "美国" },
+            { title: "🇰🇷 韩国", value: "韩国" },
+            { title: "🇯🇵 日本", value: "日本" },
+            { title: "🇬🇧 英国", value: "英国" },
+            { title: "🇹🇭 泰国", value: "泰国" }
+          ]
+        },
+        {
+          name: "year",
+          title: "年份",
+          type: "enumeration",
+          value: "",
+          enumOptions: [
+            { title: "📅 全部年份", value: "" },
+            { title: "2026", value: "2026" },
+            { title: "2025", value: "2025" },
+            { title: "2024", value: "2024" },
+            { title: "2023", value: "2023" },
+            { title: "2022", value: "2022" }
+          ]
         },
         {
           name: "sort_by",
@@ -308,6 +382,16 @@ function mergeDiscoverCards(buckets) {
   return cards.slice(0, 40);
 }
 
+function applyCmsFilters(query, params) {
+  const area = String(params.area || "").trim();
+  const year = String(params.year || "").trim();
+  const hours = Number(params.sort_by || params.hours);
+  if (area) query.area = area;
+  if (year) query.year = year;
+  if (Number.isFinite(hours) && hours > 0) query.h = Math.floor(hours);
+  return query;
+}
+
 async function loadDiscover(params) {
   const sites = await enabledSites(params);
   const genreKey = String(params.genre || "").trim();
@@ -317,12 +401,10 @@ async function loadDiscover(params) {
     throw new Error("当前启用的源里没有找到「" + label + "」分类");
   }
   const page = pageNumber(params.page);
-  const hours = Number(params.sort_by || params.hours);
   const targets = routes.slice(0, 4);
   const settled = await mapPool(targets, 4, async function (route) {
-    const query = { ac: "detail", pg: page };
+    const query = applyCmsFilters({ ac: "detail", pg: page }, params);
     if (route.typeId) query.t = route.typeId;
-    if (Number.isFinite(hours) && hours > 0) query.h = Math.floor(hours);
     try {
       const data = await cmsGet(route.site.api, query);
       return vodList(data).map(vod => vodCard(vod, route.site));
@@ -347,13 +429,23 @@ async function loadBrowse(params) {
   } else {
     site = await requireSite(params, params.site);
   }
-  const query = {
+  let categoryId = String(params.category || "").trim();
+  const genreKey = String(params.genre || "").trim();
+  if (!categoryId && genreKey) {
+    try {
+      categoryId = matchGenreId(await siteClasses(site), genreKey);
+    } catch (e) {
+      categoryId = "";
+    }
+    if (!categoryId) {
+      return loadDiscover(Object.assign({}, params, { configUrl: "" }));
+    }
+  }
+  const query = applyCmsFilters({
     ac: "detail",
-    t: String(params.category || "").trim(),
+    t: categoryId,
     pg: pageNumber(params.page)
-  };
-  const hours = Number(params.sort_by || params.hours);
-  if (Number.isFinite(hours) && hours > 0) query.h = Math.floor(hours);
+  }, params);
   const data = await cmsGet(site.api, query);
   return vodList(data).map(vod => vodCard(vod, site));
 }
@@ -888,7 +980,7 @@ function cmsUrl(api, query) {
     if (value === undefined || value === null || value === "") return;
     params[key] = String(value);
   });
-  const order = ["ac", "ids", "wd", "t", "h", "pg"];
+  const order = ["ac", "ids", "wd", "t", "area", "year", "h", "pg"];
   const keys = Object.keys(params).sort((a, b) => {
     const ia = order.indexOf(a);
     const ib = order.indexOf(b);

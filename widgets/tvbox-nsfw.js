@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox-nsfw",
   title: "TVBox 福利源",
-  version: "1.3.0",
+  version: "1.4.0",
   requiredVersion: "0.0.6",
   description: "从内置福利 TVBox 配置里浏览和搜索 18+ JSON 采集站（type 为 1，接口路径包含 provide/vod）。不含 TMDB 自动播源入口。",
   author: "chai-j",
@@ -50,13 +50,6 @@ var WidgetMetadata = {
       cacheDuration: 120,
       params: [
         {
-          name: "configUrl",
-          title: "本行配置 URL",
-          type: "input",
-          description: "首页行专用：留空则使用全局配置。",
-          placeholders: [{ title: "可选，仅首页配置需要", value: "" }]
-        },
-        {
           name: "genre",
           title: "分类",
           type: "enumeration",
@@ -72,6 +65,19 @@ var WidgetMetadata = {
             { title: "🎨 激情动漫 / 里番", value: "anime" },
             { title: "🎀 制服 / Cosplay", value: "cosplay" },
             { title: "🎞️ 伦理三级", value: "ethics" }
+          ]
+        },
+        {
+          name: "year",
+          title: "年份",
+          type: "enumeration",
+          value: "",
+          enumOptions: [
+            { title: "📅 全部年份", value: "" },
+            { title: "2026", value: "2026" },
+            { title: "2025", value: "2025" },
+            { title: "2024", value: "2024" },
+            { title: "2023", value: "2023" }
           ]
         },
         {
@@ -92,7 +98,7 @@ var WidgetMetadata = {
     {
       id: "browse",
       title: "单源浏览",
-      subtitle: "按指定源和站点分类翻页",
+      subtitle: "按指定源和分类翻页",
       functionName: "loadBrowse",
       cacheDuration: 120,
       params: [
@@ -117,6 +123,37 @@ var WidgetMetadata = {
           type: "enumeration",
           enumOptions: [{ title: "全部分类", value: "" }],
           dynamicOptions: { functionName: "categoryOptions", dependsOn: ["site", "configUrl", "preset", "configUrls", "siteKeys"] }
+        },
+        {
+          name: "genre",
+          title: "快捷分类",
+          type: "enumeration",
+          value: "",
+          enumOptions: [
+            { title: "🌟 全部（按上方分类）", value: "" },
+            { title: "🇨🇳 国产 / 自拍", value: "chinese" },
+            { title: "🔓 日本无码 / 无码", value: "uncensored" },
+            { title: "🇯🇵 日本有码 / 日韩", value: "censored" },
+            { title: "💬 中文字幕", value: "subtitle" },
+            { title: "🎬 国产传媒 / 麻豆", value: "media" },
+            { title: "🌍 欧美", value: "western" },
+            { title: "🎨 激情动漫 / 里番", value: "anime" },
+            { title: "🎀 制服 / Cosplay", value: "cosplay" },
+            { title: "🎞️ 伦理三级", value: "ethics" }
+          ]
+        },
+        {
+          name: "year",
+          title: "年份",
+          type: "enumeration",
+          value: "",
+          enumOptions: [
+            { title: "📅 全部年份", value: "" },
+            { title: "2026", value: "2026" },
+            { title: "2025", value: "2025" },
+            { title: "2024", value: "2024" },
+            { title: "2023", value: "2023" }
+          ]
         },
         {
           name: "sort_by",
@@ -276,6 +313,14 @@ function normalizeKey(value) {
   return String(value || "").toLowerCase().replace(/[\s:：\-—_.·,，!！?？'"“”`~～]/g, "");
 }
 
+function applyCmsFilters(query, params) {
+  const year = String(params.year || "").trim();
+  const hours = Number(params.sort_by || params.hours);
+  if (year) query.year = year;
+  if (Number.isFinite(hours) && hours > 0) query.h = Math.floor(hours);
+  return query;
+}
+
 async function loadDiscover(params) {
   const sites = await enabledSites(params);
   const genreKey = String(params.genre || "").trim();
@@ -285,12 +330,10 @@ async function loadDiscover(params) {
     throw new Error("当前启用的源里没有找到「" + label + "」分类");
   }
   const page = pageNumber(params.page);
-  const hours = Number(params.sort_by || params.hours);
   const targets = routes.slice(0, 4);
   const settled = await mapPool(targets, 4, async function (route) {
-    const query = { ac: "detail", pg: page };
+    const query = applyCmsFilters({ ac: "detail", pg: page }, params);
     if (route.typeId) query.t = route.typeId;
-    if (Number.isFinite(hours) && hours > 0) query.h = Math.floor(hours);
     try {
       const data = await cmsGet(route.site.api, query);
       return vodList(data).map(vod => vodCard(vod, route.site));
@@ -315,13 +358,23 @@ async function loadBrowse(params) {
   } else {
     site = await requireSite(params, params.site);
   }
-  const query = {
+  let categoryId = String(params.category || "").trim();
+  const genreKey = String(params.genre || "").trim();
+  if (!categoryId && genreKey) {
+    try {
+      categoryId = matchGenreId(await siteClasses(site), genreKey);
+    } catch (e) {
+      categoryId = "";
+    }
+    if (!categoryId) {
+      return loadDiscover(Object.assign({}, params, { configUrl: "" }));
+    }
+  }
+  const query = applyCmsFilters({
     ac: "detail",
-    t: String(params.category || "").trim(),
+    t: categoryId,
     pg: pageNumber(params.page)
-  };
-  const hours = Number(params.sort_by || params.hours);
-  if (Number.isFinite(hours) && hours > 0) query.h = Math.floor(hours);
+  }, params);
   const data = await cmsGet(site.api, query);
   return vodList(data).map(vod => vodCard(vod, site));
 }
@@ -783,7 +836,7 @@ function cmsUrl(api, query) {
     if (value === undefined || value === null || value === "") return;
     params[key] = String(value);
   });
-  const order = ["ac", "ids", "wd", "t", "h", "pg"];
+  const order = ["ac", "ids", "wd", "t", "area", "year", "h", "pg"];
   const keys = Object.keys(params).sort((a, b) => {
     const ia = order.indexOf(a);
     const ib = order.indexOf(b);
