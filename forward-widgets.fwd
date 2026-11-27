@@ -1,6 +1,6 @@
 {
   "title": "chai-j 视频模块聚合",
-  "description": "由 chai-j 维护的 10 个 Forward 自定义模块",
+  "description": "由 chai-j 维护的 9 个 Forward 自定义模块",
   "icon": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/icon.png",
   "widgets": [
     {
@@ -11,15 +11,6 @@
       "version": "3.3.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/missav.js"
-    },
-    {
-      "id": "chai.hanime1",
-      "title": "Hanime1",
-      "description": "Hanime1 浏览、搜索、中文字幕与在线播放",
-      "requiredVersion": "0.0.1",
-      "version": "2.2.1",
-      "author": "chai-j",
-      "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/hanime1.js"
     },
     {
       "id": "chai.jable",
@@ -80,7 +71,7 @@
       "title": "TVBox 影视源",
       "description": "从内置常规 TVBox 配置里浏览和搜索影视 JSON 采集站（type 为 1，接口路径包含 provide/vod），自动过滤混入的 18+ 站点；福利源请使用「TVBox 福利源」模块。",
       "requiredVersion": "0.0.6",
-      "version": "2.0.1",
+      "version": "2.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/tvbox.js"
     },
@@ -89,7 +80,7 @@
       "title": "TVBox 福利源",
       "description": "从内置福利 TVBox 配置里浏览和搜索 18+ JSON 采集站（type 为 1，接口路径包含 provide/vod）。不含 TMDB 自动播源入口。",
       "requiredVersion": "0.0.6",
-      "version": "1.0.1",
+      "version": "1.1.0",
       "author": "chai-j",
       "url": "https://raw.githubusercontent.com/chai-j/ForwardWidgets/master/widgets/tvbox-nsfw.js"
     }

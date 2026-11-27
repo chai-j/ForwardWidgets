@@ -1,7 +1,7 @@
 var WidgetMetadata = {
   id: "chai.tvbox",
   title: "TVBox 影视源",
-  version: "2.0.1",
+  version: "2.1.0",
   requiredVersion: "0.0.6",
   description: "从内置常规 TVBox 配置里浏览和搜索影视 JSON 采集站（type 为 1，接口路径包含 provide/vod），自动过滤混入的 18+ 站点；福利源请使用「TVBox 福利源」模块。",
   author: "chai-j",
@@ -72,6 +72,18 @@ var WidgetMetadata = {
           type: "enumeration",
           enumOptions: [{ title: "全部分类", value: "" }],
           dynamicOptions: { functionName: "categoryOptions", dependsOn: ["site", "configUrl", "preset", "configUrls", "siteKeys"] }
+        },
+        {
+          name: "hours",
+          title: "更新时段",
+          type: "enumeration",
+          value: "",
+          enumOptions: [
+            { title: "全部时间", value: "" },
+            { title: "24 小时内", value: "24" },
+            { title: "近 7 天", value: "168" },
+            { title: "近 30 天", value: "720" }
+          ]
         },
         { name: "page", title: "页码", type: "page" }
       ]
@@ -164,11 +176,14 @@ async function loadBrowse(params) {
   } else {
     site = await requireSite(params, params.site);
   }
-  const data = await cmsGet(site.api, {
+  const query = {
     ac: "detail",
     t: String(params.category || "").trim(),
     pg: pageNumber(params.page)
-  });
+  };
+  const hours = Number(params.hours);
+  if (Number.isFinite(hours) && hours > 0) query.h = Math.floor(hours);
+  const data = await cmsGet(site.api, query);
   return vodList(data).map(vod => vodCard(vod, site));
 }
 
@@ -691,7 +706,7 @@ function cmsUrl(api, query) {
     if (value === undefined || value === null || value === "") return;
     params[key] = String(value);
   });
-  const order = ["ac", "ids", "wd", "t", "pg"];
+  const order = ["ac", "ids", "wd", "t", "h", "pg"];
   const keys = Object.keys(params).sort((a, b) => {
     const ia = order.indexOf(a);
     const ib = order.indexOf(b);
